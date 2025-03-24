@@ -47,7 +47,7 @@ export class SignupComponent {
     this.isLoading = true;
 
     // Llamar al servicio de login
-    this.auth.register(this.user).then((res: any) => {
+    this.auth.signup(this.user).then((res: any) => {
       console.log(res);
 
       // Si el token existe, lo almacenamos en localStorage

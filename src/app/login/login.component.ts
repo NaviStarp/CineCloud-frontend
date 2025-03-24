@@ -56,9 +56,11 @@ export class LoginComponent {
 
       // Finalmente, después de recibir la respuesta, se establece isLoading en false
       this.isLoading = false;
+      window.location.href = '/';
     }).catch(error => {
       // Si hay un error, también se establece isLoading en false
       console.error('Error durante el inicio de sesión:', error);
+      this.errorMessage = error;
       this.isLoading = false;
     });
   }

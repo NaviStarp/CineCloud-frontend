@@ -10,7 +10,7 @@ export interface User {
 })
 export class AuthService {
   login_url = 'http://localhost:8000/login/';
-  register_url = 'http://localhost:8000/register/';
+  register_url = 'http://localhost:8000/signup/';
   constructor() { }
   private getToken() {
     return localStorage.getItem('token');
@@ -32,7 +32,7 @@ export class AuthService {
       body: JSON.stringify(user)
     }).then(res => res.json());
   }
-  public register(user: User) {
+  public signup(user: User) {
     return fetch(this.register_url, {
       method: 'POST',
       headers: {
