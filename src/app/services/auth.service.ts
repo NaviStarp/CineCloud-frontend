@@ -23,6 +23,7 @@ export class AuthService {
   }
   
   public login(user: User) {
+    console.log(user);
     return fetch(this.login_url, {
       method: 'POST',
       headers: {
@@ -44,9 +45,10 @@ export class AuthService {
     const token = this.getToken();
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
+      'Authorization': 'Token '
     };
     if (token) {
-      headers['Token'] = token;
+      headers['Authorization'] += token;
     }
     const response = await fetch('http://localhost:8000/prueba/', {
       method: 'GET',

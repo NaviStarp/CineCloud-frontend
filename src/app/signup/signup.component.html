@@ -1,1 +1,144 @@
-<p>signup works!</p>
+<div class="flex min-h-screen items-center justify-center bg-neutral-900 py-12 px-4 sm:px-6 lg:px-8" style="background: linear-gradient(135deg, #0f172a 0%, #020617 100%);">
+    <div class="w-full max-w-md space-y-8 bg-neutral-800/90 p-8 rounded-2xl shadow-2xl border border-neutral-700/50 backdrop-blur-sm">
+      <!-- Logo y Título -->
+      <div class="text-center">
+        <div class="relative mx-auto h-20 w-20 mb-2">
+          <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-primary-600 to-accent-500 opacity-20 blur-xl"></div>
+          <img class="relative h-full w-full rounded-full bg-neutral-800 border border-neutral-500 p-1" src="/Logo1.png" alt="Logo">
+        </div>
+        <h2 class="mt-4 text-3xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-accent-400 font-tektur">CineCloud</h2>
+        <p class="mt-2 text-sm text-neutral-400">
+          Accede a tu mundo de entretenimiento favorito
+        </p>
+      </div>
+      
+      <!-- Formulario -->
+      <form class="mt-8 space-y-6" [formGroup]="registerForm" (ngSubmit)="register()">
+        <div class="space-y-4">
+          <!-- Nombre -->
+          <div>
+            <label for="username" class="block text-sm font-medium text-neutral-300 mb-1">Nombre de usuario</label>
+            <div class="group relative transition-all duration-300 focus-within:scale-[1.01]">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-primary-400 group-focus-within:text-primary-300 transition-colors" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"></path>
+                </svg>
+              </div>
+              <input
+                id="username"
+                formControlName="username"
+                type="text"
+                required
+                class="pl-10 block w-full rounded-xl border border-neutral-600/70 py-3 px-3 text-neutral-200 bg-neutral-700/50 placeholder-neutral-500 shadow-sm focus:ring-2 focus:ring-primary-500/70 focus:border-primary-500/70 focus:bg-neutral-700/70 transition-all valid:border-green-500/70 valid:ring-green-500/30 invalid:border-red-500/70 invalid:ring-red-500/30"
+                placeholder="Nombre de usuario"
+              >
+            </div>
+              <div *ngIf="loginForm.get('username')?.hasError('required') && loginForm.get('username')?.touched" class="text-xs text-accent-400 mt-1 pl-1">
+              El nombre es obligatorio
+              </div>
+          </div>
+          
+          <div>
+            <label for="password" class="block text-sm font-medium text-neutral-300 mb-1">Contraseña</label>
+            <div class="group relative transition-all duration-300 focus-within:scale-[1.01]">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-primary-400 group-focus-within:text-primary-300 transition-colors" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+                </svg>
+              </div>
+              <input
+                id="password"
+                formControlName="password"
+                type="password"
+                required
+                class="pl-10 block w-full rounded-xl border border-neutral-600/70 py-3 px-3 text-neutral-200 bg-neutral-700/50 placeholder-neutral-500 shadow-sm focus:ring-2 focus:ring-primary-500/70 focus:border-primary-500/70 focus:bg-neutral-700/70 transition-all valid:border-green-500/70 valid:ring-green-500/30 invalid:border-red-500/70 invalid:ring-red-500/30"
+                placeholder="Contraseña"
+              >
+            </div>
+            <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-xs text-accent-400 mt-1 pl-1">
+              La contraseña debe tener al menos 2 caracteres
+            </div>
+          </div>
+          
+          <!-- Recordarme -->
+          <div class="flex items-center justify-between pt-1">
+            <div class="flex items-center">
+              <div class="relative flex items-center">
+                <input id="remember_me" name="remember_me" type="checkbox" class="peer sr-only">
+                <div class="h-5 w-5 border-2 border-neutral-600 rounded bg-neutral-700/50 flex items-center justify-center peer-checked:bg-primary-600 peer-checked:border-primary-500 transition-all cursor-pointer">
+                  <svg class="h-3 w-3 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4">
+                    <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <label for="remember_me" class="ml-2 block text-sm text-neutral-400 cursor-pointer">
+                  Recordarme
+                </label>
+              </div>
+            </div>
+            <div class="text-sm">
+              <a href="#" class="font-medium text-primary-400 hover:text-primary-300 hover:underline transition-colors">
+                ¿Olvidaste tu contraseña?
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Submit button -->
+        <div class="pt-2">
+          <button
+            type="submit"
+            [disabled]="isLoading"
+            class="group relative cursor-pointer flex w-full justify-center rounded-xl bg-primary-600 py-3 px-4 text-sm font-semibold text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-400/70 focus:ring-offset-2 focus:ring-offset-neutral-800 disabled:bg-primary-800/70 disabled:text-primary-300 transition-all duration-200 shadow-md hover:shadow-lg overflow-hidden"
+            style="background: linear-gradient(90deg, #7c3aed 0%, #8b5cf6 100%);">
+            <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer"></span>
+            <span *ngIf="isLoading" class="absolute inset-y-0 left-0 flex items-center pl-3">
+              <!-- Spinner icon -->
+              <svg class="h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </span>
+            {{isLoading ? 'Iniciando sesión...' : 'Acceder ahora'}}
+          </button>
+        </div>
+        
+        <!-- Sign up link -->
+        <div class="text-center pt-2">
+          <p class="text-sm text-neutral-400">
+            ¿No tienes cuenta?
+            <a href="/register" class="font-medium text-primary-400 hover:text-primary-300 hover:underline ml-1 transition-colors">Regístrate ahora</a>
+          </p>
+        </div>
+        
+        <!-- Social login options -->
+        <div class="mt-6">
+          <div class="relative">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-neutral-700"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+              <span class="px-2 bg-neutral-800/90 text-neutral-400">O continúa con</span>
+            </div>
+          </div>
+          
+          <div class="mt-6 grid grid-cols-3 gap-3">
+            <button type="button" class="group inline-flex justify-center items-center rounded-xl py-2 px-4 text-sm font-medium bg-neutral-700/30 hover:bg-neutral-700/50 text-white border border-neutral-600/50 transition-all hover:scale-105">
+              <svg class="h-5 w-5 text-neutral-400 group-hover:text-blue-400" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/>
+              </svg>
+            </button>
+            <button type="button" class="group inline-flex justify-center items-center rounded-xl py-2 px-4 text-sm font-medium bg-neutral-700/30 hover:bg-neutral-700/50 text-white border border-neutral-600/50 transition-all hover:scale-105">
+              <svg class="h-5 w-5 text-neutral-400 group-hover:text-blue-300" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+              </svg>
+            </button>
+            <button type="button" class="group inline-flex justify-center items-center rounded-xl py-2 px-4 text-sm font-medium bg-neutral-700/30 hover:bg-neutral-700/50 text-white border border-neutral-600/50 transition-all hover:scale-105">
+              <svg class="h-5 w-5 text-neutral-400 group-hover:text-red-400" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>

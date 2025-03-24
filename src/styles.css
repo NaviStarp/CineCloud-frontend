@@ -1,1 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Tektur:wght@400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
+
+body {
+  font-family: 'Noto Sans', 'Tektur', Helvetica, sans-serif;
+}
+
+@theme {
+  /* Tonos primarios - Azul Violeta */
+  --color-primary-50: #f5f3ff;
+  --color-primary-100: #ede9fe;
+  --color-primary-200: #ddd6fe;
+  --color-primary-300: #c4b5fd;
+  --color-primary-400: #a78bfa;
+  --color-primary-500: #8b5cf6;
+  --color-primary-600: #7c3aed;
+  --color-primary-700: #6d28d9;
+  --color-primary-800: #5b21b6;
+  --color-primary-900: #4c1d95;
+
+  /* Tonos secundarios - Turquesa */
+  --color-secondary-50: #ebf9fa;
+  --color-secondary-100: #cef1f2;
+  --color-secondary-200: #a1e4e8;
+  --color-secondary-300: #6dd3db;
+  --color-secondary-400: #3cbbc7;
+  --color-secondary-500: #26a0ae;
+  --color-secondary-600: #1e8291;
+  --color-secondary-700: #1a6974;
+  --color-secondary-800: #155158;
+  --color-secondary-900: #103c41;
+
+  /* Tonos acentos - Rosa */
+  --color-accent-50: #fdf2f8;
+  --color-accent-100: #fce7f3;
+  --color-accent-200: #fbcfe8;
+  --color-accent-300: #f9a8d4;
+  --color-accent-400: #f472b6;
+  --color-accent-500: #ec4899;
+  --color-accent-600: #db2777;
+  --color-accent-700: #be185d;
+  --color-accent-800: #9d174d;
+  --color-accent-900: #831843;
+
+  /* Tonos neutrales - Oscuro */
+  --color-neutral-50: #f8fafc;
+  --color-neutral-100: #f1f5f9;
+  --color-neutral-200: #e2e8f0;
+  --color-neutral-300: #cbd5e1;
+  --color-neutral-400: #94a3b8;
+  --color-neutral-500: #64748b;
+  --color-neutral-600: #475569;
+  --color-neutral-700: #334155;
+  --color-neutral-800: #1e293b;
+  --color-neutral-900: #0f172a;
+}
