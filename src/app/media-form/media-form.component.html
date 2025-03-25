@@ -1,63 +1,109 @@
-<div class="max-w-4xl mx-auto p-6 bg-gray-50">
-  <h2 class="text-3xl font-extrabold text-gray-800 mb-6 text-center">
-    Videos Guardados
-  </h2>
-
-  <!-- Empty State -->
-  <div *ngIf="videos.length === 0" class="text-center py-12 bg-white rounded-lg shadow-md">
-    <p class="text-gray-500 text-xl">No hay videos almacenados</p>
-  </div>
-
-  <!-- Videos Grid -->
-  <div *ngIf="videos.length > 0" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <div 
-      *ngFor="let video of videos" 
-      class="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
-      (click)="playVideo(video)"
-    >
-      <!-- Video Thumbnail -->
-      <div class="relative">
-        <img 
-          [src]="video.thumbnail || '/api/placeholder/320/240'" 
-          [alt]="video.videoType"
-          class="w-full h-48 object-cover"
+<div class="bg-neutral-900 min-h-screen p-4 flex flex-col justify-center items-center">
+  <!-- Video Container with Centered Selected Video -->
+  <div class="flex items-center justify-center w-full overflow-x-auto space-x-8 pb-4 scrollbar-hide">
+    <!-- Left Side Videos -->
+    <div class="flex space-x-4 opacity-50 hover:opacity-100 transition-opacity duration-300">
+      <div 
+        *ngFor="let video of videos.slice(0, videos.indexOf(selectedVideo))" 
+        class="flex-shrink-0 w-64 cursor-pointer transition-all duration-300"
+        (click)="selectVideo(video)"
+      >
+        <img
+          [src]="video.thumbnail"
+          [alt]="video.name"
+          class="w-full h-48 aspect-video rounded-lg opacity-70 hover:opacity-100"
         />
-        <div class="absolute inset-0 bg-transparent bg-opacity-20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            fill="none" 
-            viewBox="0 0 24 24" 
-            stroke="currentColor" 
-            class="w-12 h-12 text-white"
-          >
-            <path 
-              stroke-linecap="round" 
-              stroke-linejoin="round" 
-              stroke-width="2" 
-              d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-            />
-            <path 
-              stroke-linecap="round" 
-              stroke-linejoin="round" 
-              stroke-width="2" 
-              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-        </div>
       </div>
-  
     </div>
 
+    <!-- Selected Video in Center -->
+    <div 
+      *ngIf="selectedVideo"
+      class="flex-shrink-0 w-96 transform transition-all duration-300 scale-110"
+    >
+      <img
+        [src]="selectedVideo.thumbnail"
+        [alt]="selectedVideo.name"
+        class="w-full h-96 aspect-video rounded-xl shadow-2xl border-4 border-primary-600"
+      />
+    </div>
+
+    <!-- Right Side Videos -->
+    <div class="flex space-x-4 opacity-50 hover:opacity-100 transition-opacity duration-300">
+      <div 
+        *ngFor="let video of videos.slice(videos.indexOf(selectedVideo) + 1)" 
+        class="flex-shrink-0 w-64 cursor-pointer transition-all duration-300"
+        (click)="selectVideo(video)"
+      >
+        <img
+          [src]="video.thumbnail"
+          [alt]="video.name"
+          class="w-full h-48 aspect-video rounded-lg opacity-70 hover:opacity-100"
+        />
+      </div>
+    </div>
   </div>
-  <div>
-    <h1>Reproductor</h1>
-        <!-- Hidden Video Element -->
-        <video 
-        #videoPlayer
-        id="videoPlayer"
-        [src]="" 
-        class="hidden w-full h-48 object-fill" 
-        controls
-      ></video>
+
+  <!-- Buttons for Selected Video -->
+  <div
+    *ngIf="selectedVideo"
+    class="flex justify-center space-x-4 mt-8 transition-all duration-300"
+  >
+    <button
+      class="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-500 flex items-center space-x-2"
+      (click)="handleTypeSelection(selectedVideo, 'movie')"
+    >
+      <fa-icon [icon]="faFilm" class="mr-1"></fa-icon>
+      Película
+    </button>
+    <button
+      class="bg-secondary-600 text-white px-6 py-3 rounded-lg hover:bg-secondary-500 flex items-center space-x-2"
+      (click)="handleTypeSelection(selectedVideo, 'series')"
+    >
+      <fa-icon [icon]="faTv" class="mr-1"></fa-icon>
+      Serie
+    </button>
+  </div>
+
+  <!-- Series Configuration Modal (Unchanged) -->
+  <div
+    *ngIf="seriesDetails"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div class="bg-neutral-800 p-8 rounded-2xl shadow-2xl text-center w-full max-w-2xl mx-4">
+      <h3 class="text-2xl font-bold mb-6 text-white">Configurar Serie</h3>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-white mb-2">Nombre de la Serie</label>
+          <input
+            type="text"
+            [(ngModel)]="seriesDetails.name"
+            class="w-full p-2 rounded bg-neutral-700 text-white"
+          />
+        </div>
+        <div>
+          <label class="block text-white mb-2">Temporada</label>
+          <input
+            type="number"
+            [(ngModel)]="seriesDetails.season"
+            class="w-full p-2 rounded bg-neutral-700 text-white"
+          />
+        </div>
+        <div class="flex justify-between mt-6">
+          <button
+            (click)="handleAddToSeries()"
+            class="bg-primary-600 text-white p-2 rounded hover:bg-primary-500"
+          >
+            Añadir Capítulo
+          </button>
+          <button
+            (click)="seriesDetails = null"
+            class="bg-neutral-600 text-white p-2 rounded hover:bg-neutral-500"
+          >
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

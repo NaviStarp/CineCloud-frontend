@@ -14,16 +14,21 @@ export class IndexedDbService {
 
   // Método para abrir la base de datos
   private async openDatabase(): Promise<void> {
+    if (typeof window === 'undefined' || !('indexedDB' in window)) {
+      console.warn('IndexedDB no está disponible en este entorno');
+      return;
+    }
+  
     if (this.db) return; // Si la base de datos ya está abierta, no hacer nada
     const request = indexedDB.open(this.dbName, 1);
-
+  
     return new Promise((resolve, reject) => {
       request.onerror = (event) => reject(event.target);
       request.onsuccess = (event) => {
         this.db = (event.target as IDBRequest).result;
         resolve();
       };
-
+  
       request.onupgradeneeded = (event) => {
         const db = (event.target as IDBRequest).result;
         if (!db.objectStoreNames.contains(this.storeName)) {
@@ -32,6 +37,7 @@ export class IndexedDbService {
       };
     });
   }
+  
 
   // Guardar un video en IndexedDB
   async saveVideo(file: File): Promise<void> {

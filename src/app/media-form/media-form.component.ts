@@ -1,68 +1,108 @@
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faArrowRight, faTimes, faCloudUploadAlt, faFileAlt, faUpload } from '@fortawesome/free-solid-svg-icons';
-import { ModalErrorComponent } from "../general/modal-error/modal-error.component";
+import { faPlay, faTrash, faEdit, faFilm, faTv } from '@fortawesome/free-solid-svg-icons';
 import { IndexedDbService } from '../services/indexed-db.service';
+
+interface VideoEntry {
+  id?: number;
+  videoBlob: string;
+  videoType: string;
+  thumbnail: string;
+  name?: string;
+  type?: 'series' | 'movie';
+  chapter?: number;
+  season?: number;
+}
 
 @Component({
   selector: 'app-media-form',
-  imports: [FontAwesomeModule, CommonModule],
+  standalone: true,
+  imports: [
+    FontAwesomeModule,
+    CommonModule,
+    FormsModule
+  ],
   templateUrl: './media-form.component.html',
-  styleUrl: './media-form.component.css'
+  styleUrls: ['./media-form.component.css']
 })
-
-
 export class MediaFormComponent implements OnInit {
-  @ViewChild('videoPlayer') videoPlayer!: ElementRef<HTMLVideoElement>;
-  videos: { videoBlob: string; videoType: string,thumbnail:string }[] = [];
-  faFileAlt = faFileAlt;
-  faTimes = faTimes;
+  faFilm = faFilm;
+  faTv = faTv;
+  videos: VideoEntry[] = [];
+  selectedVideo: VideoEntry = this.videos[0];
+  selectedVideos: VideoEntry[] = [];
+  seriesDetails: { name: string; season: number } | null = null;
 
-  constructor(private indexedDbService: IndexedDbService) {}
+  constructor(private indexedDbService: IndexedDbService) { }
 
   ngOnInit(): void {
     this.loadVideos();
-        
-    }
-    async loadVideos() {
-      try {
+  }
+
+  async loadVideos() {
+    try {
       const videos = await this.indexedDbService.getVideos();
       this.videos = await Promise.all(videos.map(async (file: File) => {
-        // Creamos una URL para cada video a partir del Blob
         const videoBlob = URL.createObjectURL(file);
         const thumbnail = await this.extractThumbnail(file);
-        console.log(thumbnail);
-        const videoType = file.type || 'video/mp4'; // Establecemos un valor predeterminado si no hay tipo MIME
-    
-        return { videoBlob, videoType, thumbnail };
+        const videoType = file.type || 'video/mp4';
+        return { videoBlob, videoType, thumbnail, name: file.name };
       }));
-      } catch (error) {
-      console.error('Error al cargar los videos:', error);
+      
+      // Select first video by default if available
+      if (this.videos.length > 0) {
+        this.selectVideo(this.videos[0]);
       }
+    } catch (error) {
+      console.error('Error al cargar los videos:', error);
     }
-    extractThumbnail(videoBlob: Blob): Promise<string> {
-      return new Promise((resolve, reject) => {
-        const video = document.createElement('video');
-        video.src = URL.createObjectURL(videoBlob);
-        video.onloadeddata = () => {
-          const canvas = document.createElement('canvas');
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-          canvas.getContext('2d')?.drawImage(video, 0, 0, canvas.width, canvas.height);
-          resolve(canvas.toDataURL());
-        };
-        video.onerror = (error) => {
-          reject(error);
-        };
-      });
+  }
+
+  selectVideo(video: VideoEntry) {
+    this.selectedVideo = video;
+  }
+
+  extractThumbnail(videoBlob: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement('video');
+      video.src = URL.createObjectURL(videoBlob);
+      video.onloadeddata = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d')?.drawImage(video, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL());
+      };
+      video.onerror = (error) => {
+        reject(error);
+      };
+    });
+  }
+
+  handleTypeSelection(video: VideoEntry, type: 'movie' | 'series'): void {
+    if (type === 'movie') {
+      video.type = 'movie';
+      this.seriesDetails = null;
+    } else {
+      this.seriesDetails = {
+        name: video.name?.split('.')[0] || '',
+        season: 1
+      };
     }
-    playVideo(video: { videoBlob: string; videoType: string,thumbnail:string }) {
-      console.log('Reproduciendo video:', video);
-      const videoPlay = this.videoPlayer.nativeElement;
-      videoPlay.poster = video.thumbnail;
-      videoPlay.classList.remove('hidden');
-      videoPlay.src = video.videoBlob;
-      videoPlay.play();
-    }
+  }
+
+  handleAddToSeries(): void {
+    if (!this.seriesDetails || !this.selectedVideo) return;
+    const seriesVideo: VideoEntry = {
+      ...this.selectedVideo,
+      type: 'series',
+      season: this.seriesDetails.season,
+      chapter: this.selectedVideos.length + 1,
+      name: this.seriesDetails.name
+    };
+    this.selectedVideos.push(seriesVideo);
+    this.seriesDetails = null;
+  }
 }
