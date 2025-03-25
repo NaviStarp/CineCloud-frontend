@@ -1,0 +1,63 @@
+<div class="max-w-4xl mx-auto p-6 bg-gray-50">
+  <h2 class="text-3xl font-extrabold text-gray-800 mb-6 text-center">
+    Videos Guardados
+  </h2>
+
+  <!-- Empty State -->
+  <div *ngIf="videos.length === 0" class="text-center py-12 bg-white rounded-lg shadow-md">
+    <p class="text-gray-500 text-xl">No hay videos almacenados</p>
+  </div>
+
+  <!-- Videos Grid -->
+  <div *ngIf="videos.length > 0" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div 
+      *ngFor="let video of videos" 
+      class="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
+      (click)="playVideo(video)"
+    >
+      <!-- Video Thumbnail -->
+      <div class="relative">
+        <img 
+          [src]="video.thumbnail || '/api/placeholder/320/240'" 
+          [alt]="video.videoType"
+          class="w-full h-48 object-cover"
+        />
+        <div class="absolute inset-0 bg-transparent bg-opacity-20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            stroke="currentColor" 
+            class="w-12 h-12 text-white"
+          >
+            <path 
+              stroke-linecap="round" 
+              stroke-linejoin="round" 
+              stroke-width="2" 
+              d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+            />
+            <path 
+              stroke-linecap="round" 
+              stroke-linejoin="round" 
+              stroke-width="2" 
+              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        </div>
+      </div>
+  
+    </div>
+
+  </div>
+  <div>
+    <h1>Reproductor</h1>
+        <!-- Hidden Video Element -->
+        <video 
+        #videoPlayer
+        id="videoPlayer"
+        [src]="" 
+        class="hidden w-full h-48 object-fill" 
+        controls
+      ></video>
+  </div>
+</div>

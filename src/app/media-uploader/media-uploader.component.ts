@@ -2,20 +2,26 @@ import { CommonModule } from '@angular/common';
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowRight,faTimes, faCloudUploadAlt, faFileAlt, faUpload } from '@fortawesome/free-solid-svg-icons';
-
+import { ModalErrorComponent } from "../general/modal-error/modal-error.component";
+import { IndexedDbService } from '../services/indexed-db.service';
 @Component({
   selector: 'app-media-uploader',
   standalone: true,
-  imports: [CommonModule, FontAwesomeModule],
+  imports: [CommonModule, FontAwesomeModule, ModalErrorComponent],
   templateUrl: './media-uploader.component.html',
   styleUrls: ['./media-uploader.component.css']
 })
 export class MediaUploaderComponent {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   @ViewChild('fileInfo') fileInfo!: ElementRef<HTMLDivElement>;
+
+  constructor(private indexedDbService: IndexedDbService) {}
   
   selectedFiles: File[] = [];
   modalAbierta = false;
+  tituloError = "";
+  mensajeError="";
+  errorVisible = false;
   
   faTimes = faTimes;
   faFileAlt = faFileAlt;
@@ -26,7 +32,14 @@ export class MediaUploaderComponent {
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files) {
+      if(!this.compatibleFiles(Array.from(input.files))){
+        this.tituloError = "Error";
+        this.mensajeError = "El archivo no es compatible";
+        this.errorVisible = true;
+        return;
+      }
       this.selectedFiles = this.selectedFiles.concat(Array.from(input.files));
+      
     }
   }
 
@@ -50,8 +63,13 @@ export class MediaUploaderComponent {
     element.classList.remove('border-blue-500');
 
     if (event.dataTransfer?.files) {
+      if(!this.compatibleFiles(Array.from(event.dataTransfer.files))){
+        this.tituloError = "Error";
+        this.mensajeError = "El archivo no es compatible";
+        this.errorVisible = true;
+        return;
+      }
       this.selectedFiles = this.selectedFiles.concat(Array.from(event.dataTransfer.files));
-      
       // Update file input to reflect dropped files
       const dataTransfer = new DataTransfer();
       this.selectedFiles.forEach(file => {
@@ -62,6 +80,19 @@ export class MediaUploaderComponent {
     }
   }
 
+  compatibleFiles(files: File[] = this.selectedFiles) {
+    let compatible = true;
+    files.forEach(file => {
+      if (!/\.(mp4|avi|mkv|mov|wmv)$/i.test(file.name)) {
+        compatible = false;
+      }
+      else if (!file.type.includes('video')) {
+      compatible = false;
+      }  
+    });
+    return compatible;
+  }
+
   clearFiles() {
     this.selectedFiles = [];
     if (this.fileInput) {
@@ -69,11 +100,18 @@ export class MediaUploaderComponent {
     }
   }
 
-  subir() {
+  continuar() {
     if (this.selectedFiles.length > 0) {
-      console.log('Archivos a subir:', this.selectedFiles);
-      // Aquí implementarías la lógica de subida de archivos
-      // Por ejemplo, usando HttpClient para enviar los archivos al servidor
+      console.log('Archivos: ', this.selectedFiles);
+      // Guardar videos de forma secuencial
+      this.selectedFiles.forEach((file, index) => {
+        this.indexedDbService.saveVideo(file).then(() => {
+          console.log(`Video ${file.name} guardado correctamente`);
+          window.location.href = '/subir/2';
+        }).catch((error) => {
+          console.error(`Error al guardar el video ${file.name}:`, error);
+        });
+      });
     } else {
       console.log('No hay archivos seleccionados');
     }

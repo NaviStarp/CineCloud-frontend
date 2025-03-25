@@ -5,7 +5,7 @@
     <fa-icon [icon]="faCloudUploadAlt" class="text-primary-500 text-3xl mr-3"></fa-icon>
     <h1 class="text-3xl font-bold text-primary-500">Subir Archivos</h1>
   </div>
-  <form (submit)="subir()" method="post" enctype="multipart/form-data" class="space-y-6">
+  <form (submit)="continuar()" (dragleave)="onDragLeave($event)" (dragover)="onDragOver($event)" (drop)="onDrop($event)" method="post" enctype="multipart/form-data" class="space-y-6">
     <div id="fileContainer" class="flex items-center justify-center w-full">
       <label for="archivo" class="flex flex-col items-center justify-center w-full h-72 border-2 border-neutral-600 border-dashed rounded-lg cursor-pointer bg-neutral-700 hover:bg-neutral-600 transition-all duration-300 group">
         <div class="flex flex-col items-center justify-center pt-5 pb-6 px-4 text-center">
@@ -21,21 +21,29 @@
         <input id="archivo" name="file" type="file" multiple class="hidden" accept=".mp4,.avi,.mov,.wmv" (change)="onFileSelected($event)" #fileInput />
       </label>
     </div>
-    <div #fileInfo id="fileInfo" class="bg-neutral-700 p-3 rounded-lg" [class.hidden]="selectedFiles.length === 0">
-      <div *ngFor="let file of selectedFiles" class="flex items-center mb-4 border-b border-neutral-600 pb-2">
-      <fa-icon [icon]="faFileAlt" class="text-primary-400 mr-2"></fa-icon>
-      <span class="text-neutral-200 text-sm truncate flex-grow">{{ file.name }}</span>
-      <button 
-        type="button" 
-        class="ml-auto text-neutral-400 hover:text-red-400"
-        (click)="removeFile(file)"
-      >
-        <fa-icon [icon]="faTimes"></fa-icon>
-      </button>
-      </div>
-    </div>
+    <div class="bg-neutral-800 rounded-lg shadow-sm p-1 transition-all" 
+    [class.hidden]="selectedFiles.length === 0">
+ <div class="space-y-2">
+   <div *ngFor="let file of selectedFiles" 
+        class="flex items-center bg-neutral-700 rounded-md p-2 hover:bg-neutral-600 transition-colors group">
+     <fa-icon [icon]="faFileAlt" 
+              class="text-primary-500  text-xl mr-2 opacity-80 group-hover:opacity-100"></fa-icon>
+     <span class="text-neutral-200  truncate flex-grow">
+       {{ file.name }}
+     </span>
+     <button
+       type="button"
+       class="ml-auto text-neutral-400 hover:text-red-500 rounded-full p-1 
+              hover:bg-red-50/10 opacity-0 group-hover:opacity-100"
+       (click)="removeFile(file)">
+       <fa-icon [icon]="faTimes" class="text-sm"></fa-icon>
+     </button>
+   </div>
+ </div>
+</div>
+
     <div>
-      <button type="submit" class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-300">
+      <button type="button" (click)="continuar()"  class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-300">
         <fa-icon [icon]="faArrowRight" class="mr-2"></fa-icon> Continuar
       </button>
     </div>
@@ -44,6 +52,8 @@
     <button (click)="toggleModal()" class="text-sm text-blue-400 hover:text-blue-300 transition-colors">¿Necesitas ayuda con la importación?</button>
   </div>
 </div>
+  <app-modal-error [visible]="errorVisible" [title]="tituloError" [message]="mensajeError" (cerrarModal)="errorVisible=false" ></app-modal-error>
+
     <div *ngIf="modalAbierta" id="modalInformacion" class="fixed inset-0 flex items-center justify-center z-50">
       <div class="modal-backdrop absolute inset-0 backdrop-brightness-50 bg-opacity-50"></div>
       <div class="modal-content bg-neutral-800 p-6 rounded-lg shadow-lg w-full max-w-lg relative">
@@ -63,5 +73,5 @@
           </button>
         </div>
       </div>
-</div>
+    </div>
 </div>

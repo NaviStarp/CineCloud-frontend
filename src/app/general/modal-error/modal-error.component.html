@@ -1,0 +1,17 @@
+<div *ngIf="visible" class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-lg bg-transparent  transform transition-all duration-300">
+    <div class="bg-neutral-800 bg-opacity-80 rounded-lg shadow-xl max-w-md w-full p-6 relative">
+      <div class="flex items-center mb-4">
+        <fa-icon [icon]="faExclamationTriangle" class="text-red-500 text-3xl mr-3"></fa-icon>
+        <h2 class="text-xl font-bold text-red-500">{{ title }}</h2>
+      </div>
+      <p class="text-primary-200 mb-6">{{ message }}</p>
+      <div class="flex justify-end space-x-3">
+        <button
+          (click)="cerrar()"
+          class="px-4 py-2 bg-primary-500 text-white rounded hover:bg-primary-600 transition"
+        >
+          Vale
+        </button>
+      </div>
+    </div>
+  </div>
