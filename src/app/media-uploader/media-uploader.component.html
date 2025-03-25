@@ -1,0 +1,67 @@
+<div [ngClass]="{'bg-opacity-50': modalAbierta, 'bg-opacity-100': !modalAbierta}"
+ class="bg-gradient-to-br from-neutral-900 to-neutral-800 min-h-screen flex items-center justify-center p-4">
+<div class="bg-neutral-800 p-10 rounded-xl shadow-2xl w-full max-w-lg border border-neutral-700">
+  <div class="flex items-center mb-6">
+    <fa-icon [icon]="faCloudUploadAlt" class="text-primary-500 text-3xl mr-3"></fa-icon>
+    <h1 class="text-3xl font-bold text-primary-500">Subir Archivos</h1>
+  </div>
+  <form (submit)="subir()" method="post" enctype="multipart/form-data" class="space-y-6">
+    <div id="fileContainer" class="flex items-center justify-center w-full">
+      <label for="archivo" class="flex flex-col items-center justify-center w-full h-72 border-2 border-neutral-600 border-dashed rounded-lg cursor-pointer bg-neutral-700 hover:bg-neutral-600 transition-all duration-300 group">
+        <div class="flex flex-col items-center justify-center pt-5 pb-6 px-4 text-center">
+          <div class="mb-4 text-accent-400 group-hover:text-accent-300">
+            <fa-icon [icon]="faCloudUploadAlt" class="text-6xl animate-pulse-slow"></fa-icon>
+          </div>
+          <p class="mb-2 text-sm text-neutral-300"><span class="font-semibold">Haz clic para seleccionar</span> o arrastra y suelta</p>
+          <p class="text-xs text-neutral-400">Importación de peliculas/series</p>
+          <div class="mt-4 text-xs px-3 py-1 bg-neutral-600 text-neutral-300 rounded-full">
+            Formatos aceptados: .mp4, .avi, .mov, .wmv
+          </div>
+        </div>
+        <input id="archivo" name="file" type="file" multiple class="hidden" accept=".mp4,.avi,.mov,.wmv" (change)="onFileSelected($event)" #fileInput />
+      </label>
+    </div>
+    <div #fileInfo id="fileInfo" class="bg-neutral-700 p-3 rounded-lg" [class.hidden]="selectedFiles.length === 0">
+      <div *ngFor="let file of selectedFiles" class="flex items-center mb-4 border-b border-neutral-600 pb-2">
+      <fa-icon [icon]="faFileAlt" class="text-primary-400 mr-2"></fa-icon>
+      <span class="text-neutral-200 text-sm truncate flex-grow">{{ file.name }}</span>
+      <button 
+        type="button" 
+        class="ml-auto text-neutral-400 hover:text-red-400"
+        (click)="removeFile(file)"
+      >
+        <fa-icon [icon]="faTimes"></fa-icon>
+      </button>
+      </div>
+    </div>
+    <div>
+      <button type="submit" class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-300">
+        <fa-icon [icon]="faArrowRight" class="mr-2"></fa-icon> Continuar
+      </button>
+    </div>
+  </form>
+  <div class="mt-6 text-center">
+    <button (click)="toggleModal()" class="text-sm text-blue-400 hover:text-blue-300 transition-colors">¿Necesitas ayuda con la importación?</button>
+  </div>
+</div>
+    <div *ngIf="modalAbierta" id="modalInformacion" class="fixed inset-0 flex items-center justify-center z-50">
+      <div class="modal-backdrop absolute inset-0 backdrop-brightness-50 bg-opacity-50"></div>
+      <div class="modal-content bg-neutral-800 p-6 rounded-lg shadow-lg w-full max-w-lg relative">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold text-accent-500">Información</h2>
+          <button (click)="toggleModal()" class="text-accent-400 hover:text-red-400">
+            <fa-icon [icon]="faTimes"></fa-icon>
+          </button>
+        </div>
+        <div class="text-neutral-300">
+          <p>Aquí puedes agregar información adicional sobre la importación de inventario.</p>
+          <p class="mt-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris. Vivamus hendrerit arcu sed erat molestie vehicula.</p>
+        </div>
+        <div class="mt-6 flex justify-end">
+          <button (click)="toggleModal()" class="bg-neutral-600 hover:bg-neutral-700 text-white py-2 px-4 rounded">
+            Cerrar
+          </button>
+        </div>
+      </div>
+</div>
+</div>

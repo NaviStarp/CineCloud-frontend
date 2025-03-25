@@ -4,6 +4,7 @@
 
 body {
   font-family: 'Noto Sans', 'Tektur', Helvetica, sans-serif;
+  background-color: var(--color-neutral-900);
 }
 
 @theme {

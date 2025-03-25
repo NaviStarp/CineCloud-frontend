@@ -6,7 +6,7 @@
         <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-primary-600 to-accent-500 opacity-20 blur-xl"></div>
         <img class="relative h-full w-full rounded-full bg-neutral-800 border border-neutral-500 p-1" src="/Logo1.png" alt="Logo">
       </div>
-      <h2 class="mt-4 text-3xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-accent-400 font-tektur">CineCloud</h2>
+      <h2 class="mt-4 text-3xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-accent-500 font-tektur">CineCloud</h2>
       <p class="mt-2 text-sm text-neutral-400">
         Accede a tu mundo de entretenimiento favorito
       </p>
@@ -61,7 +61,7 @@
         </div>
         
         <!-- Recordarme -->
-        <div class="flex items-center justify-between pt-1">
+        <!-- <div class="flex items-center justify-between pt-1">
           <div class="flex items-center">
             <div class="relative flex items-center">
               <input id="remember_me" name="remember_me" type="checkbox" class="peer sr-only">
@@ -80,7 +80,7 @@
               ¿Olvidaste tu contraseña?
             </a>
           </div>
-        </div>
+        </div> -->
       </div>
       
       <!-- Submit button -->
@@ -101,7 +101,7 @@
           {{isLoading ? 'Iniciando sesión...' : 'Acceder ahora'}}
         </button>
       </div>
-      <p *ngIf="errorMessage" class="text-red-500">{{ errorMessage }}</p>
+      <div *ngIf="errorMessage" class="text-red-500 text-center">{{ errorMessage }}</div>
       <!-- Sign up link -->
       <div class="text-center pt-2">
         <p class="text-sm text-neutral-400">
