@@ -1,39 +1,12 @@
 <div class="bg-neutral-900 min-h-screen p-4 flex flex-col justify-center items-center">
-  <!-- Video Container with Centered Selected Video -->
-  <div class="flex items-center justify-center w-full overflow-x-auto space-x-8 pb-4 scrollbar-hide">
-    <!-- Left Side Videos -->
-    <div class="flex space-x-4 opacity-50 hover:opacity-100 transition-opacity duration-300">
-      <div 
-        *ngFor="let video of videos.slice(0, videos.indexOf(selectedVideo))" 
-        class="flex-shrink-0 w-64 cursor-pointer transition-all duration-300"
-        (click)="selectVideo(video)"
-      >
-        <img
-          [src]="video.thumbnail"
-          [alt]="video.name"
-          class="w-full h-48 aspect-video rounded-lg opacity-70 hover:opacity-100"
-        />
-      </div>
-    </div>
-
-    <!-- Selected Video in Center -->
-    <div 
-      *ngIf="selectedVideo"
-      class="flex-shrink-0 w-96 transform transition-all duration-300 scale-110"
-    >
-      <img
-        [src]="selectedVideo.thumbnail"
-        [alt]="selectedVideo.name"
-        class="w-full h-96 aspect-video rounded-xl shadow-2xl border-4 border-primary-600"
-      />
-    </div>
-
-    <!-- Right Side Videos -->
-    <div class="flex space-x-4 opacity-50 hover:opacity-100 transition-opacity duration-300">
-      <div 
-        *ngFor="let video of videos.slice(videos.indexOf(selectedVideo) + 1)" 
-        class="flex-shrink-0 w-64 cursor-pointer transition-all duration-300"
-        (click)="selectVideo(video)"
+  <!-- Horizontal video container with scroll snap -->
+  <div #videoContainer class="horizontal-scroll w-full overflow-x-visible flex justify-center">
+    <div class="flex items-center">
+      <div
+        *ngFor="let video of videos; let i = index"
+        #videoItem
+        class="video-item cursor-pointer flex-shrink-0 w-64 transition-all duration-500"
+        (click)="selectVideo(video, i)"
       >
         <img
           [src]="video.thumbnail"
@@ -44,11 +17,7 @@
     </div>
   </div>
 
-  <!-- Buttons for Selected Video -->
-  <div
-    *ngIf="selectedVideo"
-    class="flex justify-center space-x-4 mt-8 transition-all duration-300"
-  >
+  <div *ngIf="selectedVideo" class="flex justify-center space-x-4 mt-8 transition-all duration-300">
     <button
       class="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-500 flex items-center space-x-2"
       (click)="handleTypeSelection(selectedVideo, 'movie')"
@@ -65,7 +34,7 @@
     </button>
   </div>
 
-  <!-- Series Configuration Modal (Unchanged) -->
+  <!-- Series Configuration Modal -->
   <div
     *ngIf="seriesDetails"
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"

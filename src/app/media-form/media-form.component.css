@@ -1,7 +1,9 @@
-.scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
+.horizontal-scroll {
+  display: flex;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch; /* Para suavidad en dispositivos móviles */
+}
+.video-item {
+  scroll-snap-align: center;
+  margin: 0 10px; /* Ajusta el espacio entre videos si es necesario */
+}
