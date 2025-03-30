@@ -1,49 +1,49 @@
 {
-  "hash": "2435ab48",
-  "configHash": "ff2cdd58",
+  "hash": "64b42c16",
+  "configHash": "c241ddd8",
   "lockfileHash": "c86def89",
-  "browserHash": "dfae4414",
+  "browserHash": "6a9c1231",
   "optimized": {
     "@angular/common": {
       "src": "../../../../../../node_modules/@angular/common/fesm2022/common.mjs",
       "file": "@angular_common.js",
-      "fileHash": "8d3f6a21",
+      "fileHash": "14afe327",
       "needsInterop": false
     },
     "@angular/core": {
       "src": "../../../../../../node_modules/@angular/core/fesm2022/core.mjs",
       "file": "@angular_core.js",
-      "fileHash": "53af88d1",
+      "fileHash": "8876fa15",
       "needsInterop": false
     },
     "@angular/forms": {
       "src": "../../../../../../node_modules/@angular/forms/fesm2022/forms.mjs",
       "file": "@angular_forms.js",
-      "fileHash": "ad940388",
+      "fileHash": "cc8496be",
       "needsInterop": false
     },
     "@angular/platform-browser": {
       "src": "../../../../../../node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs",
       "file": "@angular_platform-browser.js",
-      "fileHash": "e58862f0",
+      "fileHash": "d71d931c",
       "needsInterop": false
     },
     "@angular/router": {
       "src": "../../../../../../node_modules/@angular/router/fesm2022/router.mjs",
       "file": "@angular_router.js",
-      "fileHash": "2c951143",
+      "fileHash": "aa2b7947",
       "needsInterop": false
     },
     "@fortawesome/angular-fontawesome": {
       "src": "../../../../../../node_modules/@fortawesome/angular-fontawesome/fesm2022/angular-fontawesome.mjs",
       "file": "@fortawesome_angular-fontawesome.js",
-      "fileHash": "0aaa8dc0",
+      "fileHash": "58b1d3a7",
       "needsInterop": false
     },
     "@fortawesome/free-solid-svg-icons": {
       "src": "../../../../../../node_modules/@fortawesome/free-solid-svg-icons/index.mjs",
       "file": "@fortawesome_free-solid-svg-icons.js",
-      "fileHash": "c4c31341",
+      "fileHash": "a3f4c22a",
       "needsInterop": false
     }
   },

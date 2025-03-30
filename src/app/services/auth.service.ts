@@ -1,4 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
+import {  CanActivate, GuardResult, MaybeAsync, Router} from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
 
 export interface User {
   username: string;
@@ -11,15 +13,27 @@ export interface User {
 export class AuthService {
   login_url = 'http://localhost:8000/login/';
   register_url = 'http://localhost:8000/signup/';
-  constructor() { }
-  private getToken() {
-    return localStorage.getItem('token');
+  
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
+  
+  private getToken(): string | null {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('token');
+    }
+    return null;
   }
-  public loggedIn() {
-    return !!localStorage.getItem('token');
+
+  public loggedIn(): boolean {
+    if (isPlatformBrowser(this.platformId)) {
+      return !!localStorage.getItem('token');
+    }
+    return false;
   }
-  public logout() {
-    localStorage.removeItem('token');
+
+  public logout(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('token');
+    }
   }
   
   public login(user: User) {
@@ -32,6 +46,7 @@ export class AuthService {
       body: JSON.stringify(user)
     }).then(res => res.json());
   }
+
   public signup(user: User) {
     return fetch(this.register_url, {
       method: 'POST',
@@ -41,6 +56,7 @@ export class AuthService {
       body: JSON.stringify(user)
     }).then(res => res.json());
   }
+
   public async prueba() {
     const token = this.getToken();
     const headers: HeadersInit = {
@@ -55,5 +71,25 @@ export class AuthService {
       headers: headers,
     });
     return response.json();
+  }
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthGuard implements CanActivate {
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  canActivate(): MaybeAsync<GuardResult> {
+    if (this.authService.loggedIn()) {
+      return true;
+    }
+    
+    // Redirigo al login si no esta logueado
+    this.router.navigate(['/login']);
+    return false;
   }
 }
