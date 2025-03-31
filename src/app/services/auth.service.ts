@@ -1,5 +1,5 @@
 import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
-import {  CanActivate, GuardResult, MaybeAsync, Router} from '@angular/router';
+import { CanActivate, GuardResult, MaybeAsync, Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 
 export interface User {
@@ -11,11 +11,19 @@ export interface User {
   providedIn: 'root'
 })
 export class AuthService {
-  login_url = 'http://localhost:8000/login/';
-  register_url = 'http://localhost:8000/signup/';
-  
   constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
-  
+
+  private getServerUrl(): string {
+    if (isPlatformBrowser(this.platformId)) {
+      const ip = localStorage.getItem('serverIp');
+      const port = localStorage.getItem('serverPort');
+      if (ip && port) {
+        return `http://${ip}:${port}`;
+      }
+    }
+    throw new Error('Server IP or Port not set in localStorage');
+  }
+
   private getToken(): string | null {
     if (isPlatformBrowser(this.platformId)) {
       return localStorage.getItem('token');
@@ -32,7 +40,7 @@ export class AuthService {
     if (token) {
       headers['Authorization'] += token;
     }
-    const response = await fetch('http://localhost:8000/token/test', {
+    const response = await fetch(`${this.getServerUrl()}/token/test`, {
       method: 'GET',
       headers: headers,
     });
@@ -50,15 +58,16 @@ export class AuthService {
       return false;
     }
   }
+
   public logout(): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('token');
     }
   }
-  
+
   public login(user: User) {
     console.log(user);
-    return fetch(this.login_url, {
+    return fetch(`${this.getServerUrl()}/login/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -68,7 +77,7 @@ export class AuthService {
   }
 
   public signup(user: User) {
-    return fetch(this.register_url, {
+    return fetch(`${this.getServerUrl()}/signup/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -86,13 +95,12 @@ export class AuthService {
     if (token) {
       headers['Authorization'] += token;
     }
-    const response = await fetch('http://localhost:8000/prueba/', {
+    const response = await fetch(`${this.getServerUrl()}/prueba/`, {
       method: 'GET',
       headers: headers,
     });
     return response.json();
   }
-
 }
 
 @Injectable({
@@ -107,12 +115,12 @@ export class AuthGuard implements CanActivate {
   async canActivate(): Promise<GuardResult> {
     try {
       if (await this.authService.loggedIn()) {
-      return true;
+        return true;
       }
     } catch (error) {
       console.error('Error verificando el token:', error);
     }
-    
+
     // Redirigo al login si no esta logueado o si ocurre un error
     this.router.navigate(['/login']);
     return false;

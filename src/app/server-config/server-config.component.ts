@@ -80,6 +80,8 @@ export class ServerConfigComponent {
               if (count <= 0) {
                 clearInterval(countdownInterval);
                 this.router.navigate(['/']);
+                localStorage.setItem('serverIp', serverUrl);
+                localStorage.setItem('serverPort', serverPort);
                 
               } else {
                 this.redirectMessage = `Redirigiendo al panel principal en ${count} segundos...`;
