@@ -1,10 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 @Component({
   selector: 'app-input',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,FaIconComponent],
   templateUrl: './input.component.html',
   styleUrls: ['./input.component.css']
 })
@@ -16,7 +17,7 @@ export class InputComponent implements OnInit {
   @Input() label: string = '';
   @Input() placeholder: string = '';
   @Input() errorMessage: string = 'Este campo es obligatorio';
-  @Input() icon: string = '';
+  @Input() icon:string = '';
 
   constructor() {}
 

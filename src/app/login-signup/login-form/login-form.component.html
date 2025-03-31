@@ -7,7 +7,7 @@
         [formGroup]="loginForm"
         label="Nombre de usuario"
         placeholder="Nombre de usuario"
-        icon="user"
+        [icon]="faUser.iconName"
         errorMessage="El nombre es obligatorio"
       ></app-input>
       
@@ -19,7 +19,7 @@
         controlName="password"
         label="Contraseña"
         placeholder="Contraseña"
-        icon="lock"
+        [icon]="faLock.iconName"
         errorMessage="La contraseña debe tener al menos 2 caracteres"
       ></app-input>
     </div>    

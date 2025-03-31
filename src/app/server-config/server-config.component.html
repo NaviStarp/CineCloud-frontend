@@ -1,0 +1,70 @@
+<div class="flex flex-col items-center justify-center w-full h-screen bg-neutral-900">
+  <div class="flex flex-col items-center space-y-6 max-w-md w-full bg-neutral-800 p-8 rounded-lg shadow-xl transform transition-all duration-300 hover:shadow-2xl">
+    <div class="flex items-center justify-between w-full mb-2">
+      <h2 class="text-2xl font-bold text-primary-400">Servidor</h2>
+      <div class="relative">
+        <fa-icon [icon]="isLoading ? faSpinner : faStatus" 
+                [ngClass]="{'fa-spin': isLoading, 'text-blue-500': isLoading, 'text-green-500': !isLoading}"
+                class="h-6 w-6 transition-all duration-500 transform">
+        </fa-icon>
+      </div>
+    </div>
+    
+    <div class="w-full space-y-5">
+      <app-input
+        id="serverUrl"
+        controlName="serverUrl"
+        [formGroup]="serverConfigForm"
+        label="URL del servidor"
+        placeholder="Ingrese la dirección IP"
+        [icon]="faServer.iconName"
+        errorMessage="La URL del servidor es obligatoria"
+      ></app-input>
+      
+      <app-input
+        id="serverPort"
+        controlName="serverPort"
+        [formGroup]="serverConfigForm"
+        label="Puerto del servidor"
+        placeholder="Ingrese el puerto"
+        [icon]="faServer.iconName"
+        errorMessage="El puerto es obligatorio"
+      ></app-input>
+      
+
+      
+      <div class="pt-6">
+        <app-button
+          type="submit"
+          (click)="testServer()"
+          [disabled]="!serverConfigForm.valid || isLoading"
+          [text]="isLoading ? 'Conectando...' : 'Guardar configuración'"
+          icon="save"
+          class="w-full"
+        ></app-button>
+      </div>
+            <!-- Progress bar -->
+            <div *ngIf="isLoading" class="w-full bg-neutral-700 rounded-full h-2.5 mt-2">
+              <div class="bg-primary-500 h-2.5 rounded-full transition-all duration-300 ease-out"
+                   [style.width.%]="loadingProgress">
+              </div>
+            </div>
+      
+      <div class="min-h-12 mt-2 space-y-1">
+        <div *ngIf="errorMessage" class="flex items-center text-red-500 text-sm transition-opacity duration-300 ease-in-out animate-fade-in">
+          <fa-icon [icon]="faError" class="mr-2"></fa-icon>
+          {{ errorMessage }}
+        </div>
+        
+        <div *ngIf="successMessage" class="flex items-center text-green-500 text-sm transition-opacity duration-300 ease-in-out animate-fade-in">
+          <fa-icon [icon]="faSuccess" class="mr-2"></fa-icon>
+          {{ successMessage }}
+        </div>
+        
+        <div *ngIf="redirectMessage" class="flex justify-center text-blue-400 text-sm font-medium mt-2 animate-pulse">
+          {{ redirectMessage }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

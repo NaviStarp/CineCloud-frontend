@@ -39,6 +39,17 @@ export class AuthService {
     return response.json();
   }
 
+  public async testServer(ip: string, port: string): Promise<boolean> {
+    try {
+      const response = await fetch(`http://${ip}:${port}/status/`, {
+        method: 'GET',
+      });
+      return response.ok;
+    } catch (error) {
+      console.error('Error testing server:', error);
+      return false;
+    }
+  }
   public logout(): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('token');

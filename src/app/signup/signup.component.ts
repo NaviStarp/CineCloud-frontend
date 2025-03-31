@@ -21,7 +21,16 @@ export class SignupComponent {
     this.registerForm = this.fb.group({
       username: new FormControl('', [Validators.required, Validators.minLength(4)]),
       password: new FormControl('', [Validators.required, Validators.minLength(2)]),
+      passwordConfirmation: new FormControl('', [Validators.required, Validators.minLength(2)]),
+    }, {
+      validators: this.passwordsMatch
     });
+  }
+  // Comprobar que las contraseñas sean iguales
+  private passwordsMatch(group: FormGroup): { [key: string]: boolean } | null {
+    const password = group.get('password')?.value;
+    const passwordConfirmation = group.get('passwordConfirmation')?.value;
+    return password === passwordConfirmation ? null : { passwordsMismatch: true };
   }
 
   register(): void {

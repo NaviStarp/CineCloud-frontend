@@ -4,6 +4,7 @@ import { SignupComponent } from './signup/signup.component';
 import { MediaUploaderComponent } from './media-uploader/media-uploader.component';
 import { MediaFormComponent } from './media-form/media-form.component';
 import { AuthGuard } from './services/auth.service';
+import { ServerConfigComponent } from './server-config/server-config.component';
 export const routes: Routes = [
     { 
         path: '', 
@@ -18,4 +19,5 @@ export const routes: Routes = [
         component: MediaFormComponent,
         canActivate: [AuthGuard] // Guard to check if user is authenticated
     },
+    { path: 'server/config', component: ServerConfigComponent },
 ];
