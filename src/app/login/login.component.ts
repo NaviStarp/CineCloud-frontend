@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HeaderComponent } from '../login-signup/header/header.component';
 import { LoginFormComponent } from '../login-signup/login-form/login-form.component';
-
+import { Inject, PLATFORM_ID } from '@angular/core';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -18,13 +18,27 @@ export class LoginComponent implements OnInit {
   isLoading = false;
   errorMessage = '';
 
-  constructor(private auth: AuthService, private fb: FormBuilder) {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object,private auth: AuthService, private fb: FormBuilder) {
     this.loginForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(4)]],
       password: ['', [Validators.required, Validators.minLength(2)]],
     });
   }
   ngOnInit(): void {
+    if(isPlatformBrowser(this.platformId)){
+      const serverUrl = localStorage.getItem('serverUrl');
+      const serverPort = localStorage.getItem('serverPort');
+      if(!serverPort || !serverUrl){
+        window.location.href = '/server/config';
+        return;
+      }
+      this.auth.testServer(serverUrl, serverPort).then((res: any) => {
+      if(!res){
+        alert('No se pudo conectar al servidor');
+        window.location.href = '/server/config';
+      }
+      });
+    }
     this.auth.loggedIn().then((res: any) => {
       if (res) {
         window.location.href = '/';
