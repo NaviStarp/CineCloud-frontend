@@ -1,42 +1,30 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { HeaderComponent } from '../login-signup/header/header.component';
+import { SignupFormComponent } from '../login-signup/signup-form/signup-form.component';
 import { AuthService } from '../services/auth.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { RedirectCommand } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, HeaderComponent, SignupFormComponent],
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css']
 })
 export class SignupComponent {
-
   registerForm: FormGroup;
   isLoading = false;
   errorMessage = '';
 
   constructor(private auth: AuthService, private fb: FormBuilder) {
     this.registerForm = this.fb.group({
-      username: ['', [Validators.required, Validators.minLength(4)]],
-      password: ['', [Validators.required, Validators.minLength(2)]],
+      username: new FormControl('', [Validators.required, Validators.minLength(4)]),
+      password: new FormControl('', [Validators.required, Validators.minLength(2)]),
     });
   }
 
-  username: string = '';
-  password: string = '';
-  prueba: string = '';
-  token: string | null = '';
-  user = {
-    username: this.username,
-    password: this.password
-  };
-
   register(): void {
-    alert('hola');
-    this.user = this.registerForm.value;
-    console.log(this.user);
     // Si el formulario es inválido, marcamos todos los campos como tocados y salimos
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
@@ -46,24 +34,31 @@ export class SignupComponent {
     // Establecer isLoading en true para mostrar el spinner
     this.isLoading = true;
 
+    const user = this.registerForm.value;
+    
     // Llamar al servicio de login
-    this.auth.signup(this.user).then((res: any) => {
-      console.log(res);
+    interface SignupResponse {
+      token?: string;
+    }
 
+    interface SignupError {
+      message: string;
+    }
+
+    this.auth.signup(user).then((res: SignupResponse) => {
+      console.log(res);
       // Si el token existe, lo almacenamos en localStorage
-      res.token ? this.token = res.token : this.token = '';
-      if (this.token) {
-        localStorage.setItem('token', this.token);
+      if (res.token) {
+      localStorage.setItem('token', res.token);
       }
       // Finalmente, después de recibir la respuesta, se establece isLoading en false
       this.isLoading = false;
       window.location.href = '/';
-    }).catch(error => {
+    }).catch((error: SignupError) => {
       // Si hay un error, también se establece isLoading en false
       console.error('Error durante el inicio de sesión:', error);
       this.isLoading = false;
+      this.errorMessage = 'Error al crear la cuenta';
     });
   }
-
-
 }
