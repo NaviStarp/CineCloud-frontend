@@ -23,11 +23,20 @@ export class AuthService {
     return null;
   }
 
-  public loggedIn(): boolean {
-    if (isPlatformBrowser(this.platformId)) {
-      return !!localStorage.getItem('token');
+  public async loggedIn(): Promise<boolean> {
+    const token = this.getToken();
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Token '
+    };
+    if (token) {
+      headers['Authorization'] += token;
     }
-    return false;
+    const response = await fetch('http://localhost:8000/token/test', {
+      method: 'GET',
+      headers: headers,
+    });
+    return response.json();
   }
 
   public logout(): void {
@@ -72,6 +81,7 @@ export class AuthService {
     });
     return response.json();
   }
+
 }
 
 @Injectable({
@@ -83,12 +93,16 @@ export class AuthGuard implements CanActivate {
     private router: Router
   ) {}
 
-  canActivate(): MaybeAsync<GuardResult> {
-    if (this.authService.loggedIn()) {
+  async canActivate(): Promise<GuardResult> {
+    try {
+      if (await this.authService.loggedIn()) {
       return true;
+      }
+    } catch (error) {
+      console.error('Error verificando el token:', error);
     }
     
-    // Redirigo al login si no esta logueado
+    // Redirigo al login si no esta logueado o si ocurre un error
     this.router.navigate(['/login']);
     return false;
   }
