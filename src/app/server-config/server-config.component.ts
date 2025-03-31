@@ -24,7 +24,7 @@ export class ServerConfigComponent {
   loadingInterval: any;
   serverIp: string = '';
   
-  // Icons
+  // Iconos
   faServer = faServer;
   faStatus = faQuestionCircle;
   faSuccess = faCheckCircle;
@@ -50,7 +50,7 @@ export class ServerConfigComponent {
     this.redirectMessage = '';
     this.loadingProgress = 0;
     
-    // Progress bar animation
+    // Barra de progreso
     this.loadingInterval = setInterval(() => {
       if (this.loadingProgress < 90) {
         this.loadingProgress += Math.random() * 10;
@@ -60,7 +60,7 @@ export class ServerConfigComponent {
     
     const { serverUrl, serverPort } = this.serverConfigForm.value;
     
-    // Simulate loading for at least 4.5 seconds
+    // Comprobar si el servidor está disponible
     setTimeout(async () => {
       try {
         const isServerOk = await this.testServerConnection(serverUrl, serverPort);

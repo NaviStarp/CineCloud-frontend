@@ -12,7 +12,7 @@ export interface User {
 })
 export class AuthService {
   constructor(@Inject(PLATFORM_ID) private platformId: Object,private router:Router) { }
-
+  // Devuelve la URL del servidor
   private getServerUrl(): string {
     if (isPlatformBrowser(this.platformId)) {
       const ip = localStorage.getItem('serverIp');
@@ -24,14 +24,14 @@ export class AuthService {
     this.router.navigate(['/server/config']);
     throw new Error('Server IP or Port not set in localStorage');
   }
-
+  // Devuelve el token del usuario
   private getToken(): string | null {
     if (isPlatformBrowser(this.platformId)) {
       return localStorage.getItem('token');
     }
     return null;
   }
-
+  // Verifica si el usuario está logueado
   public async loggedIn(): Promise<boolean> {
     const token = this.getToken();
     if (!token) {
@@ -50,7 +50,7 @@ export class AuthService {
     });
     return response.json();
   }
-
+  // Prueba la conexión con el servidor
   public async testServer(ip: string, port: string): Promise<boolean> {
     try {
       const response = await fetch(`http://${ip}:${port}/status/`, {
@@ -62,13 +62,13 @@ export class AuthService {
       return false;
     }
   }
-
+  // Cierra la sesión del usuario
   public logout(): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('token');
     }
   }
-
+  // Inicia sesión
   public login(user: User) {
     console.log(user);
     return fetch(`${this.getServerUrl()}/login/`, {
@@ -79,7 +79,7 @@ export class AuthService {
       body: JSON.stringify(user)
     }).then(res => res.json());
   }
-
+  // Registra un nuevo usuario
   public signup(user: User) {
     return fetch(`${this.getServerUrl()}/signup/`, {
       method: 'POST',
@@ -88,22 +88,6 @@ export class AuthService {
       },
       body: JSON.stringify(user)
     }).then(res => res.json());
-  }
-
-  public async prueba() {
-    const token = this.getToken();
-    const headers: HeadersInit = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Token '
-    };
-    if (token) {
-      headers['Authorization'] += token;
-    }
-    const response = await fetch(`${this.getServerUrl()}/prueba/`, {
-      method: 'GET',
-      headers: headers,
-    });
-    return response.json();
   }
 }
 
@@ -115,7 +99,7 @@ export class AuthGuard implements CanActivate {
     private authService: AuthService,
     private router: Router
   ) {}
-
+  // Verifica si el usuario está logueado
   async canActivate(): Promise<GuardResult> {
     try {
       if (await this.authService.loggedIn()) {
