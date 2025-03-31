@@ -1,0 +1,42 @@
+<form class="mt-8 space-y-6" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="space-y-4">
+      <!-- Nombre de usuario -->
+      <app-input
+        id="username"
+        controlName="username"
+        [formGroup]="loginForm"
+        label="Nombre de usuario"
+        placeholder="Nombre de usuario"
+        icon="user"
+        errorMessage="El nombre es obligatorio"
+      ></app-input>
+      
+      <!-- Contraseña -->
+      <app-input
+        id="password"
+        [formGroup]="loginForm"
+        type="password"
+        controlName="password"
+        label="Contraseña"
+        placeholder="Contraseña"
+        icon="lock"
+        errorMessage="La contraseña debe tener al menos 2 caracteres"
+      ></app-input>
+    </div>    
+    <!-- Submit button -->
+    <div class="pt-2">
+      <app-button
+        [isLoading]="isLoading"
+        [disabled]="loginForm.invalid"
+        text="Acceder ahora"
+        loadingText="Accediendo a cuenta..."
+      ></app-button>
+    </div>
+    
+    <!-- Sign up link -->
+    <app-form-footer
+      text="¿No tienes cuenta?"
+      linkText="Registrarse"
+      linkRoute="/register"
+    ></app-form-footer>
+  </form>

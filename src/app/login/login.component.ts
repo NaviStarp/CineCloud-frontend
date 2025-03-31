@@ -3,11 +3,12 @@ import { AuthService } from '../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HeaderComponent } from '../login-signup/header/header.component';
+import { LoginFormComponent } from '../login-signup/login-form/login-form.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule,HeaderComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule,HeaderComponent,LoginFormComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })

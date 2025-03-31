@@ -1,103 +1,15 @@
 <div class="flex min-h-screen items-center justify-center bg-neutral-900 py-12 px-4 sm:px-6 lg:px-8" style="background: linear-gradient(135deg, #0f172a 0%, #020617 100%);">
   <div class="w-full max-w-md space-y-8 bg-neutral-800/90 p-8 rounded-2xl shadow-2xl border border-neutral-700/50 backdrop-blur-sm">
     <app-header></app-header>
-    <!-- Formulario -->
-    <form class="mt-8 space-y-6" [formGroup]="loginForm" (ngSubmit)="login()">
-      <div class="space-y-4">
-        <!-- Nombre -->
-        <div>
-          <label for="username" class="block text-sm font-medium text-neutral-300 mb-1">Nombre de usuario</label>
-          <div class="group relative transition-all duration-300 focus-within:scale-[1.01]">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg class="h-5 w-5 text-primary-400 group-focus-within:text-primary-300 transition-colors" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"></path>
-              </svg>
-            </div>
-            <input
-              id="username"
-              formControlName="username"
-              type="text"
-              required
-              class="pl-10 block w-full rounded-xl border border-neutral-600/70 py-3 px-3 text-neutral-200 bg-neutral-700/50 placeholder-neutral-500 shadow-sm focus:ring-2 focus:ring-primary-500/70 focus:border-primary-500/70 focus:bg-neutral-700/70 transition-all valid:border-green-500/70 valid:ring-green-500/30 invalid:border-red-500/70 invalid:ring-red-500/30"
-              placeholder="Nombre de usuario"
-            >
-          </div>
-            <div *ngIf="loginForm.get('username')?.hasError('required') && loginForm.get('username')?.touched" class="text-xs text-accent-400 mt-1 pl-1">
-            El nombre es obligatorio
-            </div>
-        </div>
-        
-        <div>
-          <label for="password" class="block text-sm font-medium text-neutral-300 mb-1">Contraseña</label>
-          <div class="group relative transition-all duration-300 focus-within:scale-[1.01]">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg class="h-5 w-5 text-primary-400 group-focus-within:text-primary-300 transition-colors" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
-              </svg>
-            </div>
-            <input
-              id="password"
-              formControlName="password"
-              type="password"
-              required
-              class="pl-10 block w-full rounded-xl border border-neutral-600/70 py-3 px-3 text-neutral-200 bg-neutral-700/50 placeholder-neutral-500 shadow-sm focus:ring-2 focus:ring-primary-500/70 focus:border-primary-500/70 focus:bg-neutral-700/70 transition-all valid:border-green-500/70 valid:ring-green-500/30 invalid:border-red-500/70 invalid:ring-red-500/30"
-              placeholder="Contraseña"
-            >
-          </div>
-          <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-xs text-accent-400 mt-1 pl-1">
-            La contraseña debe tener al menos 2 caracteres
-          </div>
-        </div>
-        
-        <!-- Recordarme -->
-        <!-- <div class="flex items-center justify-between pt-1">
-          <div class="flex items-center">
-            <div class="relative flex items-center">
-              <input id="remember_me" name="remember_me" type="checkbox" class="peer sr-only">
-              <div class="h-5 w-5 border-2 border-neutral-600 rounded bg-neutral-700/50 flex items-center justify-center peer-checked:bg-primary-600 peer-checked:border-primary-500 transition-all cursor-pointer">
-                <svg class="h-3 w-3 text-white opacity-0 peer-checked:opacity-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4">
-                  <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </div>
-              <label for="remember_me" class="ml-2 block text-sm text-neutral-400 cursor-pointer">
-                Recordarme
-              </label>
-            </div>
-          </div>
-          <div class="text-sm">
-            <a href="#" class="font-medium text-primary-400 hover:text-primary-300 hover:underline transition-colors">
-              ¿Olvidaste tu contraseña?
-            </a>
-          </div>
-        </div> -->
-      </div>
-      
-      <!-- Submit button -->
-      <div class="pt-2">
-        <button
-          type="submit"
-          [disabled]="isLoading"
-          class="group relative cursor-pointer flex w-full justify-center rounded-xl bg-primary-600 py-3 px-4 text-sm font-semibold text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-400/70 focus:ring-offset-2 focus:ring-offset-neutral-800 disabled:bg-primary-800/70 disabled:text-primary-300 transition-all duration-200 shadow-md hover:shadow-lg overflow-hidden"
-          style="background: linear-gradient(90deg, #7c3aed 0%, #8b5cf6 100%);">
-          <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer"></span>
-          <span *ngIf="isLoading" class="absolute inset-y-0 left-0 flex items-center pl-3">
-            <!-- Spinner icon -->
-            <svg class="h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-          </span>
-          {{isLoading ? 'Iniciando sesión...' : 'Acceder ahora'}}
-        </button>
-      </div>
-      <div *ngIf="errorMessage" class="text-red-500 text-center">{{ errorMessage }}</div>
-      <!-- Sign up link -->
-      <div class="text-center pt-2">
-        <p class="text-sm text-neutral-400">
-          ¿No tienes cuenta?
-          <a href="/register" class="font-medium text-primary-400 hover:text-primary-300 hover:underline ml-1 transition-colors">Regístrate ahora</a>
-        </p>
-      </div>
-    </form>
+    
+    <app-login-form 
+      [loginForm]="loginForm"
+      [isLoading]="isLoading"
+      (formSubmit)="login()"
+    ></app-login-form>
+    
+    <div *ngIf="errorMessage" class="text-center mt-4">
+      <p class="text-sm text-accent-400">{{ errorMessage }}</p>
+    </div>
   </div>
 </div>
