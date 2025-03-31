@@ -9,7 +9,7 @@ export const routes: Routes = [
     { 
         path: '', 
         component: MediaUploaderComponent,
-        canActivate: [AuthGuard], // Guard to check if user is authenticated
+        canActivate: [AuthGuard],
          
     },
     { path: 'login', component: LoginComponent },
@@ -17,7 +17,7 @@ export const routes: Routes = [
     { 
         path: 'subir/2', 
         component: MediaFormComponent,
-        canActivate: [AuthGuard] // Guard to check if user is authenticated
+        canActivate: [AuthGuard] 
     },
     { path: 'server/config', component: ServerConfigComponent },
 ];

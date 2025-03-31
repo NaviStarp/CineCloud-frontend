@@ -11,7 +11,7 @@ export interface User {
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
+  constructor(@Inject(PLATFORM_ID) private platformId: Object,private router:Router) { }
 
   private getServerUrl(): string {
     if (isPlatformBrowser(this.platformId)) {
@@ -21,6 +21,7 @@ export class AuthService {
         return `http://${ip}:${port}`;
       }
     }
+    this.router.navigate(['/server/config']);
     throw new Error('Server IP or Port not set in localStorage');
   }
 
@@ -33,6 +34,9 @@ export class AuthService {
 
   public async loggedIn(): Promise<boolean> {
     const token = this.getToken();
+    if (!token) {
+      return false;
+    }
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
       'Authorization': 'Token '

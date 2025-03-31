@@ -72,7 +72,7 @@ export class ServerConfigComponent {
           if (isServerOk) {
             this.serverIp = serverUrl;
             this.successMessage = 'Conexión exitosa. Configuración guardada.';
-            this.redirectMessage = 'Redirigiendo al panel principal en 5 segundos...';
+            this.redirectMessage = 'Redirigiendo al panel principal en 3 segundos...';
             this.faStatus = faSignal;
             let count = 3;
             const countdownInterval = setInterval(() => {

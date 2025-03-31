@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -12,7 +12,7 @@ import { LoginFormComponent } from '../login-signup/login-form/login-form.compon
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
 
   loginForm: FormGroup;
   isLoading = false;
@@ -24,6 +24,15 @@ export class LoginComponent {
       password: ['', [Validators.required, Validators.minLength(2)]],
     });
   }
+  ngOnInit(): void {
+    this.auth.loggedIn().then((res: any) => {
+      if (res) {
+        window.location.href = '/';
+      }
+    }
+    );
+  }
+  
 
   username: string = '';
   password: string = '';
@@ -68,13 +77,6 @@ export class LoginComponent {
       console.error('Error durante el inicio de sesión:', error);
       this.errorMessage = error;
       this.isLoading = false;
-    });
-  }
-
-  pruebaF(): void {
-    this.auth.prueba().then((res: any) => {
-      console.log(res);
-      res ? this.prueba = res : this.prueba = '';
     });
   }
 }
