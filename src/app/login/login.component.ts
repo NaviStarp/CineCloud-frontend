@@ -28,9 +28,11 @@ export class LoginComponent implements OnInit {
   }
   ngOnInit(): void {
     if(isPlatformBrowser(this.platformId)){
-      const serverUrl = environment.url ||  localStorage.getItem('serverUrl');
-      const serverPort =  environment.port || localStorage.getItem('serverPort');
+      const serverUrl = localStorage.getItem('serverIp') || environment.url;
+      const serverPort = localStorage.getItem('serverPort') || environment.port;
+      
       if(!serverPort || !serverUrl){
+        console.log('No se encontro el servidor asdsas',serverPort,serverUrl);
         window.location.href = '/server/config';
         return;
       }
