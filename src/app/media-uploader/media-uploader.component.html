@@ -54,8 +54,8 @@
 </div>
   <app-modal-error [visible]="errorVisible" [title]="tituloError" [message]="mensajeError" (cerrarModal)="errorVisible=false" ></app-modal-error>
 
-    <div *ngIf="modalAbierta" id="modalInformacion" class="fixed inset-0 flex items-center justify-center z-50">
-      <div class="modal-backdrop absolute inset-0 backdrop-brightness-50 bg-opacity-50"></div>
+    <div   [@slideInOut]  *ngIf="modalAbierta" id="modalInformacion" class="fixed inset-0 flex items-center justify-center z-50">
+      <div [@slideInOut] class="modal-backdrop absolute inset-0 backdrop-brightness-50 bg-opacity-50"></div>
       <div class="modal-content bg-neutral-800 p-6 rounded-lg shadow-lg w-full max-w-lg relative">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-xl font-bold text-accent-500">Información</h2>

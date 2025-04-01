@@ -2,9 +2,10 @@ import { Component, OnInit, ViewChild, ViewChildren, ElementRef, QueryList } fro
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faFilm, faTv } from '@fortawesome/free-solid-svg-icons';
+import { faFilm, faPlaceOfWorship, faPlus, faTv } from '@fortawesome/free-solid-svg-icons';
 import { IndexedDbService } from '../services/indexed-db.service';
 import { VideoFormComponent } from '../video-form/video-form.component';
+import { Router } from '@angular/router';
 
 interface VideoEntry {
   id?: number;
@@ -25,7 +26,7 @@ interface VideoEntry {
     CommonModule,
     FormsModule,
     VideoFormComponent
-  ],
+],
   templateUrl: './media-form.component.html',
   styleUrls: ['./media-form.component.css']
 })
@@ -33,12 +34,14 @@ export class MediaFormComponent implements OnInit {
   Math = Math;
   faFilm = faFilm;
   faTv = faTv;
+  faPlus = faPlus;
+
   videos: VideoEntry[] = [];
 
   @ViewChild('videoContainer', { static: false }) videoContainer!: ElementRef;
   @ViewChildren('videoItem') videoItems!: QueryList<ElementRef>;
 
-  constructor(private indexedDbService: IndexedDbService) { }
+  constructor(private indexedDbService: IndexedDbService,private router:Router) { }
 
   ngOnInit(): void {
     this.loadVideos();
@@ -57,7 +60,10 @@ export class MediaFormComponent implements OnInit {
       console.error('Error al cargar los videos:', error);
     }
   }
-
+  addVideos(event: Event) {
+    event.preventDefault();
+    this.router.navigate(['/']);
+  }
   extractThumbnail(videoBlob: Blob): Promise<string> {
     return new Promise((resolve, reject) => {
       const video = document.createElement('video');

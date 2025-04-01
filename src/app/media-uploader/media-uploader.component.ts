@@ -4,12 +4,26 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowRight,faTimes, faCloudUploadAlt, faFileAlt, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { ModalErrorComponent } from "../general/modal-error/modal-error.component";
 import { IndexedDbService } from '../services/indexed-db.service';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 @Component({
   selector: 'app-media-uploader',
   standalone: true,
   imports: [CommonModule, FontAwesomeModule, ModalErrorComponent],
   templateUrl: './media-uploader.component.html',
-  styleUrls: ['./media-uploader.component.css']
+  styleUrls: ['./media-uploader.component.css'],
+  animations: [
+    trigger('slideInOut', [
+      state('void', style({
+        transform: 'translateY(20px)',
+        opacity: 0,
+        backdropFilter: 'brightness(50%)',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)'
+      })),
+      transition('void <=> *', [
+        animate('300ms cubic-bezier(0.4, 0.0, 0.2, 1)')
+      ])
+    ])
+  ]
 })
 export class MediaUploaderComponent {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
