@@ -1,0 +1,90 @@
+<div class="video-card flex rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 bg-neutral-800 border border-neutral-700 h-24" (click)="toggleEdit()">
+    <!-- Sección de miniatura (cuadrada a la izquierda) -->
+    <div class="thumbnail-container relative w-24 h-24 flex-shrink-0 border-r border-neutral-700">
+      <!-- Thumbnail -->
+      <img
+        [src]="video.thumbnail || 'assets/placeholder-thumbnail.jpg'"
+        alt="Video thumbnail"
+        class="thumbnail w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+        (click)="playVideo($event)"
+      >
+      <!-- Play button overlay -->
+      <div
+        class="play-button absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 hover:bg-opacity-20 transition-all duration-300"
+        [hidden]="isVideoPlaying"
+        (click)="playVideo($event)"
+      >
+        <div class="w-10 h-10 rounded-full bg-white bg-opacity-80 flex items-center justify-center hover:bg-opacity-100 transition-all">
+          <i class="fas fa-play text-lg text-gray-800"></i>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Contenido de la tarjeta (a la derecha de la miniatura) -->
+    <div class="video-content flex-grow flex flex-col justify-center px-4">
+      <h3 class="video-title text-lg font-medium text-neutral-50 mb-1 truncate">{{video.name}}</h3>
+      <p class="video-description text-sm text-neutral-400 line-clamp-1">{{video.type}}</p>
+    </div>
+    
+    <!-- Botones de acción a la derecha -->
+    <div class="video-actions flex items-center pr-4 space-x-2">
+      <button class="action-button text-neutral-400 hover:text-primary-400 p-2" (click)="toggleEdit($event)">
+        <i class="fas fa-edit"></i>
+      </button>
+   <!--   <button class="action-button text-neutral-400 hover:text-accent-500 p-2" (click)="deleteVideo($event)">
+        <i class="fas fa-trash"></i>
+      </button>-->
+    </div>
+    
+    <!-- Video player (se expande cuando se reproduce) -->
+    <div class="video-player-container fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-40" *ngIf="isVideoPlaying" (click)="playVideo($event)">
+      <video #videoPlayer class="max-w-3xl max-h-[80vh] w-full" controls autoplay>
+        <source [src]="video.videoBlob" type="video/mp4">
+        Tu navegador no soporta el elemento de video.
+      </video>
+    </div>
+    
+    <!-- Modal de edición -->
+    <div class="video-form fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" *ngIf="isEditing" (click)="closeEdit($event)">
+      <div class="bg-neutral-800 border border-neutral-700 text-neutral-50 rounded-lg p-6 w-full max-w-md" (click)="$event.stopPropagation()">
+        <h2 class="text-xl font-bold mb-4">Editar Video</h2>
+        <form (submit)="saveChanges($event)">
+          <div class="form-group mb-4">
+            <label for="title" class="block text-sm font-medium text-neutral-300 mb-1">Título</label>
+            <input
+              type="text"
+              id="title"
+              [(ngModel)]="video.name"
+              name="title"
+              class="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              required
+            >
+          </div>
+          <div class="form-group mb-4">
+            <label for="description" class="block text-sm font-medium text-neutral-300 mb-1">Descripción</label>
+            <textarea
+              id="description"
+              [(ngModel)]="video.type"
+              name="description"
+              class="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-24"
+            ></textarea>
+          </div>
+          <div class="flex justify-end space-x-3">
+            <button
+              type="button"
+              class="px-4 py-2 border border-neutral-600 text-neutral-200 rounded-md hover:bg-neutral-700"
+              (click)="toggleEdit($event)"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
+            >
+              Guardar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

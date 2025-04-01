@@ -1,7 +1,7 @@
 <div class="flex flex-col items-center justify-center w-full h-screen bg-neutral-900">
   <div class="flex flex-col items-center space-y-6 max-w-md w-full bg-neutral-800 p-8 rounded-lg shadow-xl transform transition-all duration-300 hover:shadow-2xl">
     <div class="flex items-center justify-between w-full mb-2">
-      <h2 class="text-2xl font-bold text-primary-400">Servidor</h2>
+      <h2 class="text-2xl font-bold text-primary-400">Configuración de servidor</h2>
       <div class="relative">
         <fa-icon [icon]="isLoading ? faSpinner : faStatus" 
                 [ngClass]="{'fa-spin': isLoading, 'text-blue-500': isLoading,'text-green-500': !isLoading}"
@@ -10,7 +10,7 @@
       </div>
     </div>
     
-    <div class="w-full space-y-5">
+    <form (submit)="testServer(); $event.preventDefault()" class="w-full space-y-5">
       <app-input
         id="serverUrl"
         controlName="serverUrl"
@@ -36,7 +36,6 @@
       <div class="pt-6">
         <app-button
           type="submit"
-          (click)="testServer()"
           [disabled]="!serverConfigForm.valid || isLoading"
           [text]="isLoading ? 'Conectando...' : 'Guardar configuración'"
           icon="save"
@@ -65,6 +64,6 @@
           {{ redirectMessage }}
         </div>
       </div>
-    </div>
+    </form>
   </div>
 </div>

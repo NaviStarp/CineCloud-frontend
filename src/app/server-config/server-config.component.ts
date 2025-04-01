@@ -34,7 +34,7 @@ export class ServerConfigComponent {
     this.library.addIcons(faServer, faSignal, faCheckCircle, faExclamationTriangle, faSpinner,faQuestionCircle);
     this.serverConfigForm = new FormGroup({
       serverUrl: new FormControl('', [Validators.required]),
-      serverPort: new FormControl('', [Validators.required]),
+      serverPort: new FormControl('8000', [Validators.required]),
     });
   }
   
