@@ -1,6 +1,7 @@
 import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { CanActivate, GuardResult, MaybeAsync, Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
+import { environment } from '../../environments/environment'; // Importa el archivo de configuración
 
 export interface User {
   username: string;
@@ -11,19 +12,22 @@ export interface User {
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(@Inject(PLATFORM_ID) private platformId: Object,private router:Router) { }
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Router) { }
+
   // Devuelve la URL del servidor
   private getServerUrl(): string {
     if (isPlatformBrowser(this.platformId)) {
-      const ip = localStorage.getItem('serverIp');
-      const port = localStorage.getItem('serverPort');
+      console.log(environment.url);
+      const ip =  environment.url  || localStorage.getItem('serverIp') ;
+      const port =  environment.port || localStorage.getItem('serverPort');
       if (ip && port) {
         return `http://${ip}:${port}`;
       }
     }
     this.router.navigate(['/server/config']);
-    throw new Error('Server IP or Port not set in localStorage');
+    throw new Error('Server IP or Port not set in localStorage or environment');
   }
+
   // Devuelve el token del usuario
   private getToken(): string | null {
     if (isPlatformBrowser(this.platformId)) {
@@ -31,6 +35,7 @@ export class AuthService {
     }
     return null;
   }
+
   // Verifica si el usuario está logueado
   public async loggedIn(): Promise<boolean> {
     const token = this.getToken();
@@ -50,6 +55,7 @@ export class AuthService {
     });
     return response.json();
   }
+
   // Prueba la conexión con el servidor
   public async testServer(ip: string, port: string): Promise<boolean> {
     try {
@@ -62,12 +68,14 @@ export class AuthService {
       return false;
     }
   }
+
   // Cierra la sesión del usuario
   public logout(): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('token');
     }
   }
+
   // Inicia sesión
   public login(user: User) {
     console.log(user);
@@ -79,6 +87,7 @@ export class AuthService {
       body: JSON.stringify(user)
     }).then(res => res.json());
   }
+
   // Registra un nuevo usuario
   public signup(user: User) {
     return fetch(`${this.getServerUrl()}/signup/`, {
@@ -98,7 +107,8 @@ export class AuthGuard implements CanActivate {
   constructor(
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
+
   // Verifica si el usuario está logueado
   async canActivate(): Promise<GuardResult> {
     try {

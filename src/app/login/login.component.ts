@@ -5,6 +5,8 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { HeaderComponent } from '../login-signup/header/header.component';
 import { LoginFormComponent } from '../login-signup/login-form/login-form.component';
 import { Inject, PLATFORM_ID } from '@angular/core';
+import { environment } from '../../environments/environment';
+import { env } from 'process';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -26,8 +28,8 @@ export class LoginComponent implements OnInit {
   }
   ngOnInit(): void {
     if(isPlatformBrowser(this.platformId)){
-      const serverUrl = localStorage.getItem('serverUrl');
-      const serverPort = localStorage.getItem('serverPort');
+      const serverUrl = environment.url ||  localStorage.getItem('serverUrl');
+      const serverPort =  environment.port || localStorage.getItem('serverPort');
       if(!serverPort || !serverUrl){
         window.location.href = '/server/config';
         return;

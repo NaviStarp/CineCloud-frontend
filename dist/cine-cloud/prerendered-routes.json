@@ -1,0 +1,9 @@
+{
+  "routes": {
+    "/": {},
+    "/login": {},
+    "/register": {},
+    "/server/config": {},
+    "/subir/2": {}
+  }
+}
