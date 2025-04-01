@@ -25,8 +25,8 @@
   
   <!-- Video Content Section -->
   <div class="video-content flex-grow flex flex-col justify-center px-6 py-3">
-    <h3 class="video-title text-lg font-medium text-neutral-50 mb-1 truncate">{{video.name}}</h3>
-    <div class="flex items-center">
+    <h3 class="video-title text-lg font-medium text-neutral-50  mb-1 overflow-clip sm:text-base md:text-lg  lg:text-xl">{{video.name}}  </h3>
+      <div class="flex items-center">
       <span class="video-type text-sm text-neutral-400 px-2 py-0.5 rounded-full bg-neutral-700 mr-2">{{video.type}}</span>
       <span class="video-series text-sm text-neutral-400" *ngIf="video.type === 'series' && video.seriesName">
         {{video.seriesName}} S{{video.season}}:E{{video.chapter}}
@@ -70,9 +70,9 @@
       <div class="flex space-x-4">
         <button
           type="button"
-          [ngClass]="{'bg-primary-600 text-white': video.type === 'movie', 'bg-neutral-700 text-neutral-300': video.type !== 'movie'}"
+          [ngClass]="{'bg-primary-600 text-white': video.type === 'Pelicula', 'bg-neutral-700 text-neutral-300': video.type !== 'Pelicula'}"
           class="px-5 py-2.5 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 flex-1"
-          (click)="setVideoType('movie')"
+          (click)="setVideoType('Pelicula')"
         >
           Película
         </button>
@@ -112,6 +112,7 @@
           </button>
         </div>
       </div>
+
 
       <!-- Create New Series Modal -->
       <div *ngIf="isCreatingNewSeries" class="mt-4 p-4 bg-neutral-700 rounded-lg border border-neutral-600">

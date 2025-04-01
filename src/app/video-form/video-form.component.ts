@@ -46,6 +46,10 @@ export class VideoFormComponent {
     if (event) {
       event.stopPropagation();
     }
+    console.log(this.video?.type);
+    if(this.video?.type == undefined){
+      this.video.type = 'Pelicula';
+    }
     this.isEditing = !this.isEditing;
   }
   
