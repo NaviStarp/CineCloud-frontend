@@ -8,8 +8,19 @@
     
     <!-- Videos Container -->
     <div class="space-y-4 w-full">
-      <div class="bg-neutral-800/30 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-neutral-700/50" *ngFor="let video of videos">
-        <app-video-form [video]="video"></app-video-form>
+      <div class="bg-neutral-800/30 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-neutral-700/50" *ngFor="let video of videos;let i = index">
+        <app-video-form [video]="video"
+          (videoChange)="onVideoChanged($event, i)"
+        ></app-video-form>
+      
+      </div>
+      <div class="flex justify-center mt-4">
+        <button (click)="uploadVideos($event)" class="px-8 py-4 bg-gradient-to-r from-primary-500 to-primary-700 text-white rounded-full hover:from-primary-600 hover:to-primary-800 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-400 shadow-lg transform hover:scale-105">
+          <div class="flex items-center space-x-2">
+        <fa-icon [icon]="faCheck" class="text-lg"></fa-icon>
+        <span class="text-lg font-semibold">Confirmar</span>
+          </div>
+        </button>
       </div>
       
       <!-- Empty State -->
@@ -19,7 +30,7 @@
         </div>
         <h3 class="text-xl font-medium text-neutral-300 mb-2">No hay videos</h3>
         <p class="text-neutral-500 mb-4 text-center max-w-md">Aún no has agregado videos a tu biblioteca. Comienza subiendo tu primer video.</p>
-        <button (click)="$event" class="px-5 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500">
+        <button (click)="addVideos($event)" class="px-5 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500">
           <fa-icon [icon]="faPlus" class="mr-2"></fa-icon>
           Agregar Video
         </button>

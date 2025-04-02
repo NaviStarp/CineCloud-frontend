@@ -9,7 +9,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
   templateUrl: './input.component.html',
   styleUrls: ['./input.component.css']
 })
-export class InputComponent implements OnInit {
+export class InputComponent  {
   @Input() formGroup!: FormGroup;
   @Input() controlName!: string;
   @Input() id: string = '';
@@ -20,11 +20,6 @@ export class InputComponent implements OnInit {
   @Input() icon:string = '';
 
   constructor() {}
-
-  ngOnInit(): void {
-    console.log(this.formGroup);
-    console.log(this.controlName);
-  }
 
   get control() {
     return this.formGroup.get(this.controlName);

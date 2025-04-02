@@ -2,6 +2,7 @@ import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { CanActivate, GuardResult, MaybeAsync, Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { environment } from '../../environments/environment'; // Importa el archivo de configuración
+import { VideoEntry } from './indexed-db.service';
 
 export interface User {
   username: string;
@@ -98,6 +99,34 @@ export class AuthService {
       body: JSON.stringify(user)
     }).then(res => res.json());
   }
+  public async uploadVideos(videos: VideoEntry[]) {
+    const formData = new FormData();
+  
+    videos.forEach((video, index) => {
+      formData.append(`videos[${index}][name]`, video.name);
+      formData.append(`videos[${index}][description]`, video.description || '');
+      formData.append(`videos[${index}][video]`, new Blob([video.videoBlob], { type: video.videoMime }), video.name);
+      formData.append(`videos[${index}][thumbnail]`, video.thumbnail);
+      formData.append(`videos[${index}][mediaType]`, video.mediaType);
+      const releaseDate = new Date(video.releaseDate);
+      formData.append(`videos[${index}][releaseDate]`, releaseDate.getDate().toString());
+      
+      if (video.mediaType === 'series') {
+        formData.append(`videos[${index}][season]`, video.season?.toString() || '');
+        formData.append(`videos[${index}][chapter]`, video.chapter?.toString() || '');
+        formData.append(`videos[${index}][seriesName]`, video.seriesName || '');
+      }
+    });
+  
+    return fetch(`${this.getServerUrl()}/media/upload/`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${this.getToken()}`,
+      },
+      body: formData
+    }).then(res => res.json());
+  }
+  
 }
 
 @Injectable({

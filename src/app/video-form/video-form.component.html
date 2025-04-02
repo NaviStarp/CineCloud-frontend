@@ -27,8 +27,8 @@
   <div class="video-content flex-grow flex flex-col justify-center px-6 py-3">
     <h3 class="video-title text-lg font-medium text-neutral-50  mb-1 overflow-clip sm:text-base md:text-lg  lg:text-xl">{{video.name}}  </h3>
       <div class="flex items-center">
-      <span class="video-type text-sm text-neutral-400 px-2 py-0.5 rounded-full bg-neutral-700 mr-2">{{video.type}}</span>
-      <span class="video-series text-sm text-neutral-400" *ngIf="video.type === 'series' && video.seriesName">
+      <span class="video-type text-sm text-neutral-400 px-2 py-0.5 rounded-full bg-neutral-700 mr-2">{{video.mediaType}}</span>
+      <span class="video-series text-sm text-neutral-400" *ngIf="video.mediaType === 'series' && video.seriesName">
         {{video.seriesName}} S{{video.season}}:E{{video.chapter}}
       </span>
     </div>
@@ -70,7 +70,7 @@
       <div class="flex space-x-4">
         <button
           type="button"
-          [ngClass]="{'bg-primary-600 text-white': video.type === 'Pelicula', 'bg-neutral-700 text-neutral-300': video.type !== 'Pelicula'}"
+          [ngClass]="{'bg-primary-600 text-white': video.mediaType === 'Pelicula', 'bg-neutral-700 text-neutral-300': video.mediaType !== 'Pelicula'}"
           class="px-5 py-2.5 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 flex-1"
           (click)="setVideoType('Pelicula')"
         >
@@ -78,7 +78,7 @@
         </button>
         <button
           type="button"
-          [ngClass]="{'bg-primary-600 text-white': video.type === 'series', 'bg-neutral-700 text-neutral-300': video.type !== 'series'}"
+          [ngClass]="{'bg-primary-600 text-white': video.mediaType === 'series', 'bg-neutral-700 text-neutral-300': video.mediaType !== 'series'}"
           class="px-5 py-2.5 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 flex-1"
           (click)="setVideoType('series')"
         >
@@ -88,7 +88,7 @@
     </div>
 
     <!-- Series Section - Only shown when type is 'series' -->
-    <div *ngIf="video.type === 'series'" class="space-y-5">
+    <div *ngIf="video.mediaType === 'series'" class="space-y-5">
       <div class="form-group">
         <label for="series" class="block text-sm font-medium text-neutral-300 mb-2">Serie</label>
         <div class="flex space-x-2">
@@ -190,7 +190,16 @@
         class="w-full px-4 py-3 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 min-h-32 resize-none"
       ></textarea>
     </div>
-    
+    <div class="form-group">
+      <label for="release-date" class="block text-sm font-medium text-neutral-300 mb-2">Fecha de Lanzamiento</label>
+      <input
+        type="date"
+        id="release-date"
+        [(ngModel)]="video.releaseDate"
+        name="release-date"
+        class="w-full px-4 py-3 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+      >
+    </div>
     <div class="flex justify-end space-x-4 pt-2">
       <button
         type="button"
@@ -224,10 +233,10 @@
       <fa-icon [icon]="faTimes" class="text-xl"></fa-icon>
     </button>
     
-    <!-- Video Player -->
-    <video #videoPlayer class="w-full h-full object-contain" controls autoplay>
-      <source [src]="video.videoBlob" type="video/mp4">
-      Tu navegador no soporta el elemento de video.
-    </video>
+   <!-- Video Player -->
+   <video #videoPlayer class="w-full h-full object-contain" controls autoplay>
+    <source [src]="video.videoBlob" type="video/mp4">
+    Tu navegador no soporta el elemento de video.
+  </video>
   </div>
 </div>
