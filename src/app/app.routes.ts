@@ -5,6 +5,7 @@ import { MediaUploaderComponent } from './media-uploader/media-uploader.componen
 import { MediaFormComponent } from './media-form/media-form.component';
 import { AuthGuard } from './services/auth.service';
 import { ServerConfigComponent } from './server-config/server-config.component';
+import { PruebaComponent } from './prueba/prueba.component';
 export const routes: Routes = [
     { 
         path: '', 
@@ -20,4 +21,5 @@ export const routes: Routes = [
         canActivate: [AuthGuard] 
     },
     { path: 'server/config', component: ServerConfigComponent },
+    { path: 'prueba',component:PruebaComponent}
 ];

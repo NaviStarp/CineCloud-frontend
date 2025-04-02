@@ -9,6 +9,11 @@ export interface User {
   password: string;
 }
 
+export interface MediaResponse {
+  peliculas: any[];
+  series: any[];
+  episodios: any[];
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -168,6 +173,34 @@ public async uploadVideos(videos: VideoEntry[]) {
     throw error;
   }
 }
+public async getVideos(): Promise<MediaResponse> {
+  const response = await fetch(`${this.getServerUrl()}/media/`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Token ${this.getToken()}`
+    }
+  });
+  return response.json();
+}
+  public async getVideoUrl(url:string){
+   
+    const response = await fetch(`${this.getServerUrl()}/media/${url}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${this.getToken()}`
+      },
+    }).then(res => res.blob().then(blob => URL.createObjectURL(blob)));
+    return response;
+  }
+  public async getThumnailUrl(url:string){
+    const response = await fetch(`${this.getServerUrl()}/media/${url}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${this.getToken()}`
+      },
+    }).then(res => res.blob().then(blob => URL.createObjectURL(blob)));
+    return response;
+  }
   
 }
 

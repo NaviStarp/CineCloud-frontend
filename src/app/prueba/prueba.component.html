@@ -1,2 +1,35 @@
-<p>{{token}}</p>
-<p>{{username}}</p>
+<div *ngIf="videos" class="space-y-8">
+    <h2 class="text-2xl font-bold text-gray-800">Películas</h2>
+    <div *ngIf="videos.peliculas && videos.peliculas.length > 0; else noPeliculas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div *ngFor="let pelicula of videos.peliculas" class="video-item bg-white shadow-md rounded-lg p-4">
+            <h3 class="text-lg font-semibold text-gray-700">{{ pelicula.name }}</h3>
+            <img [src]="pelicula.thumbnail" alt="Pelicula" class="mt-2 w-full rounded">
+            <video [src]="pelicula.videoBlob" controls class="mt-2 w-full rounded"></video>
+        </div>
+    </div>
+    <ng-template #noPeliculas>
+        <p class="text-gray-500">No hay películas disponibles</p>
+    </ng-template>
+
+    <h2 class="text-2xl font-bold text-gray-800">Series</h2>
+    <div *ngIf="videos.series && videos.series.length > 0; else noSeries" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div *ngFor="let serie of videos.series" class="video-item bg-white shadow-md rounded-lg p-4">
+            <h3 class="text-lg font-semibold text-gray-700">{{ serie.name }}</h3>
+            <!-- Additional series content -->
+        </div>
+    </div>
+    <ng-template #noSeries>
+        <p class="text-gray-500">No hay series disponibles</p>
+    </ng-template>
+
+    <h2 class="text-2xl font-bold text-gray-800">Episodios</h2>
+    <div *ngIf="videos.episodios && videos.episodios.length > 0; else noEpisodios" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div *ngFor="let episodio of videos.episodios" class="video-item bg-white shadow-md rounded-lg p-4">
+            <h3 class="text-lg font-semibold text-gray-700">{{ episodio.name }}</h3>
+            <!-- Additional episode content -->
+        </div>
+    </div>
+    <ng-template #noEpisodios>
+        <p class="text-gray-500">No hay episodios disponibles</p>
+    </ng-template>
+</div>
