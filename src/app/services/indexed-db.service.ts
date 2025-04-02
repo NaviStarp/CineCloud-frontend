@@ -14,6 +14,7 @@ export interface VideoEntry {
   seriesId: string | null;
   seriesName: string | null;
   seriesDescription: string | null;
+  seriesReleaseDate: Date | null;
 }
 
 @Injectable({
@@ -97,6 +98,7 @@ export class IndexedDbService {
           seriesId: null,
           seriesName: null,
           seriesDescription: null,
+          seriesReleaseDate: null,
         };
 
         try {

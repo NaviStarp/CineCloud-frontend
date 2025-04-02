@@ -142,6 +142,9 @@ public async uploadVideos(videos: VideoEntry[]) {
       formData.append(`videos[${index}][season]`, video.season?.toString() || '');
       formData.append(`videos[${index}][chapter]`, video.chapter?.toString() || '');
       formData.append(`videos[${index}][seriesName]`, video.seriesName || '');
+      formData.append(`videos[${index}][seriesDescription]`, video.seriesDescription || '');
+      const seriesReleaseDate = video.seriesReleaseDate instanceof Date ? video.seriesReleaseDate : new Date();
+      formData.append(`videos[${index}][seriesReleaseDate]`, seriesReleaseDate.toISOString().split('T')[0]);
     }
   });
   

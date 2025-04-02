@@ -43,7 +43,7 @@ export class VideoFormComponent {
 
   seriesList: any[] = []; // Lista de series disponibles
   isCreatingNewSeries = false;
-  newSeries = { name: '', description: '' };
+  newSeries = { name: '', description: '' ,releaseDate: new Date()};
 
   constructor(private indexedDbService: IndexedDbService) {
     // Inicializar el video si no se proporciona
@@ -82,7 +82,8 @@ export class VideoFormComponent {
       season: null,
       chapter: null,
       seriesName: '',
-      seriesDescription: ''
+      seriesDescription: '',
+      seriesReleaseDate: new Date(),
     };
   }
   saveChanges($event: Event) {
@@ -134,7 +135,7 @@ export class VideoFormComponent {
 
   openCreateSeriesModal() {
     this.isCreatingNewSeries = true;
-    this.newSeries = { name: '', description: '' };
+    this.newSeries = { name: '', description: '' ,releaseDate: new Date()};
   }
 
   cancelCreateSeries() {
@@ -149,13 +150,16 @@ export class VideoFormComponent {
     const createdSeries = {
       id: newSeriesId,
       name: this.newSeries.name,
-      description: this.newSeries.description
+      description: this.newSeries.description,
+      releaseDate: this.newSeries.releaseDate
     };
 
     this.seriesList.push(createdSeries);
 
     this.video.seriesId = newSeriesId;
     this.video.seriesName = this.newSeries.name;
+    this.video.seriesDescription = this.newSeries.description;
+    this.video.seriesReleaseDate = this.newSeries.releaseDate;
 
     this.isCreatingNewSeries = false;
   }

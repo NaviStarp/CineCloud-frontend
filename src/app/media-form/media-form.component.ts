@@ -60,7 +60,8 @@ export class MediaFormComponent implements OnInit {
           season: null,
           seriesId: null,
           seriesName: null,
-          seriesDescription: null
+          seriesDescription: null,
+          seriesReleaseDate: new Date(),
         };
       }));
     } catch (error) {
