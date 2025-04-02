@@ -99,33 +99,75 @@ export class AuthService {
       body: JSON.stringify(user)
     }).then(res => res.json());
   }
-  public async uploadVideos(videos: VideoEntry[]) {
-    const formData = new FormData();
+public async uploadVideos(videos: VideoEntry[]) {
+  const formData = new FormData();
   
-    videos.forEach((video, index) => {
-      formData.append(`videos[${index}][name]`, video.name);
-      formData.append(`videos[${index}][description]`, video.description || '');
-      formData.append(`videos[${index}][video]`, new Blob([video.videoBlob], { type: video.videoMime }), video.name);
-      formData.append(`videos[${index}][thumbnail]`, video.thumbnail);
-      formData.append(`videos[${index}][mediaType]`, video.mediaType);
-      const releaseDate = new Date(video.releaseDate);
-      formData.append(`videos[${index}][releaseDate]`, releaseDate.getDate().toString());
-      
-      if (video.mediaType === 'series') {
-        formData.append(`videos[${index}][season]`, video.season?.toString() || '');
-        formData.append(`videos[${index}][chapter]`, video.chapter?.toString() || '');
-        formData.append(`videos[${index}][seriesName]`, video.seriesName || '');
+  videos.forEach((video, index) => {
+    formData.append(`videos[${index}][name]`, video.name);
+    formData.append(`videos[${index}][description]`, video.description || '');
+    
+    // Check if videoBlob is actually a blob or file
+    if (video.videoBlob instanceof Blob || video.videoBlob instanceof File) {
+      formData.append(`videos[${index}][video]`, video.videoBlob, video.name);
+    } else if(video.videoBlob instanceof ArrayBuffer) {
+      const blob = new Blob([video.videoBlob], { type: video.videoMime });
+      formData.append(`videos[${index}][video]`, blob, video.name);
+      console.error(`Video at index ${index} has invalid video data`, video.videoBlob);
+    }
+    
+    // Make sure thumbnail is also valid
+    if (typeof video.thumbnail === 'string' && video.thumbnail.startsWith('data:image')) {
+      const byteString = atob(video.thumbnail.split(',')[1]);
+      const arrayBuffer = new ArrayBuffer(byteString.length);
+      const uint8Array = new Uint8Array(arrayBuffer);
+      for (let i = 0; i < byteString.length; i++) {
+      uint8Array[i] = byteString.charCodeAt(i);
       }
-    });
+      const blob = new Blob([uint8Array], { type: 'image/jpeg' });
+      formData.append(`videos[${index}][thumbnail]`, blob, `${video.name}-thumbnail.jpg`);
+    }
+    
+    formData.append(`videos[${index}][mediaType]`, video.mediaType);
+    
+    // Format the date properly - send full date string in ISO format
+    const releaseDate = video.releaseDate instanceof Date ? video.releaseDate : new Date(video.releaseDate);
+    formData.append(`videos[${index}][releaseDate]`, releaseDate.toISOString().split('T')[0]);
+    
+    if (video.mediaType === 'series') {
+      formData.append(`videos[${index}][season]`, video.season?.toString() || '');
+      formData.append(`videos[${index}][chapter]`, video.chapter?.toString() || '');
+      formData.append(`videos[${index}][seriesName]`, video.seriesName || '');
+    }
+  });
   
-    return fetch(`${this.getServerUrl()}/media/upload/`, {
+  // Add debugging
+  console.log('Sending video upload request with form data:');
+  for (const pair of formData.entries()) {
+    console.log(`${pair[0]}: ${pair[1]}`);
+  }
+
+  try {
+    const response = await fetch(`${this.getServerUrl()}/media/upload/`, {
       method: 'POST',
       headers: {
-        'Authorization': `Token ${this.getToken()}`,
+        'Authorization': `Token ${this.getToken()}`
+        // Note: Don't set Content-Type header when using FormData
       },
       body: formData
-    }).then(res => res.json());
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Upload error:', response.status, errorText);
+      throw new Error(`Upload failed: ${response.status} ${errorText}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Upload exception:', error);
+    throw error;
   }
+}
   
 }
 
