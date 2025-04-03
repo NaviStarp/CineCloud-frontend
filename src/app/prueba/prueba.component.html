@@ -1,35 +1,85 @@
-<div *ngIf="videos" class="space-y-8">
-    <h2 class="text-2xl font-bold text-gray-800">Películas</h2>
-    <div *ngIf="videos.peliculas && videos.peliculas.length > 0; else noPeliculas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div *ngFor="let pelicula of videos.peliculas" class="video-item bg-white shadow-md rounded-lg p-4">
-            <h3 class="text-lg font-semibold text-gray-700">{{ pelicula.name }}</h3>
-            <img [src]="pelicula.thumbnail" alt="Pelicula" class="mt-2 w-full rounded">
-            <video [src]="pelicula.videoBlob" controls class="mt-2 w-full rounded"></video>
+<!-- Modern Video Interface with Angular and Tailwind -->
+<div *ngIf="videos" class="min-h-screen bg-gradient-to-br from-neutral-900 to-neutral-800 text-white py-8 px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <header class="mb-12">
+      <h1 class="text-3xl md:text-4xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-primary-400 to-primary-500">
+        Mi Colección de Videos
+      </h1>
+    </header>
+  
+    <!-- Movies Section -->
+    <section class="mb-12">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-primary-300">Películas</h2>
+        <div class="h-0.5 flex-grow ml-4 bg-gradient-to-r from-primary-300 to-transparent"></div>
+      </div>
+  
+      <div *ngIf="videos.peliculas && videos.peliculas.length > 0; else noPeliculas" 
+           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div *ngFor="let pelicula of videos.peliculas" 
+             class="group relative overflow-hidden bg-neutral-800 rounded-xl shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
+          <div class="aspect-w-16 aspect-h-9 relative">
+            <img [src]="pelicula.thumbnail" alt="Pelicula" class="object-cover w-full h-full rounded-t-xl">
+            <div class="absolute inset-0 bg-gradient-to-t from-neutral-900 to-transparent opacity-60"></div>
+            <div class="absolute bottom-2 left-3 right-3">
+              <h3 class="text-lg font-bold text-white truncate">{{ pelicula.titulo }}</h3>
+                <p class="text-sm text-neutral-100">Fecha de lanzamiento: {{ pelicula.fecha_estreno | date:'dd/MM/yyyy' }}</p>
+                <p class="text-sm text-neutral-100">Duración: {{ pelicula.duracion }} min</p>
+            </div>
+          </div>
+          <div class="p-4">
+            <video [src]="pelicula.videoBlob" controls class="w-full rounded-md"></video>
+          </div>
         </div>
-    </div>
-    <ng-template #noPeliculas>
-        <p class="text-gray-500">No hay películas disponibles</p>
-    </ng-template>
-
-    <h2 class="text-2xl font-bold text-gray-800">Series</h2>
-    <div *ngIf="videos.series && videos.series.length > 0; else noSeries" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div *ngFor="let serie of videos.series" class="video-item bg-white shadow-md rounded-lg p-4">
-            <h3 class="text-lg font-semibold text-gray-700">{{ serie.name }}</h3>
-            <!-- Additional series content -->
+      </div>
+  
+      <ng-template #noPeliculas>
+        <div class="bg-neutral-800 bg-opacity-50 rounded-lg p-8 text-center">
+          <p class="text-neutral-400 text-lg">No hay películas disponibles</p>
         </div>
-    </div>
-    <ng-template #noSeries>
-        <p class="text-gray-500">No hay series disponibles</p>
-    </ng-template>
-
-    <h2 class="text-2xl font-bold text-gray-800">Episodios</h2>
-    <div *ngIf="videos.episodios && videos.episodios.length > 0; else noEpisodios" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div *ngFor="let episodio of videos.episodios" class="video-item bg-white shadow-md rounded-lg p-4">
-            <h3 class="text-lg font-semibold text-gray-700">{{ episodio.name }}</h3>
-            <!-- Additional episode content -->
+      </ng-template>
+    </section>
+  
+    <!-- Series Section -->
+    <section>
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-purple-300">Series</h2>
+        <div class="h-0.5 flex-grow ml-4 bg-gradient-to-r from-purple-300 to-transparent"></div>
+      </div>
+  
+      <div *ngIf="videos.series && videos.series.length > 0; else noSeries" 
+           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div *ngFor="let serie of videos.series" 
+             class="bg-neutral-800 rounded-xl shadow-lg overflow-hidden">
+          <div class="aspect-w-16 aspect-h-9 relative">
+            <img [src]="serie.thumbnail" alt="Serie" class="object-cover w-full h-full">
+            <div class="absolute inset-0 bg-gradient-to-t from-neutral-900 to-transparent opacity-70"></div>
+            <div class="absolute bottom-2 left-3 right-3">
+              <h3 class="text-lg font-bold text-white">{{ serie.titulo }}</h3>
+              <p class="text-sm text-neutral-500">Fecha de lanzamiento: {{ serie.fecha_estreno | date:'dd/MM/yyyy' }}</p>
+            </div>
+          </div>
+          
+          <div class="p-4 space-y-4">
+            <div *ngFor="let episodio of videos.episodios" class="mt-2">
+              <div *ngIf="serie.id == episodio.serie_id" class="border-l-4 border-purple-500 pl-3 py-1">
+                <h4 class="text-md font-semibold text-neutral-300">{{ episodio.titulo }}</h4>
+                <h5 class="text-sm text-neutral-400">{{ episodio.descripcion }}</h5>
+                <p class="text-sm text-neutral-500">Temporada: {{ episodio.temporada }} | Episodio: {{ episodio.numero }}</p>
+                <video [src]="episodio.videoBlob" controls class="mt-2 w-full rounded-md"></video>
+              </div>
+            </div>
+          </div>
         </div>
-    </div>
-    <ng-template #noEpisodios>
-        <p class="text-gray-500">No hay episodios disponibles</p>
-    </ng-template>
+      </div>
+  
+      <ng-template #noSeries>
+        <div class="bg-neutral-800 bg-opacity-50 rounded-lg p-8 text-center">
+          <p class="text-neutral-400 text-lg">No hay series disponibles</p>
+        </div>
+      </ng-template>
+    </section>
+  </div>
+<div *ngIf="!videos" class="flex items-center justify-center min-h-screen bg-gradient-to-br from-neutral-900 to-neutral-800 text-white">
+    <p class="text-2xl text-primary-300">Videos no encontrados</p>
 </div>

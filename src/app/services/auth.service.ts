@@ -31,7 +31,7 @@ export class AuthService {
       }
     }
     this.router.navigate(['/server/config']);
-    throw new Error('Server IP or Port not set in localStorage or environment');
+    return '';
   }
 
   // Devuelve el token del usuario
@@ -177,6 +177,9 @@ public async uploadVideos(videos: VideoEntry[]) {
   }
 }
 public async getVideos(): Promise<MediaResponse> {
+  if(!this.getToken() || this.getServerUrl() === ''){
+    return { peliculas: [], series: [], episodios: [] };
+  }
   const response = await fetch(`${this.getServerUrl()}/media/`, {
     method: 'GET',
     headers: {

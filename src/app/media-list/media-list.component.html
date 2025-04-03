@@ -1,0 +1,53 @@
+<div class="flex bg-neutral-800">
+    <div *ngIf="videos" class="carousel w-full overflow-x-auto">
+        <div class="flex space-x-4">
+            <!-- Películas -->
+            <div class="carousel-inner flex space-x-4 p-4" *ngFor="let pelicula of videos.peliculas">
+                <app-media-view
+                    [thumbnail]="pelicula.thumbnail"
+                    [title]="pelicula.titulo"
+                    [description]="pelicula.descripcion"
+                    (see)="onSee(pelicula)"
+                    class="flex-none w-64 bg-neutral-700 rounded-lg shadow-md cursor-pointer"
+                ></app-media-view>
+            </div>
+
+            <!-- Series -->
+            <div class="carousel-inner flex space-x-4 p-4" *ngFor="let serie of videos.series">
+                <app-media-view
+                    [thumbnail]="serie.thumbnail"
+                    [title]="serie.titulo"
+                    [description]="serie.descripcion"
+                    (see)="onSee(serie)"
+                    class="flex-none w-64 bg-neutral-700 rounded-lg shadow-md cursor-pointer"
+                ></app-media-view>
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="!videos" class="flex justify-center items-center h-screen">
+    <p class="text-white text-lg">Cargando...</p>
+</div>
+<div class="modal-video fixed inset-0 flex items-center justify-center backdrop-blur-lg bg-transparent bg-opacity-75 z-50" *ngIf="showVideo">
+    <div class="modal-content relative bg-neutral-900 rounded-lg shadow-lg p-4 max-w-3xl w-full">
+        <span 
+            class="close absolute top-2 right-2 text-white text-2xl cursor-pointer hover:text-red-500" 
+            (click)="closeVideo()"
+        >
+            &times;
+        </span>
+        <iframe
+            [src]="videoUrl"
+            class="w-full h-64 sm:h-96 rounded-lg"
+            frameborder="0"
+            allowfullscreen
+        ></iframe>
+    </div>
+</div>
+
+<app-modal-error
+[title]="errorTitle"
+[message]="errorMessage"
+[visible]="showError"
+(cerrarModal)="onCloseError()"
+></app-modal-error>

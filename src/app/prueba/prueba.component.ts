@@ -20,23 +20,37 @@ export class PruebaComponent implements OnInit {
   
   async loadVideos() {
     try {
-      // Get data from server and wait for it to resolve
       this.videos = await this.auth.getVideos();
+      
       console.log('Videos:', this.videos);
-      // Now that videos is populated, we can process the movies
+
       if (this.videos && this.videos.peliculas) {
-        // Create a copy of the array to avoid modification issues
         const peliculas = [...this.videos.peliculas];
-        
-        // Process each movie one by one
+        const episodios = [...this.videos.episodios];
+        const series = [...this.videos.series];
+      
         for (let i = 0; i < peliculas.length; i++) {
           const pelicula = peliculas[i];
           pelicula.videoBlob = await this.auth.getVideoUrl(pelicula.video);
           pelicula.thumbnail = await this.auth.getThumnailUrl(pelicula.imagen);
         }
+      
+        for(let i = 0; i<episodios.length; i++){
+          const episodio = this.videos.episodios[i];
+          episodio.videoBlob = await this.auth.getVideoUrl(episodio.video);
+          episodio.thumbnail = await this.auth.getThumnailUrl(episodio.imagen);
+        }
+      
+        for(let i = 0; i<series.length; i++){
+          const serie = this.videos.series[i];
+          serie.thumbnail = await this.auth.getThumnailUrl(serie.imagen);
+        }
+      
       }
     } catch (error) {
+      
       console.error('Error loading videos:', error);
+   
     }
   }
 }
