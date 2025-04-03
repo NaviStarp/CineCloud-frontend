@@ -14,6 +14,24 @@ export interface MediaResponse {
   series: any[];
   episodios: any[];
 }
+export interface Episode {
+  id: number;
+  titulo: string;
+  temporada: number;
+  numero: number;
+  descripcion: string;
+  imagen: string;
+}
+
+export interface Series {
+  id: number;
+  episodios: Episode[];
+  titulo: string;
+  descripcion: string;
+  fecha_estreno: string;
+  temporadas: number;
+  imagen: string;
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -188,8 +206,21 @@ public async getVideos(): Promise<MediaResponse> {
   });
   return response.json();
 }
+  public async getSeries(): Promise<Series[]> {
+    if(!this.getToken() || this.getServerUrl() === ''){
+      return [];
+    }
+    const response = await fetch(`${this.getServerUrl()}/series/`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${this.getToken()}`
+      }
+    });
+    return response.json();
+  }
   public async getVideoUrl(url:string){
-   
+    if(url.startsWith('/media')) //Temporal TODO
+      url = url.substring(7);
     const response = await fetch(`${this.getServerUrl()}/media/${url}`, {
       method: 'GET',
       headers: {
@@ -206,6 +237,18 @@ public async getVideos(): Promise<MediaResponse> {
       },
     }).then(res => res.blob().then(blob => URL.createObjectURL(blob)));
     return response;
+  }
+  public async getSerieEpisodes(id:string): Promise<any[]> {
+    if(!this.getToken() || this.getServerUrl() === ''){
+      return [];
+    }
+    const response = await fetch(`${this.getServerUrl()}/series/${id}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${this.getToken()}`
+      }
+    });
+    return response.json();
   }
   
 }

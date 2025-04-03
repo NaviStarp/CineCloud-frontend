@@ -100,7 +100,7 @@
             (change)="onSeriesChange($event)"
           >
             <option [value]="null" disabled selected>Selecciona una serie</option>
-            <option *ngFor="let series of seriesList" [value]="series.id">{{series.name}}</option>
+            <option *ngFor="let series of seriesList" [value]="series.id">{{series.titulo}}</option>
             <option [value]="'new'">-- Crear nueva serie --</option>
           </select>
           <button

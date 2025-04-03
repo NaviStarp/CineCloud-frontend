@@ -11,7 +11,7 @@ export interface VideoEntry {
   releaseDate: Date;
   chapter: number | null;
   season: number | null;
-  seriesId: string | null;
+  seriesId: number | null;
   seriesName: string | null;
   seriesDescription: string | null;
   seriesReleaseDate: Date | null;

@@ -45,6 +45,26 @@
     </div>
 </div>
 
+<div class="modal-select-episode fixed inset-0 flex items-center justify-center backdrop-blur-lg bg-transparent bg-opacity-75 z-50" *ngIf="showSelectEpisode && videos">
+    <div class="modal-content relative bg-neutral-800 rounded-lg shadow-lg p-6 max-w-lg w-full">
+        <span 
+            class="close absolute top-3 right-3 text-white text-2xl cursor-pointer hover:text-red-500 transition duration-200" 
+            (click)="toggleSelectEpisode()"
+        >
+            &times;
+        </span>
+        <h2 class="text-white text-xl font-semibold mb-4 text-center">Selecciona un episodio</h2>
+        <ul class="list-none space-y-3">
+            <li *ngFor="let episode of videos.episodios" 
+                (click)="onSee(episode);toggleSelectEpisode()" 
+                class="cursor-pointer text-blue-400 hover:text-blue-300 hover:underline transition duration-200 text-center"
+            >
+                {{ episode.titulo }}
+            </li>
+        </ul>
+    </div>
+</div>
+
 <app-modal-error
 [title]="errorTitle"
 [message]="errorMessage"

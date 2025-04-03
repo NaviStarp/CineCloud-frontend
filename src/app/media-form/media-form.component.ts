@@ -7,7 +7,7 @@ import { IndexedDbService } from '../services/indexed-db.service';
 import { VideoFormComponent } from '../video-form/video-form.component';
 import { Router } from '@angular/router';
 import { VideoEntry } from '../services/indexed-db.service';
-import { AuthService } from '../services/auth.service';
+import { AuthService, Series } from '../services/auth.service';
 
 @Component({
   selector: 'app-media-form',
@@ -28,7 +28,7 @@ export class MediaFormComponent implements OnInit {
   faPlus = faPlus;
   faCheck = faCheck;
   videos: VideoEntry[] = [];
-  
+  series: Series[] = [];
   @ViewChild('videoContainer', { static: false }) videoContainer!: ElementRef;
   @ViewChildren('videoItem') videoItems!: QueryList<ElementRef>;
 

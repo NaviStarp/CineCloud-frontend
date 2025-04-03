@@ -1,11 +1,12 @@
 // video-form.component.ts
-import { Component, Input, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef, Output, EventEmitter, OnInit } from '@angular/core';
 import { faPlay, faEdit, faTimes, faFilm, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IndexedDbService, VideoEntry } from '../services/indexed-db.service';
+import { AuthService, Series } from '../services/auth.service';
 
 @Component({
   selector: 'app-video-form',
@@ -24,7 +25,7 @@ import { IndexedDbService, VideoEntry } from '../services/indexed-db.service';
     ]),
   ]
 })
-export class VideoFormComponent {
+export class VideoFormComponent implements OnInit {
   @Input() video!: VideoEntry;
   @Output() videoChange = new EventEmitter<VideoEntry>();
   @ViewChild('videoPlayer') videoPlayer!: ElementRef;
@@ -40,18 +41,37 @@ export class VideoFormComponent {
   faTimes = faTimes;
   faPlus = faPlus;
   faFilm = faFilm;
-
-  seriesList: any[] = []; // Lista de series disponibles
+  
+  seriesList: Series[] = []; // Lista de series disponibles
   isCreatingNewSeries = false;
   newSeries = { name: '', description: '' ,releaseDate: new Date()};
 
-  constructor(private indexedDbService: IndexedDbService) {
+  constructor(private indexedDbService: IndexedDbService,private auth: AuthService) {
     // Inicializar el video si no se proporciona
     this.video = this.video || this.createEmptyVideoEntry();
+  }
+
+  ngOnInit(): void {
+    this.loadSeries();
   }
   ngOnDestroy() {
     if (this.videoUrl) {
       URL.revokeObjectURL(this.videoUrl);
+    }
+  }
+
+  async loadSeries() {
+    try {
+      const series = await this.auth.getSeries();
+      this.seriesList = series.map((serie: any) => ({
+        ...serie,
+        episodios: serie.episodios.map((episodio: any) => ({
+          ...episodio,
+          thumbnail: this.auth.getThumnailUrl(episodio.imagen)
+        }))
+      }));
+    } catch (error) {
+      console.error('Error al cargar las series:', error);
     }
   }
 
@@ -88,6 +108,7 @@ export class VideoFormComponent {
   }
   saveChanges($event: Event) {
     $event.stopPropagation();
+    console.log('Saving changes:', this.video);
     this.videoChange.emit(this.video);
     this.isEditing = false;
   }
@@ -130,6 +151,20 @@ export class VideoFormComponent {
   onSeriesChange(event: any) {
     if (event.target.value === 'new') {
       this.openCreateSeriesModal();
+      return;
+    }
+    console.log('Selected series ID:', event.target.value);
+    console.log('Selected series:', this.seriesList);
+    for (const serie of this.seriesList) {
+      if (Number(serie.id) === Number(event.target.value)) {
+        console.log('Selected series:', serie);
+        console.log('Selected series ID:', serie.id);
+        console.log('Selected series name:', serie.titulo);
+        this.video.seriesId = serie.id;
+        this.video.seriesName = serie.titulo;
+        this.video.seriesDescription = serie.descripcion;
+        this.video.seriesReleaseDate = new Date(serie.fecha_estreno);
+      }
     }
   }
 
@@ -140,23 +175,26 @@ export class VideoFormComponent {
 
   cancelCreateSeries() {
     this.isCreatingNewSeries = false;
-    if (this.video.seriesId === 'new') {
+    if (this.video.seriesId === 0) {
       this.video.seriesId = null;
     }
   }
 
   saveNewSeries() {
-    const newSeriesId = 'series_' + Date.now();
-    const createdSeries = {
+    const newSeriesId = Date.now();
+    const createdSeries: Series = {
       id: newSeriesId,
-      name: this.newSeries.name,
-      description: this.newSeries.description,
-      releaseDate: this.newSeries.releaseDate
+      titulo: this.newSeries.name,
+      descripcion: this.newSeries.description,
+      temporadas: 1,
+      imagen: '',
+      fecha_estreno: this.newSeries.releaseDate.toString(),
+      episodios: []
     };
 
     this.seriesList.push(createdSeries);
 
-    this.video.seriesId = newSeriesId;
+    this.video.seriesId = newSeriesId; // Assigning numeric ID
     this.video.seriesName = this.newSeries.name;
     this.video.seriesDescription = this.newSeries.description;
     this.video.seriesReleaseDate = this.newSeries.releaseDate;

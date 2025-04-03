@@ -15,6 +15,7 @@ export class MediaListComponent implements OnInit {
   videos: MediaResponse | null = null;
   videoUrl: SafeResourceUrl | null = null;
   showVideo: boolean = false;
+  showSelectEpisode: boolean = false;
 
   // Error handling properties
   errorTitle: string = '';
@@ -61,7 +62,17 @@ export class MediaListComponent implements OnInit {
   loadVideo(media: any) {
     console.log('Load video:', media);
     if(!media.video) {
-      this.showErrorModal('Error cargando el video', 'El video no existe');
+      this.auth.getSerieEpisodes(media.id).then((episodes) => {
+        if(this.videos) {
+        this.videos.episodios = episodes;
+        }
+        this.toggleSelectEpisode();
+        console.log('Episodes:', episodes);
+      }).catch((error) => {
+        console.error('Error loading episodes:', error);
+        this.showErrorModal('Error Loading Episodes', 'An error occurred while loading the episodes. Please try again later.');
+      }
+      );
       return;
     }
     this.auth.getVideoUrl(media.video).then((url) => {
@@ -75,11 +86,27 @@ export class MediaListComponent implements OnInit {
     });
   }
 
+  loadEpisodeVideo(media: any) {
+    this.auth.getVideoUrl(media.video).then((url) => {
+      this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+      console.log('Episode Video Blob:', this.videoUrl);
+      console.log('Episode Video URL:', url);
+      this.showVideo = true;
+    }
+    ).catch((error) => {
+      console.error('Error loading episode video:', error);
+      this.showErrorModal('Error Loading Episode Video', 'An error occurred while loading the episode video. Please try again later.');
+    }
+    );
+  }
   closeVideo() {
     this.showVideo = false;
     this.videoUrl = null;
   }
 
+  toggleSelectEpisode() {
+    this.showSelectEpisode = !this.showSelectEpisode;
+  }
   // Error modal logic
   showErrorModal(title: string, message: string) {
     console.log('Show error modal:', title, message);
