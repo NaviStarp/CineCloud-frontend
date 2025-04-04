@@ -67,7 +67,6 @@ export class VideoFormComponent implements OnInit {
         ...serie,
         episodios: serie.episodios.map((episodio: any) => ({
           ...episodio,
-          thumbnail: this.auth.getThumnailUrl(episodio.imagen)
         }))
       }));
     } catch (error) {
@@ -91,9 +90,10 @@ export class VideoFormComponent implements OnInit {
   private createEmptyVideoEntry(): VideoEntry {
     return {
       id: '',
-      videoBlob: new ArrayBuffer(0),
+      videoBlob: new File([], ''),
       description: '',
       videoMime: '',
+      video: null,
       name: '',
       thumbnail: '',
       mediaType: 'Pelicula',
@@ -123,9 +123,10 @@ export class VideoFormComponent implements OnInit {
     this.isEditing = !this.isEditing;
   }
 
-  playVideo(event: Event) {
+  async playVideo(event: Event) {
     event.stopPropagation();
-    this.loadVideo();
+    await this.loadVideo();
+
     setTimeout(() => {
     this.isVideoPlaying = !this.isVideoPlaying;
     }, 100);

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ViewChildren, ElementRef, QueryList } fro
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faCheck, faFilm, faPlus, faTv } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faFilm, faPlus, faSpinner, faTv } from '@fortawesome/free-solid-svg-icons';
 import { IndexedDbService } from '../services/indexed-db.service';
 import { VideoFormComponent } from '../video-form/video-form.component';
 import { Router } from '@angular/router';
@@ -27,6 +27,8 @@ export class MediaFormComponent implements OnInit {
   faTv = faTv;
   faPlus = faPlus;
   faCheck = faCheck;
+  faSpinner = faSpinner;
+  isLoading = false;
   videos: VideoEntry[] = [];
   series: Series[] = [];
   @ViewChild('videoContainer', { static: false }) videoContainer!: ElementRef;
@@ -40,6 +42,7 @@ export class MediaFormComponent implements OnInit {
 
   async loadVideos() {
     try {
+      this.isLoading = true;
       const files = await this.indexedDbService.getVideos();
       this.videos = await Promise.all(files.map(async (file: any) => {
         // Si el archivo ya es un objeto VideoEntry, usarlo directamente
@@ -49,8 +52,9 @@ export class MediaFormComponent implements OnInit {
         
         return {
           id: file.name, // ID temporal
-          videoBlob: new ArrayBuffer(0),          
+          videoBlob: file,          
           description: '',
+          video: null,
           videoMime: '',
           thumbnail: '',
           name: file.name,
@@ -64,6 +68,7 @@ export class MediaFormComponent implements OnInit {
           seriesReleaseDate: new Date(),
         };
       }));
+      this.isLoading = false;
     } catch (error) {
       console.error('Error al cargar los videos:', error);
     }
@@ -92,9 +97,11 @@ export class MediaFormComponent implements OnInit {
       console.error('Error al guardar el video:', error);
     }
   }
-  uploadVideos(event: Event) {
+  async uploadVideos(event: Event) {
     event.preventDefault();
-    this.auth.uploadVideos(this.videos);
+    this.isLoading = true;
+    await this.auth.uploadVideos(this.videos);
+    this.isLoading = false;
     this.router.navigate(['/']);
   }
 

@@ -4,8 +4,9 @@ export interface VideoEntry {
   id: string;
   name: string;
   description: string | null;
-  videoBlob: ArrayBuffer; // Cambiado a ArrayBuffer para ser consistente
+  videoBlob: File; 
   videoMime: string;
+  video: Blob|null;
   thumbnail: string;
   mediaType: string;
   releaseDate: Date;
@@ -59,76 +60,44 @@ export class IndexedDbService {
   // Guardar un video en IndexedDB usando FileReader y la estructura de VideoEntry
   async saveVideo(file: File): Promise<void> {
     await this.openDatabase();
-
     if (!this.db) {
       return Promise.reject('Base de datos no abierta');
     }
 
-    // Primero obtenemos la miniatura
-    let thumbnail = '';
+    let thumbnail: string = '';
     try {
       thumbnail = await this.extractThumbnail(file);
     } catch (error) {
-      console.warn('No se pudo extraer la miniatura:', error);
+      console.error('Error extracting thumbnail:', error);
     }
-
-    // Ahora leemos el archivo como ArrayBuffer
+    const video: VideoEntry = {
+      id: file.name,
+      name: file.name,
+      description: null,
+      videoBlob: file, 
+      video: null,
+      videoMime: file.type,
+      thumbnail: thumbnail, 
+      mediaType: 'Pelicula',
+      releaseDate: new Date(),
+      chapter: null,
+      season: null,
+      seriesId: null,
+      seriesName: null,
+      seriesDescription: null,
+      seriesReleaseDate: null,
+    };
+  
     return new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-      
-      fileReader.onload = async (event) => {
-        if (!event.target?.result || !(event.target.result instanceof ArrayBuffer)) {
-          return reject('Error al leer el archivo como ArrayBuffer');
-        }
-        
-        const videoArrayBuffer = event.target.result;
-        
-        // Construir el objeto VideoEntry
-        const video: VideoEntry = {
-          id: file.name, // Usamos el nombre del archivo como ID
-          name: file.name,
-          description: null,
-          videoBlob: videoArrayBuffer, // Guardamos como ArrayBuffer
-          videoMime: file.type,
-          thumbnail: thumbnail,
-          mediaType: 'Pelicula',
-          releaseDate: new Date(),
-          chapter: null,
-          season: null,
-          seriesId: null,
-          seriesName: null,
-          seriesDescription: null,
-          seriesReleaseDate: null,
-        };
-
-        try {
-          const transaction = this.db!.transaction(this.storeName, 'readwrite');
-          const store = transaction.objectStore(this.storeName);
-          const request = store.put(video);
-          
-          request.onsuccess = () => {
-            console.log('Video guardado correctamente');
-            resolve();
-          };
-          
-          request.onerror = (error) => {
-            console.error('Error al guardar en IndexedDB:', error);
-            reject(error);
-          };
-        } catch (error) {
-          console.error('Error en la transacción:', error);
-          reject(error);
-        }
-      };
-
-      fileReader.onerror = (error) => {
-        console.error('Error al leer el archivo:', error);
-        reject(error);
-      };
-
-      fileReader.readAsArrayBuffer(file);
+      const transaction = this.db!.transaction(this.storeName, 'readwrite');
+      const store = transaction.objectStore(this.storeName);
+      const request = store.put(video);
+  
+      request.onsuccess = () => resolve();
+      request.onerror = (error) => reject(error);
     });
   }
+  
 
   // Recuperar un video desde IndexedDB y devolverlo como URL de objeto
   async getVideo(videoId: string): Promise<string | null> {

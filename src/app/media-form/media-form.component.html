@@ -1,4 +1,4 @@
-<div class="flex flex-col items-center justify-center w-full min-h-screen bg-gradient-to-b from-neutral-800 to-neutral-900 p-6">
+<div *ngIf="!isLoading" class="flex flex-col items-center justify-center w-full min-h-screen bg-gradient-to-b from-neutral-800 to-neutral-900 p-6">
   <div class="w-full max-w-3xl">
     <!-- Header -->
     <div class="mb-8 text-center">
@@ -43,5 +43,13 @@
         <fa-icon [icon]="faPlus" class="text-xl"></fa-icon>
       </button>
     </div>
+  </div>
+</div>
+
+<!--- Barra de carga --->
+<div *ngIf="isLoading" class="fixed inset-0 flex items-center justify-center z-50">
+  <div class="flex items-center">
+    <fa-icon [icon]="faSpinner" class="animate-spin text-primary-500 text-3xl mr-2"></fa-icon>
+    <span class="text-white">Cargando...</span>
   </div>
 </div>

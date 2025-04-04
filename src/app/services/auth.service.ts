@@ -129,15 +129,7 @@ public async uploadVideos(videos: VideoEntry[]) {
     formData.append(`videos[${index}][name]`, video.name);
     formData.append(`videos[${index}][description]`, video.description || '');
     
-    // Check if videoBlob is actually a blob or file
-    if (video.videoBlob instanceof Blob || video.videoBlob instanceof File) {
-      formData.append(`videos[${index}][video]`, video.videoBlob, video.name);
-    } else if(video.videoBlob instanceof ArrayBuffer) {
-      const blob = new Blob([video.videoBlob], { type: video.videoMime });
-      formData.append(`videos[${index}][video]`, blob, video.name);
-      console.error(`Video at index ${index} has invalid video data`, video.videoBlob);
-    }
-    
+      formData.append(`videos[${index}][video]`, video.videoBlob, video.name);    
     // Make sure thumbnail is also valid
     if (typeof video.thumbnail === 'string' && video.thumbnail.startsWith('data:image')) {
       const byteString = atob(video.thumbnail.split(',')[1]);
