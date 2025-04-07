@@ -102,6 +102,7 @@ export class MediaFormComponent implements OnInit {
     this.isLoading = true;
     await this.auth.uploadVideos(this.videos);
     this.isLoading = false;
+    this.indexedDbService.delAll()
     this.router.navigate(['/']);
   }
 

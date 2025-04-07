@@ -228,6 +228,23 @@ export class IndexedDbService {
     });
   }
 
+  async delAll(): Promise<void> {
+    await this.openDatabase();
+
+    if (!this.db) {
+      return Promise.reject('Base de datos no abierta');
+    }
+
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction(this.storeName, 'readwrite');
+      const store = transaction.objectStore(this.storeName);
+      const request = store.clear();
+
+      request.onsuccess = () => resolve();
+      request.onerror = (error) => reject(error);
+    });
+  }
+
   // Actualizar un video existente usando la interfaz VideoEntry
   async updateVideo(video: VideoEntry): Promise<any> {
     await this.openDatabase();

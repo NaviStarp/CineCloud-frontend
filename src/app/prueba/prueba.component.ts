@@ -1,56 +1,71 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { AuthService, MediaResponse } from '../services/auth.service';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import Hls from 'hls.js';
 
 @Component({
   selector: 'app-prueba',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,FormsModule],
   templateUrl: './prueba.component.html',
-  styleUrl: './prueba.component.css'
+  styleUrls: ['./prueba.component.css']
 })
-export class PruebaComponent implements OnInit {
-  videos: MediaResponse | null = null;
-  
-  constructor(private auth: AuthService) {}
-  
-  ngOnInit(): void {
-    this.loadVideos();
-  }
-  
-  async loadVideos() {
-    try {
-      this.videos = await this.auth.getVideos();
-      
-      console.log('Videos:', this.videos);
+export class PruebaComponent {
+  @Input() videoUrl: string = 'http://localhost:8000/hls/pelicula/Puente/playlist.m3u8';
+  authToken: string =  '';
+  @ViewChild('videoPlayer') videoRef!: ElementRef<HTMLVideoElement>;
+  hls!: Hls;
+  qualityLevels: { index: number; label: string }[] = [];
+  selectedQuality: number = -1; // -1 for "Auto"
 
-      if (this.videos && this.videos.peliculas) {
-        const peliculas = [...this.videos.peliculas];
-        const episodios = [...this.videos.episodios];
-        const series = [...this.videos.series];
-      
-        for (let i = 0; i < peliculas.length; i++) {
-          const pelicula = peliculas[i];
-          pelicula.videoBlob = await this.auth.getVideoUrl(pelicula.video);
-          pelicula.thumbnail = await this.auth.getThumnailUrl(pelicula.imagen);
-        }
-      
-        for(let i = 0; i<episodios.length; i++){
-          const episodio = this.videos.episodios[i];
-          episodio.videoBlob = await this.auth.getVideoUrl(episodio.video);
-          episodio.thumbnail = await this.auth.getThumnailUrl(episodio.imagen);
-        }
-      
-        for(let i = 0; i<series.length; i++){
-          const serie = this.videos.series[i];
-          serie.thumbnail = await this.auth.getThumnailUrl(serie.imagen);
-        }
-      
-      }
+  ngAfterViewInit() {
+    try {
+      this.authToken = localStorage.getItem('token') || '';
     } catch (error) {
-      
-      console.error('Error loading videos:', error);
-   
+    }
+    
+    const video = this.videoRef.nativeElement;
+
+    if (Hls.isSupported()) {
+      this.hls = new Hls();
+      this.hls.loadSource(this.videoUrl);
+
+      // Añadir el token de autorización a la solicitud
+      this.hls.config.xhrSetup = (xhr: XMLHttpRequest) => {
+        xhr.setRequestHeader('Authorization', `Token ${this.authToken}`);
+      };
+
+      this.hls.attachMedia(video);
+
+      // Añadir niveles de calidad
+      this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        this.qualityLevels = this.hls.levels.map((level, index) => ({
+          index,
+          label: `${level.height}p`
+        }));
+        this.qualityLevels.unshift({ index: -1, label: 'Auto' }); // Opcion auto
+      });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      // Para navegadores que soportan HLS nativamente
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', this.videoUrl, true);
+      xhr.setRequestHeader('Authorization', `Token ${this.authToken}`);
+      xhr.responseType = 'blob';
+
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          video.src = URL.createObjectURL(xhr.response);
+        }
+      };
+
+      xhr.send();
+    }
+  }
+
+  changeQuality(index: number) {
+    if (this.hls) {
+      this.selectedQuality = index;
+      this.hls.currentLevel = index; // -1 para auto
     }
   }
 }
