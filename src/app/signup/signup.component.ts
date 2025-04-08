@@ -48,6 +48,10 @@ export class SignupComponent {
     // Llamar al servicio de login
     interface SignupResponse {
       token?: string;
+      user?: {
+        id: number;
+        username: string;
+      };
     }
 
     interface SignupError {
@@ -59,6 +63,9 @@ export class SignupComponent {
       // Si el token existe, lo almacenamos en localStorage
       if (res.token) {
       localStorage.setItem('token', res.token);
+      }
+      if(res.user){
+        localStorage.setItem('user', JSON.stringify(res.user));
       }
       // Finalmente, después de recibir la respuesta, se establece isLoading en false
       this.isLoading = false;

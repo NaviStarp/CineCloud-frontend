@@ -82,6 +82,9 @@ export class LoginComponent implements OnInit {
       res.token ? this.token = res.token : this.token = '';
       if (this.token) {
         localStorage.setItem('token', this.token);
+        if (res.user) {
+          localStorage.setItem('user', JSON.stringify(res.user));
+        }
         // Finalmente, después de recibir la respuesta, se establece isLoading en false
         this.isLoading = false;
         window.location.href = '/';

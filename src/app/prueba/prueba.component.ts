@@ -11,7 +11,7 @@ import Hls from 'hls.js';
   styleUrls: ['./prueba.component.css']
 })
 export class PruebaComponent {
-  @Input() videoUrl: string = 'http://localhost:8000/hls/pelicula/Puente/playlist.m3u8';
+  @Input() videoUrl: string = 'http://localhost:8000/hls/pelicula/Cubo/playlist.m3u8';
   authToken: string =  '';
   @ViewChild('videoPlayer') videoRef!: ElementRef<HTMLVideoElement>;
   hls!: Hls;

@@ -39,7 +39,7 @@ export class AuthService {
   constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Router) { }
 
   // Devuelve la URL del servidor
-  private getServerUrl(): string {
+  public getServerUrl(): string {
     if (isPlatformBrowser(this.platformId)) {
       console.log(environment.url);
       const ip =  environment.url  || localStorage.getItem('serverIp') ;
@@ -56,6 +56,17 @@ export class AuthService {
   private getToken(): string | null {
     if (isPlatformBrowser(this.platformId)) {
       return localStorage.getItem('token');
+    }
+    return null;
+  }
+  public getUserId(): string | null {
+    if (isPlatformBrowser(this.platformId)) {
+      const user = localStorage.getItem('user');
+      if (user) {
+        const parsedUser = JSON.parse(user);
+        return parsedUser.id ? parsedUser.id.toString() : null;
+      }
+      return localStorage.getItem('user.id');
     }
     return null;
   }
@@ -122,70 +133,62 @@ export class AuthService {
       body: JSON.stringify(user)
     }).then(res => res.json());
   }
-public async uploadVideos(videos: VideoEntry[]) {
-  const formData = new FormData();
-  
-  videos.forEach((video, index) => {
-    formData.append(`videos[${index}][name]`, video.name);
-    formData.append(`videos[${index}][description]`, video.description || '');
+  public async uploadVideos(videos: VideoEntry[]) {
+    const formData = new FormData();
     
-      formData.append(`videos[${index}][video]`, video.videoBlob, video.name);    
-    // Make sure thumbnail is also valid
-    if (typeof video.thumbnail === 'string' && video.thumbnail.startsWith('data:image')) {
-      const byteString = atob(video.thumbnail.split(',')[1]);
-      const arrayBuffer = new ArrayBuffer(byteString.length);
-      const uint8Array = new Uint8Array(arrayBuffer);
-      for (let i = 0; i < byteString.length; i++) {
-      uint8Array[i] = byteString.charCodeAt(i);
+    videos.forEach((video, index) => {
+      formData.append(`videos[${index}][name]`, video.name);
+      formData.append(`videos[${index}][description]`, video.description || '');
+      
+      formData.append(`videos[${index}][video]`, video.videoBlob, video.name);
+      
+      if (typeof video.thumbnail === 'string' && video.thumbnail.startsWith('data:image')) {
+        const byteString = atob(video.thumbnail.split(',')[1]);
+        const arrayBuffer = new ArrayBuffer(byteString.length);
+        const uint8Array = new Uint8Array(arrayBuffer);
+        for (let i = 0; i < byteString.length; i++) {
+          uint8Array[i] = byteString.charCodeAt(i);
+        }
+        const blob = new Blob([uint8Array], { type: 'image/jpeg' });
+        formData.append(`videos[${index}][thumbnail]`, blob, `${video.name}-thumbnail.jpg`);
       }
-      const blob = new Blob([uint8Array], { type: 'image/jpeg' });
-      formData.append(`videos[${index}][thumbnail]`, blob, `${video.name}-thumbnail.jpg`);
-    }
-    
-    formData.append(`videos[${index}][mediaType]`, video.mediaType);
-    
-    // Format the date properly - send full date string in ISO format
-    const releaseDate = video.releaseDate instanceof Date ? video.releaseDate : new Date(video.releaseDate);
-    formData.append(`videos[${index}][releaseDate]`, releaseDate.toISOString().split('T')[0]);
-    
-    if (video.mediaType === 'series') {
-      formData.append(`videos[${index}][season]`, video.season?.toString() || '');
-      formData.append(`videos[${index}][chapter]`, video.chapter?.toString() || '');
-      formData.append(`videos[${index}][seriesName]`, video.seriesName || '');
-      formData.append(`videos[${index}][seriesDescription]`, video.seriesDescription || '');
-      const seriesReleaseDate = video.seriesReleaseDate instanceof Date ? video.seriesReleaseDate : new Date();
-      formData.append(`videos[${index}][seriesReleaseDate]`, seriesReleaseDate.toISOString().split('T')[0]);
-    }
-  });
-  
-  // Add debugging
-  console.log('Sending video upload request with form data:');
-  for (const pair of formData.entries()) {
-    console.log(`${pair[0]}: ${pair[1]}`);
-  }
-
-  try {
-    const response = await fetch(`${this.getServerUrl()}/media/upload/`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Token ${this.getToken()}`
-        // Note: Don't set Content-Type header when using FormData
-      },
-      body: formData
+      
+      formData.append(`videos[${index}][mediaType]`, video.mediaType);
+      
+      const releaseDate = video.releaseDate instanceof Date ? video.releaseDate : new Date(video.releaseDate);
+      formData.append(`videos[${index}][releaseDate]`, releaseDate.toISOString().split('T')[0]);
+      
+      if (video.mediaType === 'series') {
+        formData.append(`videos[${index}][season]`, video.season?.toString() || '');
+        formData.append(`videos[${index}][chapter]`, video.chapter?.toString() || '');
+        formData.append(`videos[${index}][seriesName]`, video.seriesName || '');
+        formData.append(`videos[${index}][seriesDescription]`, video.seriesDescription || '');
+        const seriesReleaseDate = video.seriesReleaseDate instanceof Date ? video.seriesReleaseDate : new Date();
+        formData.append(`videos[${index}][seriesReleaseDate]`, seriesReleaseDate.toISOString().split('T')[0]);
+      }
     });
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Upload error:', response.status, errorText);
-      throw new Error(`Upload failed: ${response.status} ${errorText}`);
+  
+    try {
+      const response = await fetch(`${this.getServerUrl()}/media/upload/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Token ${this.getToken()}`
+        },
+        body: formData
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Upload error:', response.status, errorText);
+        throw new Error(`Upload failed: ${response.status} ${errorText}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Upload exception:', error);
+      throw error;
     }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Upload exception:', error);
-    throw error;
   }
-}
 public async getVideos(): Promise<MediaResponse> {
   if(!this.getToken() || this.getServerUrl() === ''){
     return { peliculas: [], series: [], episodios: [] };

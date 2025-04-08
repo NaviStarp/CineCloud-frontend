@@ -8,6 +8,7 @@ import { VideoFormComponent } from '../video-form/video-form.component';
 import { Router } from '@angular/router';
 import { VideoEntry } from '../services/indexed-db.service';
 import { AuthService, Series } from '../services/auth.service';
+import { ProgressBarComponent } from '../general/progress-bar/progress-bar.component';
 
 @Component({
   selector: 'app-media-form',
@@ -16,7 +17,8 @@ import { AuthService, Series } from '../services/auth.service';
     FontAwesomeModule,
     CommonModule,
     FormsModule,
-    VideoFormComponent
+    VideoFormComponent,
+    ProgressBarComponent
   ],
   templateUrl: './media-form.component.html',
   styleUrls: ['./media-form.component.css']
@@ -33,6 +35,14 @@ export class MediaFormComponent implements OnInit {
   series: Series[] = [];
   @ViewChild('videoContainer', { static: false }) videoContainer!: ElementRef;
   @ViewChildren('videoItem') videoItems!: QueryList<ElementRef>;
+
+// Barra de progreso
+  progress: number = 0;
+  message: string = '';
+  isError: boolean = false;
+  isWarning: boolean = false;
+  isSuccess: boolean = false;
+
 
   constructor(private indexedDbService: IndexedDbService, private router: Router,private auth:AuthService) { }
 
@@ -100,10 +110,69 @@ export class MediaFormComponent implements OnInit {
   async uploadVideos(event: Event) {
     event.preventDefault();
     this.isLoading = true;
-    await this.auth.uploadVideos(this.videos);
-    this.isLoading = false;
-    this.indexedDbService.delAll()
-    this.router.navigate(['/']);
+    this.progress = 0;
+    this.message = 'Iniciando la subida de videos...';
+    
+    try {
+      // Establecer la conexión WebSocket
+      const userId = this.auth.getUserId();
+      const url = this.auth.getServerUrl();
+      const wsUrl = url.replace('http', 'ws') + `/ws/progress/${userId}/`;
+      const socket = new WebSocket(wsUrl);
+      
+      socket.onopen = () => {
+        console.log('WebSocket connection established');
+      };
+      
+      socket.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          console.log('Progress data:', data);
+          
+          this.progress = data.progress || 0;
+          this.message = data.message || '';
+          
+          if (data.status === 'error') {
+            this.isError = true;
+            this.isWarning = false;
+            this.isSuccess = false;
+          } else if (data.status === 'warning') {
+            this.isError = false; 
+            this.isWarning = true;
+            this.isSuccess = false;
+          } else if (data.progress === 100) {
+            this.isError = false;
+            this.isWarning = false;
+            this.isSuccess = true;
+          } else {
+            this.isError = false;
+            this.isWarning = false;
+            this.isSuccess = false;
+          }
+        } catch (err) {
+          console.error('Error parsing WebSocket message:', err);
+        }
+      };
+      
+      socket.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        this.isError = true;
+        this.message = 'Error en la conexión WebSocket';
+      };
+      
+      await this.auth.uploadVideos(this.videos);
+      
+      socket.close();
+      
+      this.isLoading = false;
+      this.indexedDbService.delAll();
+      this.router.navigate(['/']);
+    } catch (error) {
+      console.error('Upload error:', error);
+      this.isError = true;
+      this.message = 'Error durante la subida: ' + (error instanceof Error ? error.message : 'Error desconocido');
+      this.isLoading = false;
+    }
   }
 
   addVideos(event: Event) {

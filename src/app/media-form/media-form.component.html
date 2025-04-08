@@ -48,8 +48,11 @@
 
 <!--- Barra de carga --->
 <div *ngIf="isLoading" class="fixed inset-0 flex items-center justify-center z-50">
-  <div class="flex items-center">
-    <fa-icon [icon]="faSpinner" class="animate-spin text-primary-500 text-3xl mr-2"></fa-icon>
-    <span class="text-white">Cargando...</span>
-  </div>
+  <app-progress-bar
+    [progress]="progress"
+    [isError]="isError"
+    [isWarning]="isWarning"
+    [isSuccess]="isSuccess"
+    [message]="message"
+  ></app-progress-bar>
 </div>

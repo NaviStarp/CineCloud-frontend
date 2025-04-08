@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Tektur:wght@400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
 
 body {
-  font-family: 'Noto Sans', 'Tektur', Helvetica, sans-serif;
+  font-family: 'Lexend','Noto Sans', 'Tektur', Helvetica, sans-serif;
   background-color: var(--color-neutral-900);
 }
 
