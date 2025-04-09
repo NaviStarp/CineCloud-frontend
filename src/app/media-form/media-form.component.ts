@@ -107,6 +107,28 @@ export class MediaFormComponent implements OnInit {
       console.error('Error al guardar el video:', error);
     }
   }
+  async getMinutesVideo(video: VideoEntry): Promise<number> {
+    if (video.videoBlob) {
+      return new Promise((resolve) => {
+        const videoElement = document.createElement('video');
+        videoElement.src = URL.createObjectURL(video.videoBlob);
+        videoElement.preload = 'metadata';
+
+        videoElement.onloadedmetadata = () => {
+          console.log('Duración del video:', videoElement.duration);
+          URL.revokeObjectURL(videoElement.src);
+          resolve(Math.floor(videoElement.duration / 60));
+        };
+
+        videoElement.onerror = () => {
+          console.error('Error al cargar el video:', videoElement.error);
+          URL.revokeObjectURL(videoElement.src);
+          resolve(0); 
+        };
+      });
+    }
+    return 0;
+  }
   async uploadVideos(event: Event) {
     event.preventDefault();
     this.isLoading = true;
@@ -159,6 +181,11 @@ export class MediaFormComponent implements OnInit {
         this.isError = true;
         this.message = 'Error en la conexión WebSocket';
       };
+      // Rellenar durarción de los videos
+      for (const video of this.videos) {
+        video.duration = await this.getMinutesVideo(video);
+        console.log('Duración del video:', video.duration);
+      }
       
       await this.auth.uploadVideos(this.videos);
       

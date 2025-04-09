@@ -4,10 +4,11 @@ import { CommonModule } from '@angular/common';
 import { MediaViewComponent } from './media-view/media-view.component';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ModalErrorComponent } from "../general/modal-error/modal-error.component";
+import { VideoPlayerComponent } from "../general/video-player/video-player.component";
 
 @Component({
   selector: 'app-media-list',
-  imports: [CommonModule, MediaViewComponent, ModalErrorComponent],
+  imports: [CommonModule, MediaViewComponent, ModalErrorComponent, VideoPlayerComponent],
   templateUrl: './media-list.component.html',
   styleUrl: './media-list.component.css'
 })

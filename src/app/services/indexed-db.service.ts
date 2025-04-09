@@ -11,6 +11,7 @@ export interface VideoEntry {
   mediaType: string;
   releaseDate: Date;
   chapter: number | null;
+  duration?: number | null;
   season: number | null;
   seriesId: number | null;
   seriesName: string | null;

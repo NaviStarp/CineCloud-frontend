@@ -1,0 +1,158 @@
+<!-- video-player.component.html -->
+<div class="video-container relative w-full h-full bg-black" 
+     (mousemove)="showControlsTemporarily()" 
+    [class.cursor-none]="!showControls"
+     (click)="togglePlay()">
+  
+  <!-- Video Element -->
+  <video #videoPlayer 
+         class="w-full h-full outline-none" 
+         (click)="$event.stopPropagation();togglePlay()">
+  </video>
+  
+  <!-- Prime Video Title Bar (top) -->
+  <div *ngIf="showControls" 
+       class="absolute top-0 left-0 right-0 p-4 bg-gradient-to-b from-black/80 to-transparent flex items-center justify-between transition-opacity duration-300">
+    <div class="text-white">
+      <h2 class="text-xl font-bold">{{videoTitle}}</h2>
+      <p *ngIf="episodeInfo" class="text-sm opacity-80">{{episodeInfo}}</p>
+    </div>
+  </div>
+  
+  <!-- Prime Video Control Bar (bottom) -->
+  <div *ngIf="showControls" 
+       class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent transition-opacity duration-300">
+    
+    <!-- Progress Bar -->
+    <div class="progress-container relative h-1 mb-3 bg-white/30 cursor-pointer" (click)="seek($event)">
+      <div class="buffer-bar absolute top-0 left-0 h-full bg-white/40" 
+           [style.width.%]="bufferPercent"></div>
+      <div class="progress-bar absolute top-0 left-0 h-full bg-blue-500" 
+           [style.width.%]="(currentTime / duration) * 100"></div>
+      <div class="absolute top-0 left-0 bottom-0 w-full h-6 -mt-2 opacity-0"></div>
+    </div>
+    
+    <!-- Controls -->
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <!-- Play/Pause -->
+        <button class="text-white hover:text-blue-400 focus:outline-none" (click)="togglePlay(); $event.stopPropagation()">
+          <svg *ngIf="!isPlaying" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <svg *ngIf="isPlaying" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </button>
+        
+        <!-- Rewind 10s -->
+        <button class="text-white hover:text-blue-400 focus:outline-none" (click)="skip(-10); $event.stopPropagation()">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.333 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z" />
+          </svg>
+        </button>
+        
+        <!-- Forward 10s -->
+        <button class="text-white hover:text-blue-400 focus:outline-none" (click)="skip(10); $event.stopPropagation()">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z" />
+          </svg>
+        </button>
+
+        <!-- Volume -->
+        <div class="relative">
+          <button class="text-white hover:text-blue-400 focus:outline-none" 
+                  (click)="toggleVolumeSlider(); $event.stopPropagation()">
+            <svg *ngIf="!isMuted" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+            </svg>
+            <svg *ngIf="isMuted" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+            </svg>
+          </button>
+          
+          <!-- Volume Slider -->
+          <div *ngIf="showVolumeSlider" 
+              class="absolute bottom-full mb-2 py-2 px-1 bg-gray-800 rounded shadow-lg" 
+              (click)="$event.stopPropagation()">
+              <input type="range"
+              class="appearance-none w-24 h-1 bg-white/30 rounded-full focus:outline-none cursor-pointer"
+              min="0" max="1" step="0.05"
+              [value]="volume"
+              (input)="setVolume($event)">
+        </div>
+        
+        <!-- Time Display -->
+        <div class="text-white text-sm">
+          {{formatTime(currentTime)}} / {{formatTime(duration)}}
+        </div>
+      </div>
+      
+      <div class="flex items-center space-x-4">
+        <!-- Subtitulos -->
+        <!-- <button class="text-white hover:text-blue-400 focus:outline-none" 
+                (click)="toggleSubtitles(); $event.stopPropagation()">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" 
+              [class.text-blue-500]="subtitlesEnabled">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+          </svg>
+        </button> -->
+        
+        <!-- Calidad -->
+        <div class="relative">
+          <button class="text-white hover:text-blue-400 focus:outline-none flex items-center" 
+                  (click)="toggleQualityMenu(); $event.stopPropagation()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </button>
+          
+          <!-- Menu calidad -->
+          <div *ngIf="showQualityMenu" 
+               class="absolute bottom-full right-0 mb-2 py-2 bg-gray-800 rounded shadow-lg" 
+               (click)="$event.stopPropagation()">
+            <div *ngFor="let quality of qualityLevels" 
+                 class="px-4 py-1 text-white hover:bg-gray-700 cursor-pointer text-sm whitespace-nowrap"
+                 [class.text-blue-500]="quality.index === selectedQuality"
+                 (click)="changeQuality(quality.index)">
+              {{ quality.label }}
+            </div>
+          </div>
+        </div>
+        
+        <!-- Pantalla completa  -->
+        <button class="text-white hover:text-blue-400 focus:outline-none" 
+                (click)="toggleFullscreen(); $event.stopPropagation()">
+          <svg *ngIf="!isFullscreen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
+          </svg>
+          <svg *ngIf="isFullscreen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Large play button (shows when paused) -->
+  <div *ngIf="!isPlaying && !showControls" class="absolute inset-0 flex items-center justify-center">
+    <button class="bg-white/10 hover:bg-white/20 text-white rounded-full p-6 focus:outline-none" (click)="togglePlay(); $event.stopPropagation()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+      </svg>
+    </button>
+  </div>
+  
+  <!-- Skip Intro / Next Episode buttons (when applicable) -->
+  <div *ngIf="showControls" class="absolute bottom-24 right-8">
+    <button class="bg-white/10 hover:bg-white/20 text-white py-2 px-4 rounded mr-2 text-sm">
+      Skip Intro
+    </button>
+    <button class="bg-white/10 hover:bg-white/20 text-white py-2 px-4 rounded text-sm">
+      Next Episode
+    </button>
+  </div>
+</div>

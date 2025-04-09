@@ -1,0 +1,48 @@
+/* video-player.component.css */
+.video-container {
+    aspect-ratio: 16 / 9;
+    max-height: 100vh;
+  }
+  
+  /* Custom styling for the range input (volume slider) */
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    outline: none;
+  }
+  
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #3b82f6; /* blue-500 */
+    cursor: pointer;
+  }
+  
+  input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #3b82f6; /* blue-500 */
+    cursor: pointer;
+    border: none;
+  }
+  
+  /* Progress bar hover effect */
+  .progress-container:hover .progress-bar {
+    height: 3px;
+  }
+  
+  .progress-container:hover .buffer-bar {
+    height: 3px;
+  }
+  
+  /* Prevent text selection */
+  .video-container {
+    user-select: none;
+  }

@@ -135,8 +135,9 @@ export class AuthService {
   }
   public async uploadVideos(videos: VideoEntry[]) {
     const formData = new FormData();
-    
+
     videos.forEach((video, index) => {
+      console.log(video);
       formData.append(`videos[${index}][name]`, video.name);
       formData.append(`videos[${index}][description]`, video.description || '');
       
@@ -157,7 +158,9 @@ export class AuthService {
       
       const releaseDate = video.releaseDate instanceof Date ? video.releaseDate : new Date(video.releaseDate);
       formData.append(`videos[${index}][releaseDate]`, releaseDate.toISOString().split('T')[0]);
-      
+      if(video.duration){
+        formData.append(`videos[${index}][duration]`, video.duration.toString());
+      }
       if (video.mediaType === 'series') {
         formData.append(`videos[${index}][season]`, video.season?.toString() || '');
         formData.append(`videos[${index}][chapter]`, video.chapter?.toString() || '');
