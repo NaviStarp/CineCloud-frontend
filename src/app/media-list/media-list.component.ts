@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService, MediaResponse } from '../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { MediaViewComponent } from './media-view/media-view.component';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ModalErrorComponent } from "../general/modal-error/modal-error.component";
 import { VideoPlayerComponent } from "../general/video-player/video-player.component";
 
@@ -14,10 +14,9 @@ import { VideoPlayerComponent } from "../general/video-player/video-player.compo
 })
 export class MediaListComponent implements OnInit {
   videos: MediaResponse | null = null;
-  videoUrl: SafeResourceUrl | null = null;
+  videoUrl: string  = '';
   showVideo: boolean = false;
   showSelectEpisode: boolean = false;
-
   // Error handling properties
   errorTitle: string = '';
   errorMessage: string = '';
@@ -57,52 +56,13 @@ export class MediaListComponent implements OnInit {
 
   onSee(media: any) {
     console.log('Media clicked:', media);
-    this.loadVideo(media);
+    this.videoUrl = this.auth.getHLSUrl(media.video);
+    console.log('Video URL:', this.videoUrl);
   }
 
-  loadVideo(media: any) {
-    console.log('Load video:', media);
-    if(!media.video) {
-      this.auth.getSerieEpisodes(media.id).then((episodes) => {
-        if(this.videos) {
-        this.videos.episodios = episodes;
-        }
-        this.toggleSelectEpisode();
-        console.log('Episodes:', episodes);
-      }).catch((error) => {
-        console.error('Error loading episodes:', error);
-        this.showErrorModal('Error Loading Episodes', 'An error occurred while loading the episodes. Please try again later.');
-      }
-      );
-      return;
-    }
-    this.auth.getVideoUrl(media.video).then((url) => {
-      this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-      console.log('Video Blob:', this.videoUrl);
-      console.log('Video URL:', url);
-      this.showVideo = true;
-    }).catch((error) => {
-      console.error('Error loading video:', error);
-      this.showErrorModal('Error Loading Video', 'An error occurred while loading the video. Please try again later.');
-    });
-  }
-
-  loadEpisodeVideo(media: any) {
-    this.auth.getVideoUrl(media.video).then((url) => {
-      this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-      console.log('Episode Video Blob:', this.videoUrl);
-      console.log('Episode Video URL:', url);
-      this.showVideo = true;
-    }
-    ).catch((error) => {
-      console.error('Error loading episode video:', error);
-      this.showErrorModal('Error Loading Episode Video', 'An error occurred while loading the episode video. Please try again later.');
-    }
-    );
-  }
   closeVideo() {
     this.showVideo = false;
-    this.videoUrl = null;
+    this.videoUrl = '';
   }
 
   toggleSelectEpisode() {

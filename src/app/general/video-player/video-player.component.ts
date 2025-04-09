@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, ElementRef, Inject, Input, OnDestroy, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, Input, OnChanges, OnDestroy, OnInit, PLATFORM_ID, SimpleChange, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import Hls from 'hls.js';
 
@@ -14,6 +14,35 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
   @Input() videoUrl: string = 'http://localhost:8000/hls/pelicula/Cubo/playlist.m3u8';
   @Input() videoTitle: string = 'Video Title';
   @Input() episodeInfo: string = '';
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['videoUrl'] && !changes['videoUrl'].firstChange) {
+      this.reloadVideo();
+    }
+  }
+  reloadVideo() {
+    const video = this.videoRef.nativeElement;
+  
+    // Pausar y limpiar fuente actual
+    video.pause();
+    video.removeAttribute('src');
+    video.load();
+  
+    // Destruir instancia HLS anterior si existe
+    if (this.hls) {
+      this.hls.destroy();
+    }
+  
+    // Volver a inicializar el video
+    if (Hls.isSupported()) {
+      this.initializeHls(video);
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      this.initializeNativeHls(video);
+    }
+    video.play();
+  }
+    
+
   @ViewChild('videoPlayer') videoRef!: ElementRef<HTMLVideoElement>;
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
   hls!: Hls;
@@ -51,33 +80,35 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
   }
 
 
-  
+  setup():void{
+    if (!this.isBrowser()) {
+      return;
+    }
+    const video = this.videoRef.nativeElement;
+
+    // Ensure volume is set and not muted
+    video.volume = this.volume;
+    video.muted = false;
+
+    // Set up event listeners
+    video.addEventListener('timeupdate', this.updateProgress.bind(this));
+    video.addEventListener('loadedmetadata', this.initializeVideo.bind(this));
+    video.addEventListener('play', () => this.isPlaying = true);
+    video.addEventListener('pause', () => this.isPlaying = false);
+    video.addEventListener('progress', this.updateBuffer.bind(this));
+    
+    // Initialize HLS
+    if (Hls.isSupported()) {
+      this.initializeHls(video);
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      this.initializeNativeHls(video);
+    }
+    
+    // Hide controls when mouse is inactive
+    document.addEventListener('mousemove', this.showControlsTemporarily.bind(this));
+  }
   ngAfterViewInit() {
-      if (!this.isBrowser()) {
-        return;
-      }
-      const video = this.videoRef.nativeElement;
-  
-      // Ensure volume is set and not muted
-      video.volume = this.volume;
-      video.muted = false;
-  
-      // Set up event listeners
-      video.addEventListener('timeupdate', this.updateProgress.bind(this));
-      video.addEventListener('loadedmetadata', this.initializeVideo.bind(this));
-      video.addEventListener('play', () => this.isPlaying = true);
-      video.addEventListener('pause', () => this.isPlaying = false);
-      video.addEventListener('progress', this.updateBuffer.bind(this));
-      
-      // Initialize HLS
-      if (Hls.isSupported()) {
-        this.initializeHls(video);
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        this.initializeNativeHls(video);
-      }
-      
-      // Hide controls when mouse is inactive
-      document.addEventListener('mousemove', this.showControlsTemporarily.bind(this));
+    this.setup();
     }
   
   initializeHls(video: HTMLVideoElement) {

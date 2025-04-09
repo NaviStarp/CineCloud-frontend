@@ -133,6 +133,9 @@ export class AuthService {
       body: JSON.stringify(user)
     }).then(res => res.json());
   }
+  public getHLSUrl(url: string) {
+    return `${this.getServerUrl()}${url}/playlist.m3u8`;
+  }
   public async uploadVideos(videos: VideoEntry[]) {
     const formData = new FormData();
 
@@ -202,6 +205,7 @@ public async getVideos(): Promise<MediaResponse> {
       'Authorization': `Token ${this.getToken()}`
     }
   });
+  console.log(response);
   return response.json();
 }
   public async getSeries(): Promise<Series[]> {
@@ -215,17 +219,6 @@ public async getVideos(): Promise<MediaResponse> {
       }
     });
     return response.json();
-  }
-  public async getVideoUrl(url:string){
-    if(url.startsWith('/media')) //Temporal TODO
-      url = url.substring(7);
-    const response = await fetch(`${this.getServerUrl()}/media/${url}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Token ${this.getToken()}`
-      },
-    }).then(res => res.blob().then(blob => URL.createObjectURL(blob)));
-    return response;
   }
   public async getThumnailUrl(url:string){
     const response = await fetch(`${this.getServerUrl()}/media/${url}`, {
