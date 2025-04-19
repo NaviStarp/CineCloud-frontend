@@ -16,8 +16,8 @@ Sigue estos pasos para configurar el proyecto en tu entorno local:
 
 1. Clona el repositorio:
    ```bash
-   git clone https://github.com/tu-usuario/cinecloud.git
-   cd cinecloud
+   git clone https://github.com/NaviStarp/CineCloud-frontend.git
+   cd CineCloud-frontend
    ```
 
 2. Instala las dependencias:
