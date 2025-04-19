@@ -363,7 +363,7 @@ function enableLogs(debugConfig, context, id) {
       newLogger[key] = getLoggerFn(key, debugConfig, id);
     });
     try {
-      newLogger.log(`Debug logs enabled for "${context}" in hls.js version ${"1.6.1"}`);
+      newLogger.log(`Debug logs enabled for "${context}" in hls.js version ${"1.6.2"}`);
     } catch (e) {
       return createLogger();
     }
@@ -4194,7 +4194,7 @@ var FragmentTracker = class {
     if (!activeParts) {
       return;
     }
-    this.activePartLists[levelType] = activeParts.filter((part) => part.fragment.sn >= snToKeep);
+    this.activePartLists[levelType] = filterParts(activeParts, (part) => part.fragment.sn >= snToKeep);
   }
   fragBuffered(frag, force) {
     const fragKey = getFragmentKey(frag);
@@ -4406,7 +4406,7 @@ var FragmentTracker = class {
     const activeParts = this.activePartLists[fragment.type];
     if (activeParts) {
       const snToRemove = fragment.sn;
-      this.activePartLists[fragment.type] = activeParts.filter((part) => part.fragment.sn !== snToRemove);
+      this.activePartLists[fragment.type] = filterParts(activeParts, (part) => part.fragment.sn !== snToRemove);
     }
     delete this.fragments[fragKey];
     if (fragment.endList) {
@@ -4431,6 +4431,15 @@ function isPartial(fragmentEntity) {
 }
 function getFragmentKey(fragment) {
   return `${fragment.type}_${fragment.level}_${fragment.sn}`;
+}
+function filterParts(partList, predicate) {
+  return partList.filter((part) => {
+    const keep = predicate(part);
+    if (!keep) {
+      part.clearElementaryStreamInfo();
+    }
+    return keep;
+  });
 }
 var DecrypterAesMode = {
   cbc: 0,
@@ -6946,13 +6955,14 @@ function mergeDetails(oldDetails, newDetails) {
   }
   let PTSFrag;
   mapFragmentIntersection(oldDetails, newDetails, (oldFrag, newFrag, newFragIndex, newFragments2) => {
-    if (newDetails.skippedSegments) {
-      if (newFrag.cc !== oldFrag.cc) {
-        const ccOffset = oldFrag.cc - newFrag.cc;
-        for (let i = newFragIndex; i < newFragments2.length; i++) {
-          newFragments2[i].cc += ccOffset;
-        }
+    if (!newDetails.startCC && newFrag.cc !== oldFrag.cc) {
+      var _getFragmentWithSN$cc, _getFragmentWithSN;
+      const ccOffset = oldFrag.cc - newFrag.cc;
+      for (let i = newFragIndex; i < newFragments2.length; i++) {
+        newFragments2[i].cc += ccOffset;
       }
+      newDetails.startCC = (_getFragmentWithSN$cc = (_getFragmentWithSN = getFragmentWithSN(oldDetails, newDetails.startSN - 1)) == null ? void 0 : _getFragmentWithSN.cc) != null ? _getFragmentWithSN$cc : newFragments2[0].cc;
+      newDetails.endCC = newFragments2[newFragments2.length - 1].cc;
     }
     if (isFiniteNumber(oldFrag.startPTS) && isFiniteNumber(oldFrag.endPTS)) {
       newFrag.setStart(newFrag.startPTS = oldFrag.startPTS);
@@ -8892,7 +8902,7 @@ function requireEventemitter3() {
 }
 var eventemitter3Exports = requireEventemitter3();
 var EventEmitter = getDefaultExportFromCjs(eventemitter3Exports);
-var version = "1.6.1";
+var version = "1.6.2";
 var workerStore = {};
 function hasUMDWorker() {
   return typeof __HLS_WORKER_BUNDLE__ === "function";
@@ -29853,7 +29863,7 @@ var StreamController = class extends BaseStreamController {
       }
     }
     if (video && details) {
-      if (!audio && video.type === "audiovideo") {
+      if (audio && video.type === "audiovideo") {
         this.logMuxedErr(frag);
       }
       const prevFrag = details.fragments[frag.sn - 1 - details.startSN];
