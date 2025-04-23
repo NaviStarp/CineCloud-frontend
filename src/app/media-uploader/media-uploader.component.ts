@@ -114,18 +114,25 @@ export class MediaUploaderComponent {
     }
   }
 
-  continuar() {
+   continuar() {
     if (this.selectedFiles.length > 0) {
       console.log('Archivos: ', this.selectedFiles);
-      // Guardar videos de forma secuencial
-      this.selectedFiles.forEach((file, index) => {
-        this.indexedDbService.saveVideo(file).then(() => {
-          console.log(`Video ${file.name} guardado correctamente`);
-          window.location.href = '/subir/2';
-        }).catch((error) => {
-          console.error(`Error al guardar el video ${file.name}:`, error);
-        });
+  
+      const savePromises = this.selectedFiles.map((file) => {
+        return this.indexedDbService.saveVideo(file)
+          .then(() => {
+            console.log(`Video ${file.name} guardado correctamente`);
+          })
+          .catch((error) => {
+            console.error(`Error al guardar el video ${file.name}:`, error);
+          });
       });
+  
+      Promise.all(savePromises).then(() => {
+        console.log('Todos los videos fueron guardados');
+        window.location.href = '/subir/2';
+      });
+  
     } else {
       console.log('No hay archivos seleccionados');
     }

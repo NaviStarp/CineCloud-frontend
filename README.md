@@ -1,59 +1,97 @@
 # CineCloud
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.4.
+CineCloud es una aplicación web desarrollada con Angular que permite [breve descripción de la aplicación].
 
-## Development server
+## Requisitos previos
 
-To start a local development server, run:
+Antes de comenzar, asegúrate de tener instalado:
+
+- [Node.js](https://nodejs.org/) (v14.x o superior)
+- [npm](https://www.npmjs.com/) (generalmente viene con Node.js)
+- [Angular CLI](https://angular.io/cli) (para herramientas de desarrollo)
+
+## Instalación
+
+Sigue estos pasos para configurar el proyecto en tu entorno local:
+
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/NaviStarp/CineCloud-frontend.git
+   cd CineCloud-frontend
+   ```
+
+2. Instala las dependencias:
+   ```bash
+   npm install
+   ```
+
+## Iniciar el servidor de desarrollo
+
+Para iniciar un servidor de desarrollo local:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Una vez que el servidor esté en funcionamiento, abre tu navegador y ve a `http://localhost:4200/`. La aplicación se recargará automáticamente si cambias alguno de los archivos fuente.
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Para especificar un puerto diferente:
 
 ```bash
-ng generate component component-name
+ng serve --port 4201
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Construcción para producción
+
+Para compilar el proyecto para producción:
 
 ```bash
-ng generate --help
+ng build --prod
 ```
 
-## Building
+Los archivos de la compilación se almacenarán en el directorio `dist/`.
 
-To build the project run:
+## Pruebas
 
-```bash
-ng build
-```
+### Pruebas unitarias
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Para ejecutar pruebas unitarias:
 
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
+### Pruebas end-to-end
 
-For end-to-end (e2e) testing, run:
+Para ejecutar pruebas end-to-end:
 
 ```bash
 ng e2e
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Estructura del proyecto
 
-## Additional Resources
+```
+cinecloud/
+├── src/                 # Código fuente
+│   ├── app/            # Componentes, servicios, etc.
+│   ├── assets/         # Imágenes, fuentes, etc.
+│   └── environments/   # Variables de entorno
+├── angular.json        # Configuración de Angular
+├── package.json        # Dependencias y scripts
+└── README.md           # Este archivo
+```
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Problemas comunes
+
+- **Error: Port 4200 is already in use**
+  - Solución: Utiliza un puerto diferente con `ng serve --port 4201`
+
+- **Error al instalar dependencias**
+  - Solución: Intenta borrar `node_modules` y `package-lock.json` y luego ejecuta `npm install` nuevamente
+
+## Recursos adicionales
+
+- [Documentación oficial de Angular](https://angular.dev/)
+- [Documentación de Angular CLI](https://angular.dev/tools/cli)
+
