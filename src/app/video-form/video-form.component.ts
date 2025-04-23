@@ -27,12 +27,13 @@ import { AuthService, Series } from '../services/auth.service';
 })
 export class VideoFormComponent implements OnInit {
   @Input() video!: VideoEntry;
+
   @Output() videoChange = new EventEmitter<VideoEntry>();
   @ViewChild('videoPlayer') videoPlayer!: ElementRef;
 
   isVideoPlaying = false;
   isEditing = false;
-
+  categories = [''];
   videoUrl :string | null = null;
 
   // Font Awesome icons
@@ -44,7 +45,7 @@ export class VideoFormComponent implements OnInit {
   
   seriesList: Series[] = []; // Lista de series disponibles
   isCreatingNewSeries = false;
-  newSeries = { name: '', description: '' ,releaseDate: new Date()};
+  newSeries = { name: '', description: '' ,releaseDate: new Date(),category: ''};
 
   constructor(private indexedDbService: IndexedDbService,private auth: AuthService) {
     // Inicializar el video si no se proporciona
@@ -57,6 +58,15 @@ export class VideoFormComponent implements OnInit {
   ngOnDestroy() {
     if (this.videoUrl) {
       URL.revokeObjectURL(this.videoUrl);
+    }
+  }
+  async loadCategories() {
+    try {
+      const categories = await this.auth.getCategories();
+      this.categories = categories.map((category: any) => category.name);
+    }
+    catch (error) {
+      console.error('Error al cargar las categorías:', error);
     }
   }
 
@@ -154,24 +164,48 @@ export class VideoFormComponent implements OnInit {
       this.openCreateSeriesModal();
       return;
     }
-    console.log('Selected series ID:', event.target.value);
-    console.log('Selected series:', this.seriesList);
-    for (const serie of this.seriesList) {
-      if (Number(serie.id) === Number(event.target.value)) {
-        console.log('Selected series:', serie);
-        console.log('Selected series ID:', serie.id);
-        console.log('Selected series name:', serie.titulo);
-        this.video.seriesId = serie.id;
-        this.video.seriesName = serie.titulo;
-        this.video.seriesDescription = serie.descripcion;
-        this.video.seriesReleaseDate = new Date(serie.fecha_estreno);
-      }
+    
+    const selectedSeriesId = Number(event.target.value);
+    const selectedSeries = this.seriesList.find(serie => Number(serie.id) === selectedSeriesId);
+    
+    if (selectedSeries) {
+      this.video.seriesId = selectedSeries.id;
+      this.video.seriesName = selectedSeries.titulo;
+      this.video.seriesDescription = selectedSeries.descripcion;
+      this.video.seriesReleaseDate = new Date(selectedSeries.fecha_estreno);
+      
+      // Auto-completar temporada y capítulo
+      this.autoFillSeasonAndChapter(selectedSeries);
     }
+  }
+  
+  autoFillSeasonAndChapter(series: Series) {
+    if (!series.episodios || series.episodios.length === 0) {
+      // Si no hay episodios, comenzar con temporada 1, capítulo 1
+      this.video.season = 1;
+      this.video.chapter = 1;
+      return;
+    }
+    
+    // Encontrar la última temporada
+    const maxSeason = Math.max(...series.episodios.map(ep => ep.temporada || 0));
+    
+    // Encontrar el último capítulo de la última temporada
+    const episodesInLastSeason = series.episodios.filter(ep => ep.temporada === maxSeason);
+    let maxChapter = 0;
+    
+    if (episodesInLastSeason.length > 0) {
+      maxChapter = Math.max(...episodesInLastSeason.map(ep => ep.numero || 0));
+    }
+    
+    // Sugerir el siguiente capítulo en la misma temporada
+    this.video.season = maxSeason;
+    this.video.chapter = maxChapter + 1;
   }
 
   openCreateSeriesModal() {
     this.isCreatingNewSeries = true;
-    this.newSeries = { name: '', description: '' ,releaseDate: new Date()};
+    this.newSeries = { name: '', description: '' ,releaseDate: new Date(),category: ''};
   }
 
   cancelCreateSeries() {
@@ -181,25 +215,35 @@ export class VideoFormComponent implements OnInit {
     }
   }
 
-  saveNewSeries() {
-    const newSeriesId = Date.now();
-    const createdSeries: Series = {
-      id: newSeriesId,
-      titulo: this.newSeries.name,
-      descripcion: this.newSeries.description,
-      temporadas: 1,
-      imagen: '',
-      fecha_estreno: this.newSeries.releaseDate.toString(),
-      episodios: []
-    };
+async saveNewSeries() {
+  const newSeriesId = Date.now();
+  const createdSeries: Series = {
+    id: newSeriesId,
+    titulo: this.newSeries.name,
+    descripcion: this.newSeries.description,
+    temporadas: 1,
+    imagen: this.video.thumbnail, // Coje la imagen del video
+    fecha_estreno: this.newSeries.releaseDate.toString(),
+    episodios: []
+  };
 
-    this.seriesList.push(createdSeries);
+  // Guardar la serie en el servicio AuthService
+  await this.auth.createSeries(createdSeries);
+  
+  // Actualizar la lista local de series
+  this.seriesList.push(createdSeries);
 
-    this.video.seriesId = newSeriesId; // Assigning numeric ID
-    this.video.seriesName = this.newSeries.name;
-    this.video.seriesDescription = this.newSeries.description;
-    this.video.seriesReleaseDate = this.newSeries.releaseDate;
+  this.video.seriesId = newSeriesId;
+  this.video.seriesName = this.newSeries.name;
+  this.video.seriesDescription = this.newSeries.description;
+  this.video.seriesReleaseDate = this.newSeries.releaseDate;
+  
+  // Si este es el primer episodio de la primera temporada
+  this.video.season = 1;
+  this.video.chapter = 1;
 
-    this.isCreatingNewSeries = false;
-  }
+  this.isCreatingNewSeries = false;
+  this.videoChange.emit(this.video);
+
+}
 }

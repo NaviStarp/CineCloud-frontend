@@ -115,8 +115,31 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     this.hls = new Hls({
       xhrSetup: (xhr: XMLHttpRequest) => {
         xhr.setRequestHeader('Authorization', `Token ${this.authToken}`);
+      },
+    });
+    
+
+    this.hls.on(Hls.Events.ERROR, (event, data) => {
+      console.error('HLS error:', data);
+      if (data.fatal) {
+        switch(data.type) {
+          case Hls.ErrorTypes.NETWORK_ERROR:
+            console.log('Error de red, intentando recuperar...');
+            this.hls.startLoad();
+            break;
+          case Hls.ErrorTypes.MEDIA_ERROR:
+            console.log('Error de medio, intentando recuperar...');
+            this.hls.recoverMediaError();
+            break;
+          default:
+            console.log('Error fatal, no se puede recuperar');
+            this.hls.destroy();
+            break;
+        }
       }
     });
+    
+    console.log("Cargando URL:", this.videoUrl);
     
     this.hls.loadSource(this.videoUrl);
     this.hls.attachMedia(video);

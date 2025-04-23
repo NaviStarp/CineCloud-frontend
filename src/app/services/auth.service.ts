@@ -195,6 +195,56 @@ export class AuthService {
       throw error;
     }
   }
+  public async getCategories(): Promise<any[]> {
+    if(!this.getToken() || this.getServerUrl() === ''){
+      return [];
+    }
+    const response = await fetch(`${this.getServerUrl()}/categories/`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${this.getToken()}`
+      }
+    });
+    return response.json();
+  }
+
+  public async createSeries(series: Series) {
+    const formData = new FormData();
+    formData.append('titulo', series.titulo);
+    formData.append('descripcion', series.descripcion);
+    formData.append('fecha_estreno', series.fecha_estreno);
+    formData.append('temporadas', series.temporadas.toString());
+    if (typeof series.imagen === 'string' && series.imagen.startsWith('data:image')) {
+      const byteString = atob(series.imagen.split(',')[1]);
+      const arrayBuffer = new ArrayBuffer(byteString.length);
+      const uint8Array = new Uint8Array(arrayBuffer);
+      for (let i = 0; i < byteString.length; i++) {
+        uint8Array[i] = byteString.charCodeAt(i);
+      }
+      const blob = new Blob([uint8Array], { type: 'image/jpeg' });
+      formData.append('imagen', blob, `${series.titulo}-thumbnail.jpg`);
+    }
+    try {
+      const response = await fetch(`${this.getServerUrl()}/series/new/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Token ${this.getToken()}`
+        },
+        body: formData
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Upload error:', response.status, errorText);
+        throw new Error(`Upload failed: ${response.status} ${errorText}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Upload exception:', error);
+      throw error;
+    }
+  }
 public async getVideos(): Promise<MediaResponse> {
   if(!this.getToken() || this.getServerUrl() === ''){
     return { peliculas: [], series: [], episodios: [] };

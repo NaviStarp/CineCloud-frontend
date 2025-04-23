@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewChildren, ElementRef, QueryList } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewChildren, ElementRef, QueryList, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -23,7 +23,7 @@ import { ProgressBarComponent } from '../general/progress-bar/progress-bar.compo
   templateUrl: './media-form.component.html',
   styleUrls: ['./media-form.component.css']
 })
-export class MediaFormComponent implements OnInit {
+export class MediaFormComponent implements OnInit, AfterViewInit {
   Math = Math;
   faFilm = faFilm;
   faTv = faTv;
@@ -34,7 +34,7 @@ export class MediaFormComponent implements OnInit {
   videos: VideoEntry[] = [];
   series: Series[] = [];
   @ViewChild('videoContainer', { static: false }) videoContainer!: ElementRef;
-  @ViewChildren('videoItem') videoItems!: QueryList<ElementRef>;
+  @ViewChildren('videoItem') videoItems!: QueryList<VideoFormComponent>;
 
 // Barra de progreso
   progress: number = 0;
@@ -48,6 +48,24 @@ export class MediaFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadVideos();
+  }
+
+  ngAfterViewInit(): void {
+    this.refreshSeriesInAllComponents();
+  }
+
+  refreshSeriesInAllComponents() {
+    console.log('Refreshing series in all components', this.videoItems);
+    if (this.videoItems && this.videoItems.length > 0) {
+      this.videoItems.forEach((videoItem) => {
+        if (videoItem) {
+          console.log('Refreshing series in video item:', videoItem);
+          videoItem.loadSeries()
+        }
+      });
+    } else {
+      console.warn('No video items found to refresh.');
+    }
   }
 
   async loadVideos() {
@@ -89,6 +107,7 @@ export class MediaFormComponent implements OnInit {
     this.videos[index] = updatedVideo;
     console.log('Videos:', this.videos);
     // Guardar los cambios en IndexedDB
+    this.refreshSeriesInAllComponents();
     this.saveVideoChanges(updatedVideo, index);
   }
   
