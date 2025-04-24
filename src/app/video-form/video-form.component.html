@@ -1,5 +1,5 @@
 <!-- Video Card Component -->
-<div (click)="toggleEdit($event)" class="video-card group relative flex rounded-xl shadow-lg overflow-hidden transition-all duration-300 bg-neutral-800/90 border border-neutral-700/50 backdrop-blur-sm hover:bg-neutral-800 hover:scale-[1.01] hover:shadow-xl h-28">
+<div (click)="toggleEdit($event)" class="video-card group relative flex rounded-xl shadow-lg overflow-hidden transition-all duration-300 bg-neutral-800/90 border border-neutral-700/50 backdrop-blur-sm hover:bg-neutral-800 hover:scale-101 hover:shadow-xl h-28">
   <!-- Thumbnail Container with Gradient Overlay -->
   <div class="thumbnail-container relative w-28 h-full flex-shrink-0 overflow-hidden">
     <img
@@ -25,8 +25,8 @@
   
   <!-- Video Content Section -->
   <div class="video-content flex-grow flex flex-col justify-center px-6 py-3">
-    <h3 class="video-title text-lg font-medium text-neutral-50  mb-1 overflow-clip sm:text-base md:text-lg  lg:text-xl">{{video.name}}  </h3>
-      <div class="flex items-center">
+    <h3 class="video-title text-lg font-medium text-neutral-50 mb-1 overflow-clip sm:text-base md:text-lg lg:text-xl">{{video.name}}</h3>
+    <div class="flex items-center">
       <span class="video-type text-sm text-neutral-400 px-2 py-0.5 rounded-full bg-neutral-700 mr-2">{{video.mediaType}}</span>
       <span class="video-series text-sm text-neutral-400" *ngIf="video.mediaType === 'series' && video.seriesName">
         {{video.seriesName}} S{{video.season}}:E{{video.chapter}}
@@ -45,6 +45,7 @@
   </div>
 </div>
 
+<!-- Formulario de edición -->
 <div 
   class="video-form bg-neutral-800 border border-neutral-700 text-neutral-50 rounded-xl p-6 mt-4 w-full shadow-lg transform transition-all duration-300"
   *ngIf="isEditing"
@@ -52,6 +53,7 @@
 >
   <h2 class="text-xl font-bold mb-5 text-neutral-100">Editar Video</h2>
   <form (submit)="saveChanges($event)" class="space-y-5">
+    <!-- Título -->
     <div class="form-group">
       <label for="title" class="block text-sm font-medium text-neutral-300 mb-2">Título</label>
       <input
@@ -64,120 +66,157 @@
       >
     </div>
     
-    <!-- Video Type Selector - Quick Toggle Buttons -->
+    <!-- Tipo de Video Selector -->
     <div class="form-group">
       <label class="block text-sm font-medium text-neutral-300 mb-2">Tipo de Video</label>
       <div class="flex space-x-4">
         <button
           type="button"
           [ngClass]="{'bg-primary-600 text-white': video.mediaType === 'Pelicula', 'bg-neutral-700 text-neutral-300': video.mediaType !== 'Pelicula'}"
-          class="px-5 py-2.5 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 flex-1"
+          class="px-5 py-2.5 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 flex-1 flex items-center justify-center"
           (click)="setVideoType('Pelicula')"
         >
-          Película
+          <fa-icon [icon]="faFilm" class="mr-2"></fa-icon> Película
         </button>
         <button
           type="button"
           [ngClass]="{'bg-primary-600 text-white': video.mediaType === 'series', 'bg-neutral-700 text-neutral-300': video.mediaType !== 'series'}"
-          class="px-5 py-2.5 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 flex-1"
+          class="px-5 py-2.5 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 flex-1 flex items-center justify-center"
           (click)="setVideoType('series')"
         >
-          Serie
+          <fa-icon [icon]="faTv" class="mr-2"></fa-icon> Serie
         </button>
       </div>
     </div>
+    
+    <!-- Sección de Categorías - Solo para películas -->
+    <div *ngIf="video.mediaType === 'Pelicula'" class="form-group">
+      <label class="block text-sm font-medium text-neutral-300 mb-2">Categoría</label>
+      
+      <!-- Categorías populares -->
+      <div class="mb-4">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          <button 
+            *ngFor="let cat of popularCategories"
+            type="button"
+            class="p-3 rounded-lg text-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            [ngClass]="{'bg-primary-600 text-white': video.categories?.includes(cat), 'bg-neutral-700 text-neutral-300': !video.categories?.includes(cat)}"
+            (click)="addCategory(cat)"
+          >
+            <span class="block text-sm">{{cat}}</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Búsqueda y autocompletado de categorías -->
+      <div class="relative">
+        <input
+          type="text"
+          [(ngModel)]="categorySearch"
+          name="categorySearch"
+          class="w-full px-4 py-3 pl-10 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+          placeholder="Buscar o crear categoría..."
+          (input)="onCategorySearch()"
+          (focus)="showCategorySuggestions = true"
+          (blur)="onCategoryBlur()"
+        >
+        <fa-icon [icon]="faSearch" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"></fa-icon>
+        
+        <!-- Sugerencias de categorías -->
+        <div *ngIf="showCategorySuggestions && filteredCategories.length > 0" 
+             class="absolute mt-1 w-full bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
+          <div *ngFor="let cat of filteredCategories" 
+               class="px-4 py-2 hover:bg-neutral-700 cursor-pointer transition-colors"
+               (mousedown)="addCategory(cat)">
+            {{cat}}
+          </div>
+          <div *ngIf="categorySearch && !categoryExists(categorySearch)" 
+               class="px-4 py-2 text-primary-400 hover:bg-neutral-700 cursor-pointer transition-colors border-t border-neutral-600"
+               (mousedown)="createAndSelectCategory(categorySearch)">
+            <fa-icon [icon]="faPlus" class="mr-2"></fa-icon> Crear "{{categorySearch}}"
+          </div>
+        </div>
+      </div>
+      
+      <!-- Categorías seleccionadas -->
+      <div *ngIf="video.categories && video.categories.length > 0" class="mt-3 flex flex-wrap gap-2">
+        <div *ngFor="let category of video.categories" class="flex items-center bg-neutral-700/50 rounded-lg border border-neutral-600 px-3 py-2">
+          <span class="text-neutral-100">{{category}}</span>
+          <button type="button" class="text-neutral-400 hover:text-neutral-200 ml-2 p-1" (click)="delCategory(category)">
+            <fa-icon [icon]="faTimes"></fa-icon>
+          </button>
+        </div>
+      </div>
+    </div>
 
-    <!-- Series Section - Only shown when type is 'series' -->
+    <!-- Sección de Series - Solo cuando el tipo es series -->
     <div *ngIf="video.mediaType === 'series'" class="space-y-5">
       <div class="form-group">
         <label for="series" class="block text-sm font-medium text-neutral-300 mb-2">Serie</label>
-        <div class="flex space-x-2">
-          <select
-            id="series"
-            [(ngModel)]="video.seriesId"
-            name="series"
-            class="flex-1 px-4 py-3 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-            (change)="onSeriesChange($event)"
-          >
-            <option [value]="null" disabled selected>Selecciona una serie</option>
-            <option *ngFor="let series of seriesList" [value]="series.id">{{series.titulo}}</option>
-            <option [value]="'new'">-- Crear nueva serie --</option>
-          </select>
-          <button
-            type="button"
-            class="px-4 py-3 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-lg hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-200"
-            (click)="openCreateSeriesModal()"
-          >
-            <fa-icon [icon]="faPlus" class="text-lg"></fa-icon>
-          </button>
-        </div>
-      </div>
-
-
-      <!-- Create New Series Modal -->
-      <div *ngIf="isCreatingNewSeries" class="mt-4 p-4 bg-neutral-700 rounded-lg border border-neutral-600">
-        <h3 class="text-lg font-medium text-neutral-200 mb-3">Crear Nueva Serie</h3>
-        <div class="form-group mb-4">
-          <label for="newSeriesName" class="block text-sm font-medium text-neutral-300 mb-2">Nombre de la Serie</label>
-          <input
-            type="text"
-            id="newSeriesName"
-            [(ngModel)]="newSeries.name"
-            name="newSeriesName"
-            class="w-full px-4 py-3 bg-neutral-600 border border-neutral-500 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-            required
-          >
-        </div>
-        <div class="form-group mb-4">
-          <label for="newSeriesDescription" class="block text-sm font-medium text-neutral-300 mb-2">Descripción</label>
-          <textarea
-            id="newSeriesDescription"
-            [(ngModel)]="newSeries.description"
-            name="newSeriesDescription"
-            class="w-full px-4 py-3 bg-neutral-600 border border-neutral-500 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 min-h-24 resize-none"
-          ></textarea>
-        </div>
-        <div class="form-group mb-4">
-          <label for="newSeriesGenre" class="block text-sm font-medium text-neutral-300 mb-2">Categoria</label>
-          <select
-            id="newSeriesGenre"
-            [(ngModel)]="newSeries.category"
-            name="newSeriesGenre"
-            class="w-full px-4 py-3 bg-neutral-600 border border-neutral-500 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-          >
-            <option value="" disabled selected>Selecciona una categoría</option>
-            <option *ngFor="let category of categories" [value]="category">{{category}}</option>
-          </select>
+        <div class="relative">
+          <div class="flex space-x-2">
+            <div class="flex-1 relative">
+              <input
+                type="text"
+                [(ngModel)]="seriesSearch"
+                name="seriesSearch"
+                class="w-full px-4 py-3 pl-10 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                placeholder="Buscar serie..."
+                (input)="onSeriesSearch()"
+                (focus)="showSeriesSuggestions = true"
+                (blur)="onSeriesBlur()"
+              >
+              <fa-icon [icon]="faSearch" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"></fa-icon>
+            </div>
+            <button
+              type="button"
+              class="px-4 py-3 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-lg hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-200"
+              (click)="openCreateSeriesModal()"
+            >
+              <fa-icon [icon]="faPlus" class="text-lg"></fa-icon>
+            </button>
           </div>
-        <div class="form-group mb-4">
-          <label for="newSeriesReleaseDate" class="block text-sm font-medium text-neutral-300 mb-2">Fecha de Lanzamiento</label>
-          <input
-            type="date"
-            id="newSeriesReleaseDate"
-            [(ngModel)]="newSeries.releaseDate"
-            name="newSeriesReleaseDate"
-            class="w-full px-4 py-3 bg-neutral-600 border border-neutral-500 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-          >
+          
+          <!-- Sugerencias de series -->
+          <div *ngIf="showSeriesSuggestions && filteredSeries.length > 0" 
+               class="absolute mt-1 w-full bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
+            <div *ngFor="let series of filteredSeries" 
+                 class="px-4 py-3 hover:bg-neutral-700 cursor-pointer transition-colors flex items-center"
+                 (mousedown)="selectSeries(series)">
+              <div class="flex-shrink-0 w-10 h-10 rounded overflow-hidden mr-3">
+                <img [src]="series.imagen || 'assets/placeholder-thumbnail.jpg'" class="w-full h-full object-cover" alt="Serie thumbnail">
+              </div>
+              <div>
+                <div class="font-medium text-neutral-100">{{series.titulo}}</div>
+                <div class="text-xs text-neutral-400">{{series.temporadas}} Temporada(s)</div>
+              </div>
+            </div>
+            <div *ngIf="seriesSearch && filteredSeries.length === 0" 
+                 class="px-4 py-2 text-primary-400 hover:bg-neutral-700 cursor-pointer transition-colors border-t border-neutral-600"
+                 (mousedown)="openCreateSeriesModal()">
+              <fa-icon [icon]="faPlus" class="mr-2"></fa-icon> Crear nueva serie
+            </div>
+          </div>
         </div>
         
-        <div class="flex justify-end space-x-3">
-          <button
-            type="button"
-            class="px-4 py-2 border border-neutral-500 text-neutral-200 rounded-lg hover:bg-neutral-600 transition-colors duration-200"
-            (click)="cancelCreateSeries()"
-          >
-            Cancelar
-          </button>
-          <button
-            type="button"
-            class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200"
-            (click)="saveNewSeries()"
-          >
-            Guardar Serie
-          </button>
+        <!-- Serie seleccionada -->
+        <div *ngIf="video.seriesId" class="mt-3 p-3 bg-neutral-700/50 rounded-lg border border-neutral-600">
+          <div class="flex items-center">
+            <div class="flex-shrink-0 w-12 h-12 rounded overflow-hidden mr-3">
+              <img [src]="getSeriesThumbnail(video.seriesId) || 'assets/placeholder-thumbnail.jpg'" class="w-full h-full object-cover" alt="Serie thumbnail">
+            </div>
+            <div class="flex-grow">
+              <div class="font-medium text-neutral-100">{{video.seriesName}}</div>
+              <div class="text-xs text-neutral-400">Temporada {{video.season}} • Episodio {{video.chapter}}</div>
+            </div>
+            <button type="button" class="text-neutral-400 hover:text-neutral-200 p-2" (click)="clearSeries()">
+              <fa-icon [icon]="faTimes"></fa-icon>
+            </button>
+          </div>
         </div>
       </div>
 
+      <!-- Temporada y Capítulo -->
       <div class="grid grid-cols-2 gap-4">
         <div class="form-group">
           <label for="season" class="block text-sm font-medium text-neutral-300 mb-2">Temporada</label>
@@ -204,6 +243,7 @@
       </div>
     </div>
     
+    <!-- Descripción - Común para ambos tipos -->
     <div class="form-group">
       <label for="description" class="block text-sm font-medium text-neutral-300 mb-2">Descripción</label>
       <textarea
@@ -213,6 +253,8 @@
         class="w-full px-4 py-3 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 min-h-32 resize-none"
       ></textarea>
     </div>
+    
+    <!-- Fecha de lanzamiento - Común para ambos tipos -->
     <div class="form-group">
       <label for="release-date" class="block text-sm font-medium text-neutral-300 mb-2">Fecha de Lanzamiento</label>
       <input
@@ -223,6 +265,8 @@
         class="w-full px-4 py-3 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
       >
     </div>
+    
+    <!-- Botones de acción -->
     <div class="flex justify-end space-x-4 pt-2">
       <button
         type="button"
@@ -241,25 +285,152 @@
   </form>
 </div>
 
-  <!-- Fullscreen Video Player Modal -->
-  <div 
+<!-- Reproductor de Video Modal -->
+<div 
   class="video-player-container fixed inset-0 bg-black/95 backdrop-blur-lg flex items-center justify-center z-[99999]"
   *ngIf="isVideoPlaying" 
   (click)="$event.stopPropagation()"
 >
   <div class="relative w-full max-w-[90%] h-full max-h-[90%] flex items-center justify-center">
-    <!-- Close Button -->
+    <!-- Botón de Cerrar -->
     <button 
-      class="relative left-5 text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors z-[100000]"
+      class="absolute top-4 right-4 text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors z-[100000]"
       (click)="closeVideo($event)"
     >
       <fa-icon [icon]="faTimes" class="text-xl"></fa-icon>
     </button>
     
-   <!-- Video Player -->
-   <video #videoPlayer class="w-full h-full object-contain" controls autoplay>
-    <source [src]="videoUrl" type="video/mp4">
-    Tu navegador no soporta el elemento de video.
-  </video>
+    <!-- Reproductor de Video -->
+    <video #videoPlayer class="w-full h-full object-contain" controls autoplay>
+      <source [src]="videoUrl" type="video/mp4">
+      Tu navegador no soporta el elemento de video.
+    </video>
+  </div>
+</div>
+
+<!--modal series-->
+<!-- Series Creation Modal -->
+<div 
+  class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[99999]"
+  *ngIf="isCreatingNewSeries"
+>
+  <div class="bg-neutral-800 border border-neutral-700 text-neutral-50 rounded-xl p-6 w-full max-w-xl shadow-lg transform transition-all duration-300">
+    <h2 class="text-xl font-bold mb-5 text-neutral-100">Crear Nueva Serie</h2>
+    
+    <form class="space-y-5">
+      <!-- Nombre de la Serie -->
+      <div class="form-group">
+        <label for="series-name" class="block text-sm font-medium text-neutral-300 mb-2">Nombre de la Serie</label>
+        <input
+          type="text"
+          id="series-name"
+          [(ngModel)]="newSeries.name"
+          name="series-name"
+          class="w-full px-4 py-3 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+          required
+        >
+      </div>
+      
+      <!-- Descripción de la Serie -->
+      <div class="form-group">
+        <label for="series-description" class="block text-sm font-medium text-neutral-300 mb-2">Descripción</label>
+        <textarea
+          id="series-description"
+          [(ngModel)]="newSeries.description"
+          name="series-description"
+          class="w-full px-4 py-3 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 min-h-32 resize-none"
+        ></textarea>
+      </div>
+      
+      <!-- Fecha de Estreno -->
+      <div class="form-group">
+        <label for="series-release-date" class="block text-sm font-medium text-neutral-300 mb-2">Fecha de Estreno</label>
+        <input
+          type="date"
+          id="series-release-date"
+          [(ngModel)]="newSeries.releaseDate"
+          name="series-release-date"
+          class="w-full px-4 py-3 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+        >
+      </div>
+      
+      <!-- Categorías para la Serie -->
+      <div class="form-group">
+        <label class="block text-sm font-medium text-neutral-300 mb-2">Categorías</label>
+        
+        <!-- Categorías populares -->
+        <div class="mb-4">
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            <button 
+              *ngFor="let cat of popularCategories"
+              type="button"
+              class="p-3 rounded-lg text-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              [ngClass]="{'bg-primary-600 text-white': newSeries.categories.includes(cat), 'bg-neutral-700 text-neutral-300': !newSeries.categories.includes(cat)}"
+              (click)="addCategoryToSeries(cat)"
+            >
+              <span class="block text-sm">{{cat}}</span>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Búsqueda y autocompletado de categorías para la serie -->
+        <div class="relative">
+          <input
+            type="text"
+            [(ngModel)]="newSeries.categorySearch"
+            name="seriesCategorySearch"
+            class="w-full px-4 py-3 pl-10 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+            placeholder="Buscar o crear categoría..."
+            (input)="onSeriesCategorySearch()"
+            (focus)="showCategorySuggestions = true"
+            (blur)="onCategoryBlur()"
+          >
+          <fa-icon [icon]="faSearch" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"></fa-icon>
+          
+          <!-- Sugerencias de categorías para series -->
+          <div *ngIf="showCategorySuggestions && filteredCategories.length > 0" 
+               class="absolute mt-1 w-full bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
+            <div *ngFor="let cat of filteredCategories" 
+                 class="px-4 py-2 hover:bg-neutral-700 cursor-pointer transition-colors"
+                 (mousedown)="addCategoryToSeries(cat)">
+              {{cat}}
+            </div>
+            <div *ngIf="newSeries.categorySearch && !categoryExists(newSeries.categorySearch)" 
+                 class="px-4 py-2 text-primary-400 hover:bg-neutral-700 cursor-pointer transition-colors border-t border-neutral-600"
+                 (mousedown)="createCategoryForSeries(newSeries.categorySearch)">
+              <fa-icon [icon]="faPlus" class="mr-2"></fa-icon> Crear "{{newSeries.categorySearch}}"
+            </div>
+          </div>
+        </div>
+        
+        <!-- Categorías seleccionadas para la serie -->
+        <div *ngIf="newSeries.categories && newSeries.categories.length > 0" class="mt-3 flex flex-wrap gap-2">
+          <div *ngFor="let category of newSeries.categories" class="flex items-center bg-neutral-700/50 rounded-lg border border-neutral-600 px-3 py-2">
+            <span class="text-neutral-100">{{category}}</span>
+            <button type="button" class="text-neutral-400 hover:text-neutral-200 ml-2 p-1" (click)="delCategoryFromSeries(category)">
+              <fa-icon [icon]="faTimes"></fa-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Botones de Acción -->
+      <div class="flex justify-end space-x-4 pt-2">
+        <button
+          type="button"
+          class="px-5 py-2.5 border border-neutral-600 text-neutral-200 rounded-lg hover:bg-neutral-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-500"
+          (click)="cancelCreateSeries()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="px-5 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 shadow-md hover:shadow-lg"
+          (click)="saveNewSeries()"
+        >
+          Crear Serie
+        </button>
+      </div>
+    </form>
   </div>
 </div>

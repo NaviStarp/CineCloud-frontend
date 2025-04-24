@@ -11,6 +11,7 @@ export interface VideoEntry {
   mediaType: string;
   releaseDate: Date;
   chapter: number | null;
+  categories: string[] | null;
   duration?: number | null;
   season: number | null;
   seriesId: number | null;
@@ -81,6 +82,7 @@ export class IndexedDbService {
       thumbnail: thumbnail, 
       mediaType: 'Pelicula',
       releaseDate: new Date(),
+      categories: null,
       chapter: null,
       season: null,
       seriesId: null,

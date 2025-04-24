@@ -42,6 +42,7 @@ export class MediaFormComponent implements OnInit, AfterViewInit {
   isError: boolean = false;
   isWarning: boolean = false;
   isSuccess: boolean = false;
+  
 
 
   constructor(private indexedDbService: IndexedDbService, private router: Router,private auth:AuthService) { }
@@ -90,6 +91,7 @@ export class MediaFormComponent implements OnInit, AfterViewInit {
           releaseDate: new Date(),
           chapter: null,
           season: null,
+          categories: null,
           seriesId: null,
           seriesName: null,
           seriesDescription: null,
