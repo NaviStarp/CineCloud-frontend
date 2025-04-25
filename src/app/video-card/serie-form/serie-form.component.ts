@@ -60,46 +60,20 @@ export class SerieFormComponent implements OnInit {
   };
 
   constructor(private indexedDbService: IndexedDbService, private auth: AuthService) {
-    this.video = this.video || this.createEmptyVideoEntry();
   }
 
   ngOnInit(): void {
     this.loadCategories();
 
-    if (!this.video.categories || !Array.isArray(this.video.categories)) {
-      this.video.categories = [];
+    if (!this.newSeries.categories || !Array.isArray(this.newSeries.categories)) {
+      this.newSeries.categories = [];
     }
-  }
-
-  private createEmptyVideoEntry(): VideoEntry {
-    return {
-      id: '',
-      videoBlob: new File([], ''),
-      description: '',
-      videoMime: '',
-      video: null,
-      name: '',
-      thumbnail: '',
-      mediaType: 'Pelicula',
-      releaseDate: new Date(),
-      seriesId: null,
-      categories: [],
-      season: null,
-      chapter: null,
-      seriesName: '',
-      seriesDescription: '',
-      seriesReleaseDate: new Date(),
-    };
   }
 
   async loadCategories() {
     try {
-      const categories = await this.auth.getCategories();
-      if (!categories || categories.length === 0) {
-        console.warn('No categories found');
-        return;
-      }
-      this.categories = categories.map((category: any) => category.name);
+      this.categories =  await this.auth.getCategories();
+
       this.popularCategories = [...this.categories].slice(0, 8);
       this.filteredCategories = [...this.categories];
     } catch (error) {
@@ -132,22 +106,22 @@ export class SerieFormComponent implements OnInit {
 
   addCategory(category: string) {
     if (!category.trim()) return;
-    if (!this.video.categories) {
-      this.video.categories = [];
+    if (!this.newSeries.categories) {
+      this.newSeries.categories = [];
     }
-    if (this.video.categories.includes(category)) {
+    if (this.newSeries.categories.includes(category)) {
       return;
     }
-    this.video.categories.push(category);
+    this.newSeries.categories.push(category);
     this.categorySearch = '';
     this.showCategorySuggestions = false;
   }
 
   delCategory(category: string) {
-    if (!category.trim() || !this.video.categories) return;
-    const index = this.video.categories.indexOf(category);
+    if (!category.trim() || !this.newSeries.categories) return;
+    const index = this.newSeries.categories.indexOf(category);
     if (index !== -1) {
-      this.video.categories.splice(index, 1);
+      this.newSeries.categories.splice(index, 1);
     }
   }
 
@@ -182,29 +156,14 @@ export class SerieFormComponent implements OnInit {
       if (!this.categoryExists(category)) {
         this.categories.push(category);
         await this.auth.createCategory(category);
+        this.newSeries.categories.push(category);
+        this.categorySearch = '';
         console.log(`Category "${category}" created successfully`);
         if (this.popularCategories.length < 8) {
           this.popularCategories.push(category);
         }
       }
       this.addCategory(category);
-    } catch (error) {
-      console.error('Error creating category:', error);
-    }
-  }
-
-  async createCategoryForSeries(category: string) {
-    if (!category.trim()) return;
-    try {
-      if (!this.categoryExists(category)) {
-        this.categories.push(category);
-        await this.auth.createCategory(category);
-        console.log(`Category "${category}" created successfully`);
-        if (this.popularCategories.length < 8) {
-          this.popularCategories.push(category);
-        }
-      }
-      this.addCategoryToSeries(category);
     } catch (error) {
       console.error('Error creating category:', error);
     }

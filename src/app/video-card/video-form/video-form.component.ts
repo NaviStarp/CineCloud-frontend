@@ -123,17 +123,13 @@ export class VideoFormComponent implements OnInit,OnChanges {
   // Metodo que carga las categorias de la base de datos
   async loadCategories() {
     try {
-      const categories = await this.auth.getCategories();
-      if (!categories || categories.length === 0) {
-        console.warn('No categories found');
-        return;
-      }
-      this.categories = categories.map((category: any) => category.name);
-      
+      this.categories = await this.auth.getCategories();
+
       // Categorias populares limitadas a 8
       this.popularCategories = [...this.categories].slice(0, 8);
     }
     catch (error) {
+      console.error('Error loading categories:', error);
     }
   }
   
@@ -202,21 +198,20 @@ export class VideoFormComponent implements OnInit,OnChanges {
     if (!category.trim()) return;
     
     try {
-      // Add to categories if it doesn't exist
       if (!this.categoryExists(category)) {
         this.categories.push(category);
         
-        // Save to service
         await this.auth.createCategory(category);
+        if(this.video.categories) this.video.categories.push(category);
+        else this.video.categories = [category];
+        this.categorySearch = '';
         console.log(`Category "${category}" created successfully`);
         
-        // Update popular categories if needed
         if (this.popularCategories.length < 8) {
           this.popularCategories.push(category);
         }
       }
       
-      // Add to video categories
       this.addCategory(category);
     } catch (error) {
       console.error('Error creating category:', error);
@@ -344,11 +339,12 @@ export class VideoFormComponent implements OnInit,OnChanges {
         
         // Save to service
         await this.auth.createCategory(category);
+        this.addCategoryToSeries(category);
+
         console.log(`Category "${category}" created successfully`);
       }
       
       // Add to series categories
-      this.addCategoryToSeries(category);
     } catch (error) {
       console.error('Error creating category for series:', error);
     }

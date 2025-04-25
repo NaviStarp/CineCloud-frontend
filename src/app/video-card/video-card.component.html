@@ -1,30 +1,30 @@
-<div (click)="toggleEdit($event)" class="video-card group relative flex rounded-xl shadow-lg overflow-hidden transition-all duration-300 bg-neutral-800/90 border border-neutral-700/50 backdrop-blur-sm hover:bg-neutral-800 hover:scale-101 hover:shadow-xl h-28">
-    <!-- Thumbnail Container with Gradient Overlay -->
-    <div class="thumbnail-container relative w-28 h-full flex-shrink-0 overflow-hidden">
-      <img
-        [src]="video.thumbnail || 'assets/placeholder-thumbnail.jpg'"
-        alt="Video thumbnail"
-        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-        (click)="playVideo($event)"
-      >
-      <!-- Gradient Overlay -->
-      <div class="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
-      <!-- Play Button Overlay -->
-      <div
-        class="play-button absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-all duration-300"
-        [class.hidden]="isVideoPlaying"
-        (click)="playVideo($event)"
-      >
-        <div class="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center hover:bg-white transition-all duration-200 shadow-lg transform group-hover:scale-110">
-          <fa-icon [icon]="faPlay" class="text-lg text-neutral-900 ml-1"></fa-icon>
-        </div>
-      </div>
+<div (click)="toggleEdit($event)" class="video-card group relative flex rounded-xl shadow-2xl overflow-hidden transform transition-all duration-300 bg-neutral-800 border border-neutral-700 text-neutral-50 hover:border-primary-200 focus-within:border-primary-500 h-28">
+  <!-- Thumbnail Container with Gradient Overlay -->
+  <div class="thumbnail-container relative w-28 h-full flex-shrink-0 overflow-hidden">
+    <img
+    [src]="video.thumbnail || 'assets/placeholder-thumbnail.jpg'"
+    alt="Video thumbnail"
+    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+    (click)="playVideo($event)"
+    >
+    <!-- Gradient Overlay -->
+    <div class="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
+    <!-- Play Button Overlay -->
+    <div
+    class="play-button absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-all duration-300"
+    [class.hidden]="isVideoPlaying"
+    (click)="playVideo($event)"
+    >
+    <div class="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center hover:bg-white transition-all duration-200 shadow-lg transform group-hover:scale-110">
+      <fa-icon [icon]="faPlay" class="text-lg text-neutral-900 ml-1"></fa-icon>
     </div>
-    
-    <!-- Video Content Section -->
-    <div class="video-content flex-grow flex flex-col justify-center px-6 py-3">
-      <h3 class="video-title text-lg font-medium text-neutral-50 mb-1 overflow-clip sm:text-base md:text-lg lg:text-xl">{{video.name}}</h3>
-      <div class="flex items-center">
+    </div>
+  </div>
+  
+  <!-- Video Content Section -->
+  <div class="video-content flex-grow flex flex-col justify-center px-6 py-3">
+    <h3 class="video-title text-lg font-medium text-neutral-50 mb-1 overflow-clip sm:text-base md:text-lg lg:text-xl">{{video.name}}</h3>
+    <div class="flex items-center">
         <span class="video-type text-sm text-neutral-400 px-2 py-0.5 rounded-full bg-neutral-700 mr-2">{{video.mediaType}}</span>
         <span class="video-series text-sm text-neutral-400" *ngIf="video.mediaType === 'series' && video.seriesName">
           {{video.seriesName}} S{{video.season}}:E{{video.chapter}}

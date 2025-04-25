@@ -8,7 +8,7 @@
     
     <!-- Videos Container -->
     <div class="space-y-4 w-full">
-      <div  class="bg-neutral-800/30 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-neutral-700/50" *ngFor="let video of videos;let i = index">
+      <div  class="bg-neutral-800/30 backdrop-blur p-6  transition  hover:shadow-lg shadow-primary-600 rounded-xl  border border-neutral-700/50" *ngFor="let video of videos;let i = index">
         <app-video-card #videoItem [video]="video"
         (videoChange)="onVideoChanged($event, i)"
       ></app-video-card>

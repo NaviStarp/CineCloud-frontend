@@ -193,8 +193,8 @@ export class AuthService {
       throw error;
     }
   }
-  public async getCategories(): Promise<any[]> {
-    if(!this.getToken() || this.getServerUrl() === ''){
+  public async getCategories(): Promise<string[]> {
+    if (!this.getToken() || this.getServerUrl() === '') {
       return [];
     }
     const response = await fetch(`${this.getServerUrl()}/categories/`, {
@@ -203,7 +203,8 @@ export class AuthService {
         'Authorization': `Token ${this.getToken()}`
       }
     });
-    return response.json();
+    const categorias = await response.json();
+    return categorias.map((categoria: any) => categoria.nombre);
   }
 
   public async createSeries(series: Series) {
@@ -211,9 +212,10 @@ export class AuthService {
     formData.append('titulo', series.titulo);
     formData.append('descripcion', series.descripcion);
     formData.append('fecha_estreno', series.fecha_estreno);
-    for(const categoria of series.categorias){
-      formData.append('categoria', categoria);
-    }
+    series.categorias.forEach((categoria, index) => {
+      formData.append(`categorias[${index}]`, categoria);
+    });
+    console.log('FormData:', formData);
     formData.append('temporadas', series.temporadas.toString());
     if (typeof series.imagen === 'string' && series.imagen.startsWith('data:image')) {
       const byteString = atob(series.imagen.split(',')[1]);
@@ -251,7 +253,8 @@ export class AuthService {
   }
   public async createCategory(name: string) {
     const formData = new FormData();
-    formData.append('name', name);
+    formData.append('nombre', name);
+    console.log('FormData:', formData);
     try {
       const response = await fetch(`${this.getServerUrl()}/categories/new/`, {
         method: 'POST',
