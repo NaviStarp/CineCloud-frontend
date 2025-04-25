@@ -1,0 +1,124 @@
+<div 
+class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[99999]"
+*ngIf="isCreatingNewSeries"
+>
+<div class="bg-neutral-800 border border-neutral-700 text-neutral-50 rounded-xl p-6 w-full max-w-xl shadow-lg transform transition-all duration-300">
+  <h2 class="text-xl font-bold mb-5 text-neutral-100">Crear Nueva Serie</h2>
+  
+  <form class="space-y-5">
+    <!-- Nombre de la Serie -->
+    <div class="form-group">
+      <label for="series-name" class="block text-sm font-medium text-neutral-300 mb-2">Nombre de la Serie</label>
+      <input
+        type="text"
+        id="series-name"
+        [(ngModel)]="newSeries.name"
+        name="series-name"
+        class="w-full px-4 py-3 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+        required
+      >
+    </div>
+    
+    <!-- Descripción de la Serie -->
+    <div class="form-group">
+      <label for="series-description" class="block text-sm font-medium text-neutral-300 mb-2">Descripción</label>
+      <textarea
+        id="series-description"
+        [(ngModel)]="newSeries.description"
+        name="series-description"
+        class="w-full px-4 py-3 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 min-h-32 resize-none"
+      ></textarea>
+    </div>
+    
+    <!-- Fecha de Estreno -->
+    <div class="form-group">
+      <label for="series-release-date" class="block text-sm font-medium text-neutral-300 mb-2">Fecha de Estreno</label>
+      <input
+        type="date"
+        id="series-release-date"
+        [(ngModel)]="newSeries.releaseDate"
+        name="series-release-date"
+        class="w-full px-4 py-3 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+      >
+    </div>
+    
+    <!-- Categorías para la Serie -->
+    <div class="form-group">
+      <label class="block text-sm font-medium text-neutral-300 mb-2">Categorías</label>
+      
+      <!-- Categorías populares -->
+      <div class="mb-4">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          <button 
+            *ngFor="let cat of popularCategories"
+            type="button"
+            class="p-3 rounded-lg text-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            [ngClass]="{'bg-primary-600 text-white': newSeries.categories.includes(cat), 'bg-neutral-700 text-neutral-300': !newSeries.categories.includes(cat)}"
+            (click)="addCategoryToSeries(cat)"
+          >
+            <span class="block text-sm">{{cat}}</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Búsqueda y autocompletado de categorías para la serie -->
+      <div class="relative">
+        <input
+          type="text"
+          [(ngModel)]="newSeries.categorySearch"
+          name="seriesCategorySearch"
+          class="w-full px-4 py-3 pl-10 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+          placeholder="Buscar o crear categoría..."
+          (input)="onSeriesCategorySearch()"
+          (focus)="showCategorySuggestions = true"
+          (blur)="onCategoryBlur()"
+        >
+        <fa-icon [icon]="faSearch" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"></fa-icon>
+        
+        <!-- Sugerencias de categorías para series -->
+        <div *ngIf="showCategorySuggestions && filteredCategories.length > 0" 
+             class="absolute mt-1 w-full bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
+          <div *ngFor="let cat of filteredCategories" 
+               class="px-4 py-2 hover:bg-neutral-700 cursor-pointer transition-colors"
+               (mousedown)="addCategoryToSeries(cat)">
+            {{cat}}
+          </div>
+          <div *ngIf="newSeries.categorySearch && !categoryExists(newSeries.categorySearch)" 
+               class="px-4 py-2 text-primary-400 hover:bg-neutral-700 cursor-pointer transition-colors border-t border-neutral-600"
+               (mousedown)="createCategoryForSeries(newSeries.categorySearch)">
+            <fa-icon [icon]="faPlus" class="mr-2"></fa-icon> Crear "{{newSeries.categorySearch}}"
+          </div>
+        </div>
+      </div>
+      
+      <!-- Categorías seleccionadas para la serie -->
+      <div *ngIf="newSeries.categories && newSeries.categories.length > 0" class="mt-3 flex flex-wrap gap-2">
+        <div *ngFor="let category of newSeries.categories" class="flex items-center bg-neutral-700/50 rounded-lg border border-neutral-600 px-3 py-2">
+          <span class="text-neutral-100">{{category}}</span>
+          <button type="button" class="text-neutral-400 hover:text-neutral-200 ml-2 p-1" (click)="delCategoryFromSeries(category)">
+            <fa-icon [icon]="faTimes"></fa-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Botones de Acción -->
+    <div class="flex justify-end space-x-4 pt-2">
+      <button
+        type="button"
+        class="px-5 py-2.5 border border-neutral-600 text-neutral-200 rounded-lg hover:bg-neutral-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-500"
+        (click)="cancelCreateSeries()"
+      >
+        Cancelar
+      </button>
+      <button
+        type="button"
+        class="px-5 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 shadow-md hover:shadow-lg"
+        (click)="saveNewSeries()"
+      >
+        Crear Serie
+      </button>
+    </div>
+  </form>
+</div>
+</div>

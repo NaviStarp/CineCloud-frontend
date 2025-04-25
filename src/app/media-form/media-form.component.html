@@ -9,10 +9,9 @@
     <!-- Videos Container -->
     <div class="space-y-4 w-full">
       <div  class="bg-neutral-800/30 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-neutral-700/50" *ngFor="let video of videos;let i = index">
-        <app-video-form #videoItem [video]="video"
-          (videoChange)="onVideoChanged($event, i)"
-          
-        ></app-video-form>
+        <app-video-card #videoItem [video]="video"
+        (videoChange)="onVideoChanged($event, i)"
+      ></app-video-card>
       
       </div>
       <div class="flex justify-center mt-4">

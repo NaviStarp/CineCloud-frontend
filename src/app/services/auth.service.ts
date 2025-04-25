@@ -28,6 +28,7 @@ export interface Series {
   episodios: Episode[];
   titulo: string;
   categorias:string[];
+  thumbnail: string | null;
   descripcion: string;
   fecha_estreno: string;
   temporadas: number;
@@ -42,7 +43,6 @@ export class AuthService {
   // Devuelve la URL del servidor
   public getServerUrl(): string {
     if (isPlatformBrowser(this.platformId)) {
-      console.log(environment.url);
       const ip =  environment.url  || localStorage.getItem('serverIp') ;
       const port =  environment.port || localStorage.getItem('serverPort');
       if (ip && port) {
@@ -114,7 +114,6 @@ export class AuthService {
 
   // Inicia sesión
   public login(user: User) {
-    console.log(user);
     return fetch(`${this.getServerUrl()}/login/`, {
       method: 'POST',
       headers: {
@@ -141,7 +140,6 @@ export class AuthService {
     const formData = new FormData();
 
     videos.forEach((video, index) => {
-      console.log(video);
       formData.append(`videos[${index}][name]`, video.name);
       formData.append(`videos[${index}][description]`, video.description || '');
       
@@ -283,7 +281,6 @@ public async getVideos(): Promise<MediaResponse> {
       'Authorization': `Token ${this.getToken()}`
     }
   });
-  console.log(response);
   return response.json();
 }
   public async getSeries(): Promise<Series[]> {
@@ -296,7 +293,11 @@ public async getVideos(): Promise<MediaResponse> {
         'Authorization': `Token ${this.getToken()}`
       }
     });
-    return response.json();
+    var series = await response.json();
+    series.forEach((serie: Series) => {
+       serie.imagen = serie.imagen.replace('/media/', '');
+    });
+    return series;
   }
   public async getThumnailUrl(url:string){
     const response = await fetch(`${this.getServerUrl()}/media/${url}`, {

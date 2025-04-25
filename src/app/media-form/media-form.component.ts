@@ -4,11 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCheck, faFilm, faPlus, faSpinner, faTv } from '@fortawesome/free-solid-svg-icons';
 import { IndexedDbService } from '../services/indexed-db.service';
-import { VideoFormComponent } from '../video-form/video-form.component';
 import { Router } from '@angular/router';
 import { VideoEntry } from '../services/indexed-db.service';
 import { AuthService, Series } from '../services/auth.service';
 import { ProgressBarComponent } from '../general/progress-bar/progress-bar.component';
+import { VideoCardComponent } from '../video-card/video-card.component';
 
 @Component({
   selector: 'app-media-form',
@@ -17,7 +17,7 @@ import { ProgressBarComponent } from '../general/progress-bar/progress-bar.compo
     FontAwesomeModule,
     CommonModule,
     FormsModule,
-    VideoFormComponent,
+    VideoCardComponent,
     ProgressBarComponent
   ],
   templateUrl: './media-form.component.html',
@@ -34,7 +34,7 @@ export class MediaFormComponent implements OnInit, AfterViewInit {
   videos: VideoEntry[] = [];
   series: Series[] = [];
   @ViewChild('videoContainer', { static: false }) videoContainer!: ElementRef;
-  @ViewChildren('videoItem') videoItems!: QueryList<VideoFormComponent>;
+  @ViewChildren('videoItem') videoItems!: QueryList<VideoCardComponent>;
 
 // Barra de progreso
   progress: number = 0;
@@ -56,17 +56,14 @@ export class MediaFormComponent implements OnInit, AfterViewInit {
   }
 
   refreshSeriesInAllComponents() {
-    console.log('Refreshing series in all components', this.videoItems);
     if (this.videoItems && this.videoItems.length > 0) {
       this.videoItems.forEach((videoItem) => {
         if (videoItem) {
-          console.log('Refreshing series in video item:', videoItem);
-          videoItem.loadSeries()
+          console.log('Refrescando series en:', videoItem);
+          //videoItem.loadSeries()
         }
       });
-    } else {
-      console.warn('No video items found to refresh.');
-    }
+    } 
   }
 
   async loadVideos() {
@@ -169,9 +166,7 @@ export class MediaFormComponent implements OnInit, AfterViewInit {
       
       socket.onmessage = (event) => {
         try {
-          const data = JSON.parse(event.data);
-          console.log('Progress data:', data);
-          
+          const data = JSON.parse(event.data);          
           this.progress = data.progress || 0;
           this.message = data.message || '';
           
@@ -193,7 +188,7 @@ export class MediaFormComponent implements OnInit, AfterViewInit {
             this.isSuccess = false;
           }
         } catch (err) {
-          console.error('Error parsing WebSocket message:', err);
+          console.error('Error recibiendo mensaje de websocket:', err);
         }
       };
       
@@ -214,7 +209,7 @@ export class MediaFormComponent implements OnInit, AfterViewInit {
       
       this.isLoading = false;
       this.indexedDbService.delAll();
-      this.router.navigate(['/']);
+      this.router.navigate(['/lista']);
     } catch (error) {
       console.error('Upload error:', error);
       this.isError = true;
@@ -228,9 +223,4 @@ export class MediaFormComponent implements OnInit, AfterViewInit {
     this.router.navigate(['/']);
   }
 
-  confirrmChanges(event: Event) {
-    event.preventDefault();
-    
-    this.router.navigate(['/']);
-  }
 }

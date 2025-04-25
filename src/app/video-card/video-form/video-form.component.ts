@@ -4,8 +4,8 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { IndexedDbService, VideoEntry } from '../services/indexed-db.service';
-import { AuthService, Series } from '../services/auth.service';
+import { IndexedDbService, VideoEntry } from '../../services/indexed-db.service';
+import { AuthService, Series } from '../../services/auth.service';
 
 @Component({
   selector: 'app-video-form',
@@ -26,26 +26,27 @@ import { AuthService, Series } from '../services/auth.service';
   ]
 })
 export class VideoFormComponent implements OnInit {
+  @Input() isEditing: boolean = false;
   @Input() video!: VideoEntry;
 
   @Output() videoChange = new EventEmitter<VideoEntry>();
-  @ViewChild('videoPlayer') videoPlayer!: ElementRef;
+ 
 
-  isVideoPlaying = false;
-  isEditing = false;
+  // Categorías y series
   categories: string[] = [];
   popularCategories: string[] = [];
   videoUrl: string | null = null;
-
+  
+  // Variables para búsqueda
   categorySearch: string = '';
   showCategorySuggestions: boolean = false;
   filteredCategories: string[] = [];
-  
+
   seriesSearch: string = '';
   showSeriesSuggestions: boolean = false;
   filteredSeries: Series[] = [];
   
-  // Font Awesome icons
+  // Iconos
   faPlay = faPlay;
   faEdit = faEdit;
   faTimes = faTimes;
@@ -53,7 +54,8 @@ export class VideoFormComponent implements OnInit {
   faFilm = faFilm;
   faSearch = faSearch;
   faTv = faTv;
-  
+
+  // Variables para crear nueva serie
   seriesList: Series[] = [];
   isCreatingNewSeries = false;
   newSeries = { 
@@ -64,6 +66,7 @@ export class VideoFormComponent implements OnInit {
     categorySearch: ''
   };
 
+  // Constructor
   constructor(private indexedDbService: IndexedDbService, private auth: AuthService) {
     // Initialize video if not provided
     this.video = this.video || this.createEmptyVideoEntry();
@@ -78,7 +81,8 @@ export class VideoFormComponent implements OnInit {
       this.video.categories = [];
     }
   }
-
+  // Metodo que crea un video vacio
+  // para evitar errores al cargar el componente
   private createEmptyVideoEntry(): VideoEntry {
     return {
       id: '',
@@ -100,25 +104,24 @@ export class VideoFormComponent implements OnInit {
     };
   }
 
+  // Metodo que carga las categorias de la base de datos
   async loadCategories() {
     try {
       const categories = await this.auth.getCategories();
-      console.log('Categories loaded:', categories);
       if (!categories || categories.length === 0) {
         console.warn('No categories found');
         return;
       }
       this.categories = categories.map((category: any) => category.name);
       
-      // Set popular categories (first 8)
+      // Categorias populares limitadas a 8
       this.popularCategories = [...this.categories].slice(0, 8);
     }
     catch (error) {
-      console.error('Error loading categories:', error);
     }
   }
   
-  // Category management methods
+  // Metodo de busqueda de categorias
   onCategorySearch() {
     if (!this.categorySearch) {
       this.filteredCategories = [...this.categories];
@@ -131,22 +134,26 @@ export class VideoFormComponent implements OnInit {
     );
   }
   
+  // Metodo que oculta las sugerencias de categorias
+  // al hacer blur en el input
   onCategoryBlur() {
     // Use setTimeout to allow click events on suggestions to complete
     setTimeout(() => {
       this.showCategorySuggestions = false;
     }, 200);
   }
-  
+  // Metodo que añade una categoria al video
+  // si no existe en el array de categorias
+  // y la categoria no es vacia
   addCategory(category: string) {
     if (!category.trim()) return;
     
-    // Initialize categories array if it doesn't exist
+    // Inicializa el array de categorias si no existe
     if (!this.video.categories) {
       this.video.categories = [];
     }
-    
-    // Don't add if category already exists in the array
+
+    // No añadir si la categoria ya existe en el array
     if (this.video.categories.includes(category)) {
       return;
     }
@@ -155,7 +162,9 @@ export class VideoFormComponent implements OnInit {
     this.categorySearch = '';
     this.showCategorySuggestions = false;
   }
-  
+
+  // Metodo que elimina una categoria del video
+  // si existe en el array de categorias
   delCategory(category: string) {
     if (!category.trim() || !this.video.categories) return;
     
@@ -164,11 +173,15 @@ export class VideoFormComponent implements OnInit {
       this.video.categories.splice(index, 1);
     }
   }
-  
+  // Metodo que verifica si una categoria existe
+  // en el array de categorias
   categoryExists(category: string): boolean {
     return this.categories.some(cat => cat.toLowerCase() === category.toLowerCase());
   }
-  
+
+  // Metodo que crea una categoria
+  // si no existe en el array de categorias
+  // y la categoria no es vacia  
   async createAndSelectCategory(category: string) {
     if (!category.trim()) return;
     
@@ -193,39 +206,43 @@ export class VideoFormComponent implements OnInit {
       console.error('Error creating category:', error);
     }
   }
+  /* METODOS PARA SERIES */
+  
 
-  // Series-related methods
+  // Metodo para busqueda de serie
   onSeriesSearch() {
     if (!this.seriesSearch) {
       this.filteredSeries = [...this.seriesList];
       return;
     }
-    
     const search = this.seriesSearch.toLowerCase();
     this.filteredSeries = this.seriesList.filter(
       series => series.titulo.toLowerCase().includes(search)
     );
+    console.log('Filtered series:', this.filteredSeries);
   }
-  
+  // Metodo para ocultar las sugerencias de series
+  // al hacer blur en el input
   onSeriesBlur() {
     setTimeout(() => {
       this.showSeriesSuggestions = false;
     }, 200);
   }
   
+  // Metodo para añadir una serie al video
   selectSeries(series: Series) {
     this.video.seriesId = series.id;
     this.video.seriesName = series.titulo;
     this.video.seriesDescription = series.descripcion;
     this.video.seriesReleaseDate = new Date(series.fecha_estreno);
     
-    // Auto-fill season and chapter
+    // Autocompletar temporada y capitulo
     this.autoFillSeasonAndChapter(series);
     
     this.seriesSearch = '';
     this.showSeriesSuggestions = false;
   }
-  
+  // Limpiar los atributos que le correspenden a un capitulo
   clearSeries() {
     this.video.seriesId = null;
     this.video.seriesName = '';
@@ -234,12 +251,14 @@ export class VideoFormComponent implements OnInit {
     this.video.chapter = null;
   }
   
+  // Metodo para extraer la imagen de una serie
+  // y devolverla como thumbnail
   getSeriesThumbnail(seriesId: number): string | null {
     const series = this.seriesList.find(s => s.id === seriesId);
     return series ? series.imagen : null;
   }
 
-  // Series loading and creation methods
+  // Metodo para cargar series de la base de datos
   async loadSeries() {
     try {
       const series = await this.auth.getSeries();
@@ -249,13 +268,17 @@ export class VideoFormComponent implements OnInit {
           ...episodio,
         }))
       }));
+      for(let i = 0; i < this.seriesList.length; i++) {
+        const serie = this.seriesList[i];
+        serie.thumbnail = await this.auth.getThumnailUrl(serie.imagen);
+      }
       this.filteredSeries = [...this.seriesList];
     } catch (error) {
       console.error('Error loading series:', error);
     }
   }
 
-  // Series category methods
+  // Metodo para buscar categorias dentro del apartado de serie
   onSeriesCategorySearch() {
     if (!this.newSeries.categorySearch) {
       this.filteredCategories = [...this.categories];
@@ -267,7 +290,7 @@ export class VideoFormComponent implements OnInit {
       cat => cat.toLowerCase().includes(search)
     );
   }
-  
+  // Metodo para añadir una categoria a la serie
   addCategoryToSeries(category: string) {
     if (!category.trim()) return;
     
@@ -284,7 +307,7 @@ export class VideoFormComponent implements OnInit {
     this.newSeries.categories.push(category);
     this.newSeries.categorySearch = '';
   }
-  
+  // Metodo para eliminar una categoria de la serie
   delCategoryFromSeries(category: string) {
     if (!category.trim() || !this.newSeries.categories) return;
     
@@ -294,6 +317,7 @@ export class VideoFormComponent implements OnInit {
     }
   }
   
+  // Metodo para crear categoria y añadirla a la serie
   async createCategoryForSeries(category: string) {
     if (!category.trim()) return;
     
@@ -313,28 +337,15 @@ export class VideoFormComponent implements OnInit {
       console.error('Error creating category for series:', error);
     }
   }
-
-  async loadVideo() {
-    try {
-      console.log("Loading video:", this.video);
-      this.videoUrl = await this.indexedDbService.getVideo(this.video.id);
-      if (this.videoUrl) {
-        console.log("Video URL generated:", this.videoUrl);
-      } else {
-        console.error("Failed to get video URL for ID:", this.video.id);
-      }
-    } catch (error) {
-      console.error("Error loading video:", error);
-    }
-  }
   
+  // Emitir evento para guardar los cambios
   saveChanges($event: Event) {
     $event.stopPropagation();
     console.log('Saving changes:', this.video);
     this.videoChange.emit(this.video);
     this.isEditing = false;
   }
-
+  // Funcion que alterna la edición del video
   toggleEdit(event?: Event) {
     if (event) {
       event.stopPropagation();
@@ -345,28 +356,7 @@ export class VideoFormComponent implements OnInit {
     this.isEditing = !this.isEditing;
   }
 
-  async playVideo(event: Event) {
-    event.stopPropagation();
-    await this.loadVideo();
-
-    setTimeout(() => {
-      this.isVideoPlaying = !this.isVideoPlaying;
-    }, 100);
-  }
-
-  closeVideo(event: Event) {
-    event.stopPropagation();
-    this.isVideoPlaying = false;
-    if (this.videoPlayer) {
-      this.videoPlayer.nativeElement.pause();
-    }
-
-    this.video.mediaType = this.video.mediaType || 'Pelicula';
-    event.preventDefault();
-    this.videoChange.emit(this.video);
-    this.isEditing = false;
-  }
-
+  // Funcion que se encarga de cambiar el tipo del video
   setVideoType(type: 'Pelicula' | 'series') {
     this.video.mediaType = type;
   }
@@ -386,23 +376,23 @@ export class VideoFormComponent implements OnInit {
       this.video.seriesDescription = selectedSeries.descripcion;
       this.video.seriesReleaseDate = new Date(selectedSeries.fecha_estreno);
       
-      // Auto-fill season and chapter
+      // Autocompletar temporada y capitulo
       this.autoFillSeasonAndChapter(selectedSeries);
     }
   }
-  
+  // Funcion que autocompleta la temporada y capitulo
   autoFillSeasonAndChapter(series: Series) {
     if (!series.episodios || series.episodios.length === 0) {
-      // If no episodes, start with season 1, chapter 1
+      // Si no hay episodios que empiece por la temporada 1, capitulo 1
       this.video.season = 1;
       this.video.chapter = 1;
       return;
     }
     
-    // Find last season
+    // Encontrar la ultima temporada
     const maxSeason = Math.max(...series.episodios.map(ep => ep.temporada || 0));
     
-    // Find last chapter of last season
+    // Encontrar el ultimo capitulo de la ultima temporada
     const episodesInLastSeason = series.episodios.filter(ep => ep.temporada === maxSeason);
     let maxChapter = 0;
     
@@ -410,11 +400,11 @@ export class VideoFormComponent implements OnInit {
       maxChapter = Math.max(...episodesInLastSeason.map(ep => ep.numero || 0));
     }
     
-    // Suggest next chapter in same season
+    // Asignar la temporada y capitulo al video
     this.video.season = maxSeason;
     this.video.chapter = maxChapter + 1;
   }
-
+  // Función para abrir el modal de creación de serie
   openCreateSeriesModal() {
     this.isCreatingNewSeries = true;
     this.newSeries = { 
@@ -425,24 +415,24 @@ export class VideoFormComponent implements OnInit {
       categorySearch: ''
     };
   }
-
+  // Función para cerrar el modal de creación de serie
   cancelCreateSeries() {
     this.isCreatingNewSeries = false;
     if (this.video.seriesId === 0) {
       this.video.seriesId = null;
     }
   }
-
+  // Función para alternar la visibilidad del input de categoria
   toggleInputCategoria(){
     const inputCategoria = document.getElementById('inputCategoria');
     if (inputCategoria) {
       inputCategoria.classList.toggle('hidden');
     }
   }
-
+  // Función para guardar la nueva serie en la base de datos
   async saveNewSeries() {
     if (!this.newSeries.name.trim()) {
-      console.error('Series name is required');
+      console.error('El nombre de la serie es requerido');
       return;
     }
     
@@ -453,35 +443,36 @@ export class VideoFormComponent implements OnInit {
         titulo: this.newSeries.name,
         descripcion: this.newSeries.description,
         categorias: this.newSeries.categories || [],
+        thumbnail: this.video.thumbnail || '', 
         temporadas: 1,
         imagen: this.video.thumbnail || '', // Use video thumbnail
         fecha_estreno: this.newSeries.releaseDate.toString(),
         episodios: []
       };
 
-      // Save series in AuthService
+      // Lanzar petición para crear la serie
       await this.auth.createSeries(createdSeries);
       
-      // Update local series list
+      // Añadir la serie a la lista de series
       this.seriesList.push(createdSeries);
       this.filteredSeries = [...this.seriesList];
 
-      // Update video with new series info
+      // Actualizar el video con la nueva serie
       this.video.seriesId = newSeriesId;
       this.video.seriesName = this.newSeries.name;
       this.video.seriesDescription = this.newSeries.description;
       this.video.seriesReleaseDate = this.newSeries.releaseDate;
       
-      // First episode of first season
+      // Autocompletar temporada y capitulo
       this.video.season = 1;
       this.video.chapter = 1;
 
       this.isCreatingNewSeries = false;
       this.videoChange.emit(this.video);
       
-      console.log('Series created successfully:', createdSeries);
+      console.log('Serie creada correctamente:', createdSeries);
     } catch (error) {
-      console.error('Error creating series:', error);
+      console.error('Error creando la serie:', error);
     }
   }
 }
