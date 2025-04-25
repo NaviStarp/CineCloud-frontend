@@ -16,6 +16,7 @@ import { AuthService, Series } from '../../services/auth.service';
 export class SerieFormComponent implements OnInit {
   @Input() video!: VideoEntry;
   @Output() closeModal = new EventEmitter<void>();
+  @Output() actualizar = new EventEmitter<void>();
   @ViewChild('videoPlayer') videoPlayer!: ElementRef;
 
   // Estados
@@ -284,7 +285,7 @@ export class SerieFormComponent implements OnInit {
       await this.auth.createSeries(createdSeries);
 
       this.closeModal.emit(); // Emitir evento para cerrar el modal
-      
+      this.actualizar.emit(); // Emitir evento para actualizar la lista de series
       // Cerrar el modal en el componente padre
       const parent = document.querySelector('app-video-card');
       if (parent) {

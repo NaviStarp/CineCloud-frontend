@@ -36,6 +36,7 @@ export class VideoCardComponent implements OnInit {
   isVideoPlaying = false;
   isEditing = false;
   isCreatingNewSeries = false;
+  actualizar = { value: false };
   
   // Video URL
   videoUrl: string | null = null;
@@ -68,6 +69,9 @@ export class VideoCardComponent implements OnInit {
     } catch (error) {
       console.error("Error loading video:", error);
     }
+  }
+  onUpdate() {
+    this.actualizar = { value: true }; 
   }
   
   // Funcion que alterna la edición del video

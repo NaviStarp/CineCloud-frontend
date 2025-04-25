@@ -48,6 +48,7 @@
     *ngIf="isEditing"
     [video]="video"
     [isEditing]="isEditing"
+    [actualizar]="actualizar"
     (videoChange)="onVideoFormChange($event)"
     (modalSerieToggle)="isCreatingNewSeries = $event"
   ></app-video-form>
@@ -79,4 +80,5 @@
     *ngIf="isCreatingNewSeries"
     [video]="video"
     (closeModal)="isCreatingNewSeries = false"
+    (actualizar)="onUpdate()"
   ></app-serie-form>

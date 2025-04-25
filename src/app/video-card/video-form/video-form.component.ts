@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, ElementRef, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
 import { faPlay, faEdit, faTimes, faFilm, faPlus, faSearch, faTv } from '@fortawesome/free-solid-svg-icons';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { CommonModule } from '@angular/common';
@@ -25,9 +25,10 @@ import { AuthService, Series } from '../../services/auth.service';
     ]),
   ]
 })
-export class VideoFormComponent implements OnInit {
+export class VideoFormComponent implements OnInit,OnChanges {
   @Input() isEditing: boolean = false;
   @Input() video!: VideoEntry;
+  @Input() actualizar: { value: boolean } = { value: false };
 
   @Output() videoChange = new EventEmitter<VideoEntry>();
   @Output() modalSerieToggle = new EventEmitter<boolean>();
@@ -67,14 +68,26 @@ export class VideoFormComponent implements OnInit {
 
   // Constructor
   constructor(private indexedDbService: IndexedDbService, private auth: AuthService) {
-    // Initialize video if not provided
     this.video = this.video || this.createEmptyVideoEntry();
+  }
+  ngOnChanges(changes: SimpleChanges){
+    if(this.actualizar.value){
+      const tamañoAntes = this.seriesList.length;
+      this.loadSeries();
+      const tamañoDespues = this.seriesList.length;
+
+      if (this.seriesList.length > 0 && tamañoAntes < tamañoDespues) {
+        const lastSeries = this.seriesList[this.seriesList.length - 1];
+        this.autoFillSeasonAndChapter(lastSeries);
+      }
+      this.loadCategories();
+      this.actualizar.value = false;
+    }
   }
 
   ngOnInit(): void {
     this.loadSeries();
     this.loadCategories();
-    
     // Ensure categories is initialized
     if (!this.video.categories || !Array.isArray(this.video.categories)) {
       this.video.categories = [];
