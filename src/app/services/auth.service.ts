@@ -206,51 +206,72 @@ export class AuthService {
     const categorias = await response.json();
     return categorias.map((categoria: any) => categoria.nombre);
   }
-
   public async createSeries(series: Series) {
     const formData = new FormData();
     formData.append('titulo', series.titulo);
     formData.append('descripcion', series.descripcion);
     formData.append('fecha_estreno', series.fecha_estreno);
-    series.categorias.forEach((categoria, index) => {
-      formData.append(`categorias[${index}]`, categoria);
-    });
-    console.log('FormData:', formData);
     formData.append('temporadas', series.temporadas.toString());
+    
+    // Manejar las categorías como un array JSON
+    if (series.categorias && series.categorias.length > 0) {
+        // Opción 1: Enviar como JSON string
+        formData.append('categorias', JSON.stringify(series.categorias));
+        
+        // Opción 2: Si el backend espera múltiples valores con el mismo nombre
+        // series.categorias.forEach(categoria => {
+        //     formData.append('categorias', categoria.toString());
+        // });
+    }
+    
+    // Manejar la imagen
     if (typeof series.imagen === 'string' && series.imagen.startsWith('data:image')) {
-      const byteString = atob(series.imagen.split(',')[1]);
-      const arrayBuffer = new ArrayBuffer(byteString.length);
-      const uint8Array = new Uint8Array(arrayBuffer);
-      for (let i = 0; i < byteString.length; i++) {
-        uint8Array[i] = byteString.charCodeAt(i);
-      }
-      const blob = new Blob([uint8Array], { type: 'image/jpeg' });
-      console.log('Blob:', blob);
-      formData.append('imagen', blob, `${series.titulo}-thumbnail.jpg`);
-    }else{
-      console.log('No es una imagen', series.imagen);
+        // Convertir base64 a blob
+        const parts = series.imagen.split(';base64,');
+        const imageType = parts[0].split(':')[1];
+        const byteString = atob(parts[1]);
+        const arrayBuffer = new ArrayBuffer(byteString.length);
+        const uint8Array = new Uint8Array(arrayBuffer);
+        
+        for (let i = 0; i < byteString.length; i++) {
+            uint8Array[i] = byteString.charCodeAt(i);
+        }
+        
+        const blob = new Blob([uint8Array], { type: imageType });
+        formData.append('imagen', blob, `${series.titulo.replace(/\s+/g, '-')}-thumbnail.jpg`);
+    } 
+     else {
+        console.error('Formato de imagen no válido:', series.imagen);
+        throw new Error('La imagen debe ser un string base64 o un objeto File/Blob');
     }
+    
     try {
-      const response = await fetch(`${this.getServerUrl()}/series/new/`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Token ${this.getToken()}`
-        },
-        body: formData
-      });
-  
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Upload error:', response.status, errorText);
-        throw new Error(`Upload failed: ${response.status} ${errorText}`);
-      }
-      
-      return await response.json();
+        const token = this.getToken();
+        if (!token) {
+            throw new Error('No se encontró el token de autenticación');
+        }
+        
+        const response = await fetch(`${this.getServerUrl()}/series/new/`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Token ${token}`
+                // No incluir 'Content-Type' para que el navegador establezca el boundary del FormData correctamente
+            },
+            body: formData
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => response.text());
+            console.error('Error en la creación de serie:', response.status, errorData);
+            throw new Error(typeof errorData === 'string' ? errorData : JSON.stringify(errorData));
+        }
+        
+        return await response.json();
     } catch (error) {
-      console.error('Upload exception:', error);
-      throw error;
+        console.error('Excepción en createSeries:', error);
+        throw error;
     }
-  }
+}
   public async createCategory(name: string) {
     const formData = new FormData();
     formData.append('nombre', name);
