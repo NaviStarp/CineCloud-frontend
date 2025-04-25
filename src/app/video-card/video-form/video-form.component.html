@@ -124,7 +124,7 @@
             <button
               type="button"
               class="px-4 py-3 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-lg hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-200"
-              (click)="openCreateSeriesModal()"
+              (click)="toggleModalSerie()"
             >
               <fa-icon [icon]="faPlus" class="text-lg"></fa-icon>
             </button>
@@ -137,7 +137,7 @@
                  class="px-4 py-3 hover:bg-neutral-700 cursor-pointer transition-colors flex items-center"
                  (mousedown)="selectSeries(series)">
               <div class="flex-shrink-0 w-10 h-10 rounded overflow-hidden mr-3">
-                <img [src]="series.thumbnail || 'assets/placeholder-thumbnail.jpg'" class="w-full h-full object-cover" alt="Serie thumbnail">
+                <img [src]="series.imagen || 'assets/placeholder-thumbnail.jpg'" class="w-full h-full object-cover" alt="Serie thumbnail">
               </div>
               <div>
                 <div class="font-medium text-neutral-100">{{series.titulo}}</div>
@@ -146,7 +146,7 @@
             </div>
             <div *ngIf="seriesSearch && filteredSeries.length === 0" 
                  class="px-4 py-2 text-primary-400 hover:bg-neutral-700 cursor-pointer transition-colors border-t border-neutral-600"
-                 (mousedown)="openCreateSeriesModal()">
+                 (mousedown)="toggleModalSerie()">
               <fa-icon [icon]="faPlus" class="mr-2"></fa-icon> Crear nueva serie
             </div>
           </div>

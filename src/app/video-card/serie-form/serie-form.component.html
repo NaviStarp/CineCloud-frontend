@@ -1,11 +1,18 @@
 <div 
-class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[99999]"
-*ngIf="isCreatingNewSeries"
+class="fixed inset-0 bg-transparent backdrop-blur-md flex items-center justify-center z-[99999]"
 >
 <div class="bg-neutral-800 border border-neutral-700 text-neutral-50 rounded-xl p-6 w-full max-w-xl shadow-lg transform transition-all duration-300">
   <h2 class="text-xl font-bold mb-5 text-neutral-100">Crear Nueva Serie</h2>
-  
+  <div id="fotoSerie" class="flex justify-center mb-4">
+    <img
+      *ngIf="imagen"
+      [src]="imagen"
+      alt="Portada de la serie"
+      class="w-32 h-32 object-cover rounded-lg shadow-lg"
+    />
+    </div>
   <form class="space-y-5">
+
     <!-- Nombre de la Serie -->
     <div class="form-group">
       <label for="series-name" class="block text-sm font-medium text-neutral-300 mb-2">Nombre de la Serie</label>
@@ -41,7 +48,18 @@ class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-cent
         class="w-full px-4 py-3 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
       >
     </div>
-    
+    <!--Portada-->
+    <div class="form-group">
+      <label for="series-cover" class="block text-sm font-medium text-neutral-300 mb-2">Portada</label>
+      <input
+        type="file"
+        id="series-cover"
+        (change)="onFileSelected($event)"
+        accept="image/*"
+        class="w-full px-4 py-3 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+      >
+    </div>
+
     <!-- Categorías para la Serie -->
     <div class="form-group">
       <label class="block text-sm font-medium text-neutral-300 mb-2">Categorías</label>

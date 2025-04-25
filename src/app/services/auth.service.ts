@@ -28,7 +28,6 @@ export interface Series {
   episodios: Episode[];
   titulo: string;
   categorias:string[];
-  thumbnail: string | null;
   descripcion: string;
   fecha_estreno: string;
   temporadas: number;
@@ -224,7 +223,10 @@ export class AuthService {
         uint8Array[i] = byteString.charCodeAt(i);
       }
       const blob = new Blob([uint8Array], { type: 'image/jpeg' });
+      console.log('Blob:', blob);
       formData.append('imagen', blob, `${series.titulo}-thumbnail.jpg`);
+    }else{
+      console.log('No es una imagen', series.imagen);
     }
     try {
       const response = await fetch(`${this.getServerUrl()}/series/new/`, {

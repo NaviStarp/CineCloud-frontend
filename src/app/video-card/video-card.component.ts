@@ -7,13 +7,14 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IndexedDbService, VideoEntry } from '../services/indexed-db.service';
 import { AuthService, Series } from '../services/auth.service';
 import { VideoFormComponent } from './video-form/video-form.component';
+import { SerieFormComponent } from "./serie-form/serie-form.component";
 
 @Component({
   selector: 'app-video-card',
   templateUrl: './video-card.component.html',
   styleUrls: ['./video-card.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, FontAwesomeModule, VideoFormComponent],
+  imports: [CommonModule, FormsModule, FontAwesomeModule, VideoFormComponent, SerieFormComponent],
   animations: [
     trigger('slideInOut', [
       state('void', style({
@@ -34,6 +35,7 @@ export class VideoCardComponent implements OnInit {
   // Estados
   isVideoPlaying = false;
   isEditing = false;
+  isCreatingNewSeries = false;
   
   // Video URL
   videoUrl: string | null = null;

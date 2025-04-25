@@ -43,11 +43,13 @@
     </div>
   </div>
   
+  <!-- Video Form Component -->
   <app-video-form
     *ngIf="isEditing"
     [video]="video"
     [isEditing]="isEditing"
     (videoChange)="onVideoFormChange($event)"
+    (modalSerieToggle)="isCreatingNewSeries = $event"
   ></app-video-form>
   
   <!-- Video Player Modal -->
@@ -71,3 +73,10 @@
       </video>
     </div>
   </div>
+  
+  <!-- Serie Form Component -->
+  <app-serie-form
+    *ngIf="isCreatingNewSeries"
+    [video]="video"
+    (closeModal)="isCreatingNewSeries = false"
+  ></app-serie-form>

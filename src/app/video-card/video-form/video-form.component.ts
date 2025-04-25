@@ -30,7 +30,7 @@ export class VideoFormComponent implements OnInit {
   @Input() video!: VideoEntry;
 
   @Output() videoChange = new EventEmitter<VideoEntry>();
- 
+  @Output() modalSerieToggle = new EventEmitter<boolean>();
 
   // Categorías y series
   categories: string[] = [];
@@ -57,7 +57,6 @@ export class VideoFormComponent implements OnInit {
 
   // Variables para crear nueva serie
   seriesList: Series[] = [];
-  isCreatingNewSeries = false;
   newSeries = { 
     name: '', 
     description: '', 
@@ -102,6 +101,10 @@ export class VideoFormComponent implements OnInit {
       seriesDescription: '',
       seriesReleaseDate: new Date(),
     };
+  }
+
+  toggleModalSerie(){
+    this.modalSerieToggle.emit(true);
   }
 
   // Metodo que carga las categorias de la base de datos
@@ -270,7 +273,7 @@ export class VideoFormComponent implements OnInit {
       }));
       for(let i = 0; i < this.seriesList.length; i++) {
         const serie = this.seriesList[i];
-        serie.thumbnail = await this.auth.getThumnailUrl(serie.imagen);
+        serie.imagen = await this.auth.getThumnailUrl(serie.imagen);
       }
       this.filteredSeries = [...this.seriesList];
     } catch (error) {
@@ -363,7 +366,7 @@ export class VideoFormComponent implements OnInit {
 
   onSeriesChange(event: any) {
     if (event.target.value === 'new') {
-      this.openCreateSeriesModal();
+      this.toggleModalSerie();
       return;
     }
     
@@ -404,75 +407,12 @@ export class VideoFormComponent implements OnInit {
     this.video.season = maxSeason;
     this.video.chapter = maxChapter + 1;
   }
-  // Función para abrir el modal de creación de serie
-  openCreateSeriesModal() {
-    this.isCreatingNewSeries = true;
-    this.newSeries = { 
-      name: '', 
-      description: '', 
-      releaseDate: new Date(),
-      categories: [],
-      categorySearch: ''
-    };
-  }
-  // Función para cerrar el modal de creación de serie
-  cancelCreateSeries() {
-    this.isCreatingNewSeries = false;
-    if (this.video.seriesId === 0) {
-      this.video.seriesId = null;
-    }
-  }
+
   // Función para alternar la visibilidad del input de categoria
   toggleInputCategoria(){
     const inputCategoria = document.getElementById('inputCategoria');
     if (inputCategoria) {
       inputCategoria.classList.toggle('hidden');
-    }
-  }
-  // Función para guardar la nueva serie en la base de datos
-  async saveNewSeries() {
-    if (!this.newSeries.name.trim()) {
-      console.error('El nombre de la serie es requerido');
-      return;
-    }
-    
-    try {
-      const newSeriesId = Date.now();
-      const createdSeries: Series = {
-        id: newSeriesId,
-        titulo: this.newSeries.name,
-        descripcion: this.newSeries.description,
-        categorias: this.newSeries.categories || [],
-        thumbnail: this.video.thumbnail || '', 
-        temporadas: 1,
-        imagen: this.video.thumbnail || '', // Use video thumbnail
-        fecha_estreno: this.newSeries.releaseDate.toString(),
-        episodios: []
-      };
-
-      // Lanzar petición para crear la serie
-      await this.auth.createSeries(createdSeries);
-      
-      // Añadir la serie a la lista de series
-      this.seriesList.push(createdSeries);
-      this.filteredSeries = [...this.seriesList];
-
-      // Actualizar el video con la nueva serie
-      this.video.seriesId = newSeriesId;
-      this.video.seriesName = this.newSeries.name;
-      this.video.seriesDescription = this.newSeries.description;
-      this.video.seriesReleaseDate = this.newSeries.releaseDate;
-      
-      // Autocompletar temporada y capitulo
-      this.video.season = 1;
-      this.video.chapter = 1;
-
-      this.isCreatingNewSeries = false;
-      this.videoChange.emit(this.video);
-      
-      console.log('Serie creada correctamente:', createdSeries);
-    } catch (error) {
-      console.error('Error creando la serie:', error);
     }
   }
 }
