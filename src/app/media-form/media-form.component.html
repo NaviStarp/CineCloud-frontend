@@ -14,7 +14,7 @@
       ></app-video-card>
       
       </div>
-      <div class="flex justify-center mt-4">
+      <div *ngIf="videos.length > 0" class="flex justify-center mt-4">
         <button (click)="uploadVideos($event)" class="px-8 py-4 bg-gradient-to-r from-primary-500 to-primary-700 text-white rounded-full hover:from-primary-600 hover:to-primary-800 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-400 shadow-lg transform hover:scale-105">
           <div class="flex items-center space-x-2">
         <fa-icon [icon]="faCheck" class="text-lg"></fa-icon>
