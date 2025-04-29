@@ -1,5 +1,5 @@
 import { Component, Input, ViewChild, ElementRef, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
-import { faPlay, faEdit, faTimes, faFilm, faPlus, faSearch, faTv } from '@fortawesome/free-solid-svg-icons';
+import { faPlay, faEdit, faTimes, faFilm, faPlus, faSearch, faTv, faUpload, faCheck, faImage, faInfoCircle, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -42,7 +42,7 @@ export class VideoFormComponent implements OnInit,OnChanges {
   categorySearch: string = '';
   showCategorySuggestions: boolean = false;
   filteredCategories: string[] = [];
-
+  thumbnailUrl: string | null = null;
   seriesSearch: string = '';
   showSeriesSuggestions: boolean = false;
   filteredSeries: Series[] = [];
@@ -51,7 +51,12 @@ export class VideoFormComponent implements OnInit,OnChanges {
   faPlay = faPlay;
   faEdit = faEdit;
   faTimes = faTimes;
+  faImage = faImage;
+  faInfoCircle = faInfoCircle;
+  faExclamationTriangle = faExclamationTriangle;
   faPlus = faPlus;
+  faCheck  = faCheck;
+  faUpload = faUpload;
   faFilm = faFilm;
   faSearch = faSearch;
   faTv = faTv;
@@ -227,6 +232,38 @@ export class VideoFormComponent implements OnInit,OnChanges {
       };
       reader.readAsDataURL(file);
     }
+  }
+
+  removeThumbnail() {
+    this.video.thumbnail = '';
+    this.thumbnailUrl = null;
+  }
+  loadFromThumbnailUrl($event: Event) {
+        if (!this.thumbnailUrl) return;
+      
+      // Validar que la URL sea válida
+      try {
+        new URL(this.thumbnailUrl);
+        const img = new Image();
+        img.crossOrigin = 'anonymous'; // Allow cross-origin requests
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0);
+            this.video.thumbnail = canvas.toDataURL('image/png');
+          }
+        };
+        img.onerror = () => {
+          console.error("Failed to load image from URL");
+        };
+        img.src = this.thumbnailUrl;
+      } catch (_) {
+        console.error("Invalid URL");
+      }
+   
   }
 
 
