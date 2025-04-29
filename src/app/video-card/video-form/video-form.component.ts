@@ -217,9 +217,20 @@ export class VideoFormComponent implements OnInit,OnChanges {
       console.error('Error creating category:', error);
     }
   }
-  /* METODOS PARA SERIES */
-  
+  onThumbnailSelected($event: Event) {
+    const input = $event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.video.thumbnail = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
 
+
+  /* METODOS PARA SERIES */
   // Metodo para busqueda de serie
   onSeriesSearch() {
     if (!this.seriesSearch) {
