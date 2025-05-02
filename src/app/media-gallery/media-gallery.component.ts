@@ -11,6 +11,7 @@ interface Media {
   titulo: string;
   descripcion: string;
   imagen: string;
+  duracion: string;
   fecha_estreno: string;
   categorias: string[];
 }

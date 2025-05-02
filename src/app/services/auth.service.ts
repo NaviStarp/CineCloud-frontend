@@ -311,7 +311,7 @@ public async getVideos(): Promise<MediaResponse> {
   });
 
   const videos = await response.json();
-
+  console.log('Videos:', videos);
   // Helper function to process video thumbnails
   const processThumbnails = async (videos: any[]) => {
     for (const video of videos) {

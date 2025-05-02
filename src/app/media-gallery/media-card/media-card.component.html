@@ -1,33 +1,31 @@
-<!-- media-card.component.html -->
-<div class="media-card bg-neutral-800 rounded-lg overflow-hidden shadow-lg cursor-pointer hover:scale-105 transition-transform duration-300">
-    <div class="relative">
-      <!-- Imagen de portada -->
-      <img [src]="thumbnail" [alt]="title" class="w-full h-48 object-cover">
-      
-      <!-- Badge de tipo (película o serie) -->
-      <div class="absolute top-2 right-2 bg-neutral-900/80 text-xs font-bold px-2 py-1 rounded">
-        {{type | uppercase}}
-      </div>
-      
-      <!-- Overlay al hacer hover -->
-      <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/10 opacity-0 hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
-        <!-- Botón de reproducir -->
-        <div class="flex justify-center mb-3">
-          <button class="bg-primary-500 hover:bg-primary-400 rounded-full w-12 h-12 flex items-center justify-center transition-colors duration-300">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </button>
-        </div>
-        <!-- Descripción que aparece en hover -->
-        <p class="text-xs text-neutral-300 line-clamp-3">{{description}}</p>
-      </div>
+<div class="media-card bg-gradient-to-b from-neutral-800 via-neutral-900 to-black rounded-xl overflow-hidden shadow-xl cursor-pointer transform hover:scale-101 transition-transform duration-300">
+  <div class="relative">
+    <img [src]="thumbnail" [alt]="title" class="w-full h-48 object-cover">
+
+    <!-- Badge de tipo -->
+    <div class="absolute top-2 right-2 bg-accent-600/90 text-xs font-bold px-2 py-1 rounded text-white shadow-md">
+      {{ type | uppercase }}
     </div>
-    
-    <!-- Información básica siempre visible -->
-    <div class="p-3">
-      <h3 class="font-bold text-neutral-200">{{title}}</h3>
-      <p class="text-xs text-neutral-400">{{date}}</p>
+
+    <!-- Overlay con botón y descripción -->
+    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center p-4">
+      <button
+        class="bg-primary-500 hover:bg-primary-400 rounded-full w-12 h-12 flex items-center justify-center transition-colors duration-300 shadow-lg ring-2 ring-white/30"
+        >
+        <fa-icon [icon]="faPlay" class="text-white"></fa-icon>
+      </button>
+
     </div>
   </div>
+
+  <!-- Contenido inferior -->
+  <div class="p-4 bg-neutral-900 rounded-b-xl">
+    <h3 class="font-semibold text-white text-base truncate">{{ title }}</h3>
+    <div class="flex justify-between items-center mt-2">
+      <p class="text-xs text-neutral-300 mt-1 text-center line-clamp-3" *ngIf="duration && +duration > 0" >
+        {{ duration | number:'1.0-0' }} Minutos
+      </p>
+      <p class="text-xs text-neutral-400">{{ date }}</p>
+    </div>
+  </div>
+</div>
