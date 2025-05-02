@@ -5,7 +5,7 @@ import { AuthService } from '../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { MediaCardComponent } from "./media-card/media-card.component";
 import { LoadingComponent } from "../general/loading/loading.component";
-
+import { MediaCarouselComponent } from "./media-carousel/media-carousel.component";
 interface Media {
   id: string;
   titulo: string;
@@ -18,7 +18,7 @@ interface Media {
 
 @Component({
   selector: 'app-media-gallery',
-  imports: [HeaderComponent, CommonModule, MediaCardComponent, LoadingComponent],
+  imports: [HeaderComponent, CommonModule, MediaCarouselComponent, LoadingComponent],
   standalone: true,
   templateUrl: './media-gallery.component.html',
   styleUrl: './media-gallery.component.css'
@@ -30,7 +30,6 @@ export class MediaGalleryComponent implements OnInit {
   series: Media[] = [];
   loading: boolean = true;
   
-  // Filtered media based on selected category
   peliculasFiltradas: Media[] = [];
   seriesFiltradas: Media[] = [];
 
@@ -47,7 +46,6 @@ export class MediaGalleryComponent implements OnInit {
     }).catch((error: any) => {
       console.error('Error loading data:', error);
     }).finally(() => {
-      console.log('All data loaded');
       this.loading = false;
     });
   }
@@ -66,8 +64,6 @@ export class MediaGalleryComponent implements OnInit {
     this.auth.getVideos().then((data: any) => {
       this.peliculas = data.peliculas;
       this.series = data.series;
-      console.log(this.peliculas);
-      console.log(this.series);
       this.filterMediaByCategory();
     }).catch((error: any) => {
       console.error('Error loading media:', error);

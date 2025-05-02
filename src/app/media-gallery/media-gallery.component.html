@@ -6,73 +6,41 @@
 </media-header>
 
 <div *ngIf="!loading" class="container mx-auto px-4 py-8">
-
   <div class="space-y-10">
     <!-- Películas Section -->
     <section *ngIf="peliculas.length > 0" class="bg-gray-50 dark:bg-gray-800 rounded-xl shadow-lg p-6">
       <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4 border-b pb-2">Películas: {{opcionSeleccionada}}</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <div *ngFor="let pelicula of peliculas" class="transform transition duration-300 hover:scale-105">
-          <app-media-card
-            [thumbnail]="pelicula.imagen"
-            [title]="pelicula.titulo"
-            [description]="pelicula.descripcion"
-            [date]="pelicula.fecha_estreno"
-            [duration]="pelicula.duracion"
-            [type]="'pelicula'"
-            class="h-full rounded-lg overflow-hidden shadow-md hover:shadow-xl">
-          </app-media-card>
-        </div>
-      </div>
+      
+      <app-media-carousel [items]="peliculas" [itemType]="'pelicula'"></app-media-carousel>
     </section>
-    
+
     <!-- Series Section -->
     <section *ngIf="series.length > 0" class="bg-gray-50 dark:bg-gray-800 rounded-xl shadow-lg p-6">
       <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4 border-b pb-2">Series: {{opcionSeleccionada}}</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <div *ngFor="let serie of series" class="transform transition duration-300 hover:scale-105">
-          <app-media-card
-            [thumbnail]="serie.imagen"
-            [title]="serie.titulo"
-            [description]="serie.descripcion"
-            [date]="serie.fecha_estreno"
-            [type]="'serie'"
-            class="h-full rounded-lg overflow-hidden shadow-md hover:shadow-xl">
-          </app-media-card>
-        </div>
-      </div>
+      
+      <app-media-carousel [items]="series" [itemType]="'serie'"></app-media-carousel>
     </section>
-    
+
     <!-- Categorias -->
     <section *ngFor="let categoria of categorias" class="bg-gray-50 dark:bg-gray-800 rounded-xl shadow-lg p-6">
       <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4 border-b pb-2">Categoría: {{categoria}}</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <div *ngFor="let serie of filterCategorie(categoria, series)" class="transform transition duration-300 hover:scale-105">
-          <app-media-card
-            *ngIf="serie.categorias.includes(categoria)"
-            [thumbnail]="serie.imagen"
-            [title]="serie.titulo"
-            [description]="serie.descripcion"
-            [date]="serie.fecha_estreno"
-            [type]="'serie'"
-            class="h-full rounded-lg overflow-hidden shadow-md hover:shadow-xl">
-          </app-media-card>
-        </div>
-        <div *ngFor="let pelicula of filterCategorie(categoria, peliculas)" class="transform transition duration-300 hover:scale-105">
-          <app-media-card
-            *ngIf="pelicula.categorias.includes(categoria)"
-            [thumbnail]="pelicula.imagen"
-            [title]="pelicula.titulo"
-            [description]="pelicula.descripcion"
-            [date]="pelicula.fecha_estreno"
-            [type]="'pelicula'"
-            class="h-full rounded-lg overflow-hidden shadow-md hover:shadow-xl">
-          </app-media-card>
-        </div>
+      
+      <!-- Series Carousel -->
+      <div *ngIf="filterCategorie(categoria, series).length > 0" class="mb-6">
+        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-3">Series</h3>
+        <app-media-carousel [items]="filterCategorie(categoria, series)" [itemType]="'serie'"></app-media-carousel>
+      </div>
+      
+      <!-- Películas Carousel -->
+      <div *ngIf="filterCategorie(categoria, peliculas).length > 0">
+        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-3">Películas</h3>
+        <app-media-carousel [items]="filterCategorie(categoria, peliculas)" [itemType]="'pelicula'"></app-media-carousel>
       </div>
     </section>
   </div>
 </div>
+
+<app-loading *ngIf="loading" class="flex justify-center items-center h-screen w-full"></app-loading>
 
 <app-loading
   *ngIf="loading"

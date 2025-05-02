@@ -112,7 +112,7 @@
         <label class="block text-sm font-medium text-neutral-300 mb-2">Portada</label>
         <div class="flex flex-col gap-6 items-center">
           <!-- Vista previa de la imagen -->
-          <div class="relative w-full h-80 bg-neutral-800 rounded-lg overflow-hidden border border-neutral-600 flex items-center justify-center">
+          <div *ngIf="showImg" (click)="showImg=false" class="relative w-full h-80 bg-neutral-800 rounded-lg overflow-hidden border border-neutral-600 flex items-center justify-center">
         <div *ngIf="!video.thumbnail" class="text-center p-4">
           <fa-icon [icon]="faImage" class="text-neutral-500 text-5xl mb-2"></fa-icon>
           <p class="text-neutral-400 text-sm">No hay portada seleccionada</p>
@@ -121,10 +121,15 @@
         <!-- Botón de eliminar portada -->
         <button *ngIf="video.thumbnail"
           type="button"
-          class="absolute top-2 right-2 bg-red-500/80 hover:bg-red-600 text-white p-2 rounded-full shadow-lg transition-all duration-200"
-          (click)="removeThumbnail()">
+          class="absolute top-2 right-2 bg-red-500/80 hover:bg-red-600 text-white w-5 h-5 rounded-full shadow-lg flex items-center justify-center transition-all duration-200"
+          (click)="$event.stopPropagation();removeThumbnail()">
           <fa-icon [icon]="faTimes"></fa-icon>
         </button>
+          </div>
+          <div *ngIf="!showImg" class="flex flex-col items-center">
+            <button type="button" (click)="showImg=true" class="px-4 py-2 bg-neutral-700 text-neutral-100 rounded-lg hover:bg-neutral-600 transition shadow-md">
+              <fa-icon [icon]="faEye" class="mr-2"></fa-icon> Ver Portada
+            </button>
           </div>
           
           <!-- Botón de seleccionar archivo -->
@@ -133,7 +138,7 @@
           id="thumbnail"
           type="file"
           (change)="onThumbnailSelected($event)"
-          accept="image/*"
+            accept="image/png, image/jpeg, image/jpg, image/avif, image/webp"
           class="hidden"
         />
         <label for="thumbnail" class="flex items-center justify-center cursor-pointer px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition shadow-md hover:shadow-lg w-full">
@@ -155,7 +160,7 @@
           <button
             type="button"
             class="px-3 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition shadow-md"
-            (click)="loadFromThumbnailUrl($event)">
+            (click)="loadFromThumbnailUrl()">
             <fa-icon [icon]="faCheck"></fa-icon>
           </button>
         </div>
