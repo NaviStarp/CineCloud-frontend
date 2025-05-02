@@ -141,7 +141,8 @@ export class AuthService {
     videos.forEach((video, index) => {
       formData.append(`videos[${index}][name]`, video.name);
       formData.append(`videos[${index}][description]`, video.description || '');
-      
+      formData.append(`videos[${index}][categorias]`, JSON.stringify(video.categories || []));
+      console.log("Categorias",video.categories);
       formData.append(`videos[${index}][video]`, video.videoBlob, video.name);
       
       if (typeof video.thumbnail === 'string' && video.thumbnail.startsWith('data:image')) {
@@ -298,16 +299,35 @@ export class AuthService {
     }
   }
 public async getVideos(): Promise<MediaResponse> {
-  if(!this.getToken() || this.getServerUrl() === ''){
+  if (!this.getToken() || this.getServerUrl() === '') {
     return { peliculas: [], series: [], episodios: [] };
   }
+
   const response = await fetch(`${this.getServerUrl()}/media/`, {
     method: 'GET',
     headers: {
       'Authorization': `Token ${this.getToken()}`
     }
   });
-  return response.json();
+
+  const videos = await response.json();
+
+  // Helper function to process video thumbnails
+  const processThumbnails = async (videos: any[]) => {
+    for (const video of videos) {
+      video.imagen = video.imagen.replace('/media/', '');
+      video.imagen = await this.getThumnailUrl(video.imagen);
+    }
+  };
+
+  // Wait for all thumbnails to be processed
+  await Promise.all([
+    processThumbnails(videos.peliculas),
+    processThumbnails(videos.series),
+    processThumbnails(videos.episodios)
+  ]);
+
+  return videos;
 }
   public async getSeries(): Promise<Series[]> {
     if(!this.getToken() || this.getServerUrl() === ''){

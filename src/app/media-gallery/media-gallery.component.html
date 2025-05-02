@@ -1,0 +1,76 @@
+<div *ngIf="!loading">
+<media-header 
+  [categorias]="categorias"
+    [opcionSeleccionada]="'Miedo'"
+  >
+</media-header>
+<div class="media-gallery-container">
+  <!-- Películas Section -->
+  <section class="media-section" *ngIf="peliculas.length > 0">
+    <h2 class="section-title">Películas: {{opcionSeleccionada}}</h2>
+    <div class="media-grid">
+      <div class="media-card-wrapper" *ngFor="let pelicula of peliculas">
+        <app-media-card
+          [thumbnail]="pelicula.imagen"
+          [title]="pelicula.titulo"
+          [description]="pelicula.descripcion"
+          [date]="pelicula.fecha_estreno"
+          [type]="'pelicula'">
+        </app-media-card>
+      </div>
+    </div>
+  </section>
+
+  <!-- Series Section -->
+  <section class="media-section" *ngIf="series.length > 0">
+    <h2 class="section-title">Series: {{opcionSeleccionada}}</h2>
+    <div class="media-grid">
+      <div class="media-card-wrapper" *ngFor="let serie of series">
+        <app-media-card
+          [thumbnail]="serie.imagen"
+          [title]="serie.titulo"
+          [description]="serie.descripcion"
+          [date]="serie.fecha_estreno"
+          [type]="'serie'">
+        </app-media-card>
+      </div>
+    </div>
+  </section>
+
+  <!--Categorias-->
+<section class="media-section" *ngFor="let categoria of categorias">
+    <h2 class="section-title">Categoría: {{categoria}}</h2>
+    <div class="media-grid">
+                <div class="media-card-wrapper" *ngFor="let serie of filterCategorie(categoria, series)">
+                    <app-media-card 
+                        *ngIf="serie.categorias.includes(categoria)"
+                        [thumbnail]="serie.imagen"
+                        [title]="serie.titulo"
+                        [description]="serie.descripcion"
+                        [date]="serie.fecha_estreno"
+                        [type]="'serie'">
+                    </app-media-card>
+                </div>
+                <div class="media-card-wrapper" *ngFor="let pelicula of filterCategorie(categoria, peliculas)">
+                    <app-media-card 
+                        *ngIf="pelicula.categorias.includes(categoria)"
+                        [thumbnail]="pelicula.imagen"
+                        [title]="pelicula.titulo"
+                        [description]="pelicula.descripcion"
+                        [date]="pelicula.fecha_estreno"
+                        [type]="'pelicula'">
+                    </app-media-card>
+                </div>
+            </div>
+        </section>
+            <!-- No Results Message -->
+
+  <!-- No Results Message
+  <div class="no-results" *ngIf="peliculasFiltradas.length === 0 && seriesFiltradas.length === 0">
+    <p>No hay contenido disponible para la categoría "{{opcionSeleccionada}}"</p>
+  </div> -->
+</div>
+</div>
+<app-loading
+class="flex justify-center items-center h-screen w-screen"
+ *ngIf="loading"></app-loading>

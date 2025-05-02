@@ -8,6 +8,7 @@ import { ServerConfigComponent } from './server-config/server-config.component';
 import { PruebaComponent } from './prueba/prueba.component';
 import { MediaListComponent } from './media-list/media-list.component';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { MediaGalleryComponent } from './media-gallery/media-gallery.component';
 export const routes: Routes = [
     { 
         path: '', 
@@ -23,7 +24,7 @@ export const routes: Routes = [
         canActivate: [AuthGuard] 
     },
     { path: 'server/config', component: ServerConfigComponent },
-    { path: 'prueba',component:PruebaComponent},
-    { path: 'lista',component:MediaListComponent},
+    { path: 'prueba',component:MediaListComponent},
+    { path: 'lista',component:MediaGalleryComponent},
     { path: '**', component:NotFoundComponent} 
 ];
