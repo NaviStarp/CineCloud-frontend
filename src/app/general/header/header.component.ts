@@ -28,7 +28,6 @@ export class HeaderComponent  implements OnInit {
   @HostListener('window:scroll', ['$event'])
   onWindowScroll(event: Event) {
     const scrollPosition = document.documentElement.scrollTop;
-    console.log(this.opcionSeleccionada);
     this.scroll = scrollPosition > 10;
   }
 }

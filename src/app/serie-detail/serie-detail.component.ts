@@ -6,12 +6,15 @@ import { MediaCarouselComponent } from '../media-gallery/media-carousel/media-ca
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { MediaCardComponent } from "../media-gallery/media-card/media-card.component";
 import { faCheck, faPlay, faShareAlt } from '@fortawesome/free-solid-svg-icons';
+import { FormsModule } from '@angular/forms';
+import { EpisodeListComponent } from "./episode-list/episode-list.component";
 
 @Component({
   selector: 'app-serie-detail',
-  imports: [CommonModule, HeaderComponent, VideoPlayerComponent, MediaCarouselComponent, FaIconComponent, MediaCardComponent],
+  standalone: true,
+  imports: [CommonModule, HeaderComponent, VideoPlayerComponent, MediaCarouselComponent, 
+           FaIconComponent, EpisodeListComponent, FormsModule],
   templateUrl: './serie-detail.component.html',
   styleUrl: './serie-detail.component.css'
 })
@@ -20,6 +23,8 @@ export class SerieDetailComponent implements OnInit {
   title: string = 'Serie Detail';
   description: string = 'Serie Description';
   imageUrl: string = '';
+  season: number = 1; 
+  temporadas: number = 1;
   releaseDate: string = '2023-01-01';
   categories: string[] = [];
   episodes: any[] = [];
@@ -27,48 +32,90 @@ export class SerieDetailComponent implements OnInit {
   series: any[] = [];
   showVideo: boolean = false;
   loading: boolean = true;
+  selectedView: string = 'episodes';
   showToolTip: boolean = false;
   hlsUrl: string = '';
+  
   // Iconos
-  faPlay =  faPlay;
+  faPlay = faPlay;
   faCheck = faCheck;
   faShare = faShareAlt;
+  
   constructor(private route: ActivatedRoute, private auth: AuthService, private router: Router) {
     console.log('SerieDetailComponent initialized');
   }
 
-  ngOnInit(): void {
-    // Escuchar cambios en los parámetros de la ruta
+  async ngOnInit(): Promise<void> {
     this.route.params.subscribe(params => {
       this.id = params['id'];
       console.log('Serie ID from route:', this.id);
       this.loadSerieData();
     });
-
-    // Cargar las listas de películas y series
-    this.auth.getVideos().then((data: any) => {
-      this.peliculas = data.peliculas;
-      this.series = data.series;
-    }).catch((error: any) => {
+    
+    try {
+      const data = await this.auth.getVideos();
+      if (data) {
+        this.peliculas = data.peliculas || [];
+        this.series = data.series || [];
+        console.log('Peliculas:', this.peliculas);
+        console.log('Series:', this.series);
+      }
+    } catch (error) {
       console.error('Error loading videos:', error);
-    });
+    }
   }
 
-  loadSerieData(): void {
+  async loadSerieData(): Promise<void> {
     this.loading = true;
-    this.auth.getSerie(this.id).then((data: any) => {
-      this.title = data.titulo;
-      this.description = data.descripcion;
-      this.imageUrl = data.imagen;
-      this.releaseDate = data.fecha_estreno;
-      this.categories = data.categorias;
-      this.episodes = data.episodios || [];
-      this.loading = false;
-    }).catch((error: any) => {
+    
+    try {
+      const data = await this.auth.getSerie(this.id);
+      console.log('Raw serie data received:', data);
+      
+      if (data) {
+        this.title = data.titulo || 'No Title';
+        this.description = data.descripcion || 'No Description';
+        this.imageUrl = data.imagen || '';
+        this.releaseDate = data.fecha_estreno || '';
+        this.categories = data.categorias || [];
+        this.temporadas = data.temporadas || 1;
+        this.season = this.temporadas;  
+        
+        if (data.episodios && Array.isArray(data.episodios)) {
+          this.episodes = data.episodios.map((ep: any) => {
+            return {
+              ...ep,
+              season: ep.temporada || 1,
+              temporada: ep.temporada || 1, 
+              episode: ep.numero || 0,
+              numero: ep.numero || 0, 
+              title: ep.titulo || `Episode ${ep.numero || 'Unknown'}`,
+              titulo: ep.titulo || `Episode ${ep.numero || 'Unknown'}`, 
+              description: ep.descripcion || '',
+              descripcion: ep.descripcion || '', 
+              imageUrl: ep.imagen || '',
+              imagen: ep.imagen || '', 
+              duration: ep.duracion || 0,
+              duracion: ep.duracion || 0, 
+              videoUrl: ep.video || '',
+              video: ep.video || '' 
+            };
+          });
+        } else {
+          this.episodes = [];
+        }
+        
+        console.log('Serie data loaded:', this.title, this.description, this.imageUrl);
+        console.log('Processed episodes for EpisodeListComponent:', this.episodes);
+        console.log('Number of seasons:', this.season);
+      }
+    } catch (error) {
       console.error('Error loading serie:', error);
+    } finally {
       this.loading = false;
-    });
+    }
   }
+  
   copyUrlToClipboard(): void {
     const url = window.location.href;
     navigator.clipboard.writeText(url).then(() => {
@@ -81,8 +128,29 @@ export class SerieDetailComponent implements OnInit {
       console.error('Error copying URL to clipboard:', err);
     });
   }
+  
   showVideoPlayer(episode: any): void {
-    this.hlsUrl = episode.video;
+    this.hlsUrl = episode.video || episode.videoUrl;
     this.showVideo = true;
   }
+  
+  filterMediaByRelation() {
+    const relatedMedia = [...this.peliculas, ...this.series]
+      .filter((media) => {
+        return this.categories.some((category) => 
+          media.categorias?.includes(category)) && media.id !== this.id;
+      })
+      .filter((media, index, self) =>
+        index === self.findIndex((m) => m.id === media.id)
+      );
+    
+    console.log('Related Media:', relatedMedia);
+    return relatedMedia;
   }
+  
+  selectEpisode(episode: any): void {
+    console.log('Episode selected:', episode);
+    this.hlsUrl = episode.video || episode.videoUrl;
+    this.showVideo = true;
+  }
+}

@@ -383,25 +383,63 @@ public async getVideos(): Promise<MediaResponse> {
   }
   public async getSerie(id: string): Promise<any> {
     if (!this.getToken() || this.getServerUrl() === '') {
+      console.error('Missing token or server URL');
       return {};
     }
-    const response = await fetch(`${this.getServerUrl()}/series/${id}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Token ${this.getToken()}`
+    
+    try {
+      console.log(`Fetching serie with ID: ${id}`);
+      const response = await fetch(`${this.getServerUrl()}/series/${id}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Token ${this.getToken()}`,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
-    });
-    const serie = await response.json();
-    serie.imagen = await this.getThumnailUrl(serie.imagen.replace('/media/', ''));
-    if (serie.episodios) {
-      serie.episodios = await Promise.all(serie.episodios.map(async (episodio: any) => {
-        episodio.video = await this.getHLSUrl(episodio.video.replace('/media/', '/'));
-        episodio.imagen = await this.getThumnailUrl(episodio.imagen.replace('/media/', ''));
-        console.log('Episodio:', episodio);
-        return episodio;
-      }));
+      
+      const serie = await response.json();
+      console.log('Raw API response:', serie);
+      
+      // Procesar la imagen de la serie
+      if (serie.imagen) {
+        serie.imagen = await this.getThumnailUrl(serie.imagen.replace('/media/', ''));
+      }
+      
+      // Procesar episodios si exsiten
+      if (serie.episodios && Array.isArray(serie.episodios)) {
+        serie.episodios = await Promise.all(serie.episodios.map(async (episodio: any) => {
+          try {
+            // Procesar el video del episodio
+            if (episodio.video) {
+              episodio.video = await this.getHLSUrl(episodio.video.replace('/media/', '/'));
+            }
+            
+            // Procesar la imagen del episodio
+            if (episodio.imagen) {
+              episodio.imagen = await this.getThumnailUrl(episodio.imagen.replace('/media/', ''));
+            }
+            
+            return episodio;
+          } catch (error) {
+            console.error(`Error processing episode ${episodio.id}:`, error);
+            return episodio; // Devuelve el episodio original en caso de error
+          }
+        }));
+      } else {
+        serie.episodios = [];
+        console.warn('No episodes found in API response');
+      }
+      
+      return serie;
+    } catch (error) {
+      console.error('Error fetching serie details:', error);
+      throw error; // Devuelve error
     }
-    return serie;
   }
   
 }
