@@ -1,1 +1,122 @@
-<p>serie-detail works!</p>
+<media-header class="w-full bg-neutral-900 text-white"></media-header>
+
+<div class="serie-detail relative min-h-screen bg-neutral-900 text-white">
+    <!-- Fondo -->
+    <div class="absolute inset-0 z-0 overflow-hidden">
+        <img
+            *ngIf="imageUrl && !showVideo"
+            [src]="imageUrl"
+            [alt]="title"
+            class="w-full h-full object-cover object-center"
+        />
+    </div>
+
+    <!-- Gradiente -->
+    <div class="absolute inset-0 bg-gradient-to-r from-neutral-900 via-neutral-900/80 to-transparent z-10"></div>
+
+    <!-- Contenido -->
+    <div class="absolute bottom-10 z-20 px-6 md:px-16 py-8">
+        <!-- Titulo -->
+        <h1 class="text-5xl md:text-6xl font-bold mb-4">{{ title }}</h1>
+
+        <!-- Descripcion -->
+        <p class="max-w-4xl text-base md:text-lg mb-8">{{ description }}</p>
+
+        <!-- Fecha y duración -->
+        <div class="flex items-center space-x-4 text-base text-neutral-400 mb-6">
+            <span>{{ releaseDate }}</span>
+            <span >{{ episodes.length }} Episodios</span>
+        </div>
+
+        <!-- Categorias -->
+        <div class="flex items-center space-x-3 text-base mb-8">
+            <ng-container *ngFor="let category of categories; let i = index">
+                <ng-container *ngIf="i < 3">
+                    <span class="bg-neutral-700 text-neutral-200 px-3 py-1 rounded-full text-sm">
+                        {{ category }}
+                    </span>
+                    <span *ngIf="i < categories.length - 1" class="text-neutral-400">|</span>
+                </ng-container>
+            </ng-container>
+        </div>
+
+        <!-- Botones -->
+        <div class="flex flex-wrap items-center space-x-3 mb-8">
+            <button
+                (click)="showVideo = true"
+                class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-lg"
+            >
+                <fa-icon [icon]="faPlay" class="mr-3"></fa-icon>
+                Reproducir
+            </button>
+            <div class="relative">
+                <button
+                    (click)="copyUrlToClipboard(); showToolTip = true; $event.stopPropagation();"
+                    (mouseleave)="showToolTip = false"
+                    class="w-12 h-12 bg-neutral-700 hover:bg-neutral-600 rounded-full flex items-center justify-center"
+                >
+                    <fa-icon [icon]="faShare" class="text-xl hover:text-primary-400"></fa-icon>
+                </button>
+                <span
+                    *ngIf="showToolTip"
+                    class="absolute min-w-40 bottom-full text-green-100 mb-2 left-1/2 transform -translate-x-1/2 bg-neutral-800 text-green-500 text-sm px-3 py-1 rounded shadow-lg"
+                >
+                    <fa-icon [icon]="faCheck" class="mr-1"></fa-icon>
+                    ¡Enlace copiado!
+                </span>
+            </div>
+        </div>
+ 
+    </div>     
+</div>
+   <!-- Sección episodios -->
+   <div *ngIf="episodes.length" class="bg-gray-800 rounded-xl shadow-lg p-6 mt-2">
+    <h2 class="text-2xl font-bold text-white mb-4 border-b pb-2">Episodios</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <ng-container *ngFor="let episode of episodes">
+            <app-media-card
+                [ngClass]="{
+                    'h-64': !showVideo,
+                    'h-48': showVideo
+                }"
+                (click)="showVideoPlayer(episode)"
+                [thumbnail]="episode.imagen"
+                [title]="episode.titulo"
+                [thumbnail]="episode.imagen"
+                [description]="episode.descripcion"
+                [date]="episode.fecha_estreno"
+                [duration]="episode.duracion"
+                [type]="'episodio'"
+                class="h-full rounded-lg overflow-hidden shadow-md hover:shadow-xl transform transition duration-300"
+            ></app-media-card>
+        </ng-container>
+    </div>
+<!-- Recomendados
+<h2 class="mt-6 text-2xl font-bold text-gray-100 mb-4">Te podrían interesar:</h2>
+<section *ngFor="let categoria of categories">
+    <div
+        *ngIf="filterMediaByCategory(categoria, peliculas).length > 0"
+        class="bg-gray-800 rounded-xl shadow-lg p-6 mt-2"
+    >
+        <h2 class="text-2xl font-bold text-white mb-4 border-b pb-2">
+            Categoría: {{ categoria }}
+        </h2>
+        <!-- Películas Carousel -->
+        <!-- <div>
+            <app-media-carousel
+                [items]="filterMediaByCategory(categoria, peliculas)"
+                [itemType]="'pelicula'"
+            ></app-media-carousel>
+        </div>
+    </div>
+</section> --> 
+
+<!-- Video Player Component -->
+<app-video-player
+    *ngIf="hlsUrl && showVideo"
+    [videoUrl]="hlsUrl"
+    [videoTitle]="title"
+    [episodeInfo]="description"
+    (videoClosed)="showVideo = false"
+    class="w-full h-full fixed inset-0 z-50"
+></app-video-player>

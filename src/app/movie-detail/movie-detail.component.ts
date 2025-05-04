@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { HeaderComponent as HeaderComponent } from "../general/header/header.component";
 import { VideoPlayerComponent } from "../general/video-player/video-player.component";
 import { MediaCarouselComponent } from "../media-gallery/media-carousel/media-carousel.component";
-import { faPlay, faShareAlt } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faPlay, faShareAlt } from '@fortawesome/free-solid-svg-icons';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 @Component({
@@ -28,9 +28,10 @@ export class MovieDetailComponent implements OnInit {
   series: any[] = [];
   showVideo: boolean = false;
   loading: boolean = true;
-
+  showToolTip: boolean = false;
   // Iconos
   faPlay = faPlay;
+  faCheck = faCheck;
   faShare = faShareAlt;
 
   constructor(private route: ActivatedRoute, private auth: AuthService, private router: Router) {

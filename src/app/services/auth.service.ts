@@ -381,6 +381,28 @@ public async getVideos(): Promise<MediaResponse> {
     movie.video = this.getHLSUrl(movie.video.replace('/media/','/'));
     return movie;
   }
+  public async getSerie(id: string): Promise<any> {
+    if (!this.getToken() || this.getServerUrl() === '') {
+      return {};
+    }
+    const response = await fetch(`${this.getServerUrl()}/series/${id}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${this.getToken()}`
+      }
+    });
+    const serie = await response.json();
+    serie.imagen = await this.getThumnailUrl(serie.imagen.replace('/media/', ''));
+    if (serie.episodios) {
+      serie.episodios = await Promise.all(serie.episodios.map(async (episodio: any) => {
+        episodio.video = await this.getHLSUrl(episodio.video.replace('/media/', '/'));
+        episodio.imagen = await this.getThumnailUrl(episodio.imagen.replace('/media/', ''));
+        console.log('Episodio:', episodio);
+        return episodio;
+      }));
+    }
+    return serie;
+  }
   
 }
 

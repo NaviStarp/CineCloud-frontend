@@ -8,32 +8,32 @@
 <div *ngIf="!loading && peliculas.length > 0" class="container mx-auto px-4 py-8">
   <div class="space-y-10">
     <!-- Películas Section -->
-    <section *ngIf="peliculas.length > 0" class="bg-gray-50 dark:bg-gray-800 rounded-xl shadow-lg p-6">
-      <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4 border-b pb-2">Películas: {{opcionSeleccionada}}</h2>
+    <section *ngIf="peliculas.length > 0" class="bg-gray-800 rounded-xl shadow-lg p-6">
+      <h2 class="text-2xl font-bold text-white mb-4 border-b pb-2">Películas: {{opcionSeleccionada}}</h2>
       
       <app-media-carousel [items]="peliculas" [itemType]="'pelicula'"></app-media-carousel>
     </section>
 
     <!-- Series Section -->
-    <section *ngIf="series.length > 0" class="bg-gray-50 dark:bg-gray-800 rounded-xl shadow-lg p-6">
-      <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4 border-b pb-2">Series: {{opcionSeleccionada}}</h2>
+    <section *ngIf="series.length > 0" class="bg-gray-800 rounded-xl shadow-lg p-6">
+      <h2 class="text-2xl font-bold text-white mb-4 border-b pb-2">Series: {{opcionSeleccionada}}</h2>
       
       <app-media-carousel [items]="series" [itemType]="'serie'"></app-media-carousel>
     </section>
 
     <!-- Categorias -->
-    <section *ngFor="let categoria of categorias" class="bg-gray-50 dark:bg-gray-800 rounded-xl shadow-lg p-6">
-      <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4 border-b pb-2">Categoría: {{categoria}}</h2>
+    <section *ngFor="let categoria of categorias" class="bg-gray-800 rounded-xl shadow-lg p-6">
+      <h2 class="text-2xl font-bold text-white mb-4 border-b pb-2">Categoría: {{categoria}}</h2>
       
       <!-- Series Carousel -->
       <div *ngIf="filterCategorie(categoria, series).length > 0" class="mb-6">
-        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-3">Series</h3>
+        <h3 class="text-lg font-semibold text-gray-300 mb-3">Series</h3>
         <app-media-carousel [items]="filterCategorie(categoria, series)" [itemType]="'serie'"></app-media-carousel>
       </div>
       
       <!-- Películas Carousel -->
       <div *ngIf="filterCategorie(categoria, peliculas).length > 0">
-        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-3">Películas</h3>
+        <h3 class="text-lg font-semibold text-gray-300 mb-3">Películas</h3>
         <app-media-carousel [items]="filterCategorie(categoria, peliculas)" [itemType]="'pelicula'"></app-media-carousel>
       </div>
     </section>

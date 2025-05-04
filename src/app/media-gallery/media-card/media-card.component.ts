@@ -17,9 +17,6 @@ export class MediaCardComponent  {
   @Input() date: string = '';
   @Input() duration: string = '';
 
-
-  
-
   // Variables
   hover: boolean = false;
 

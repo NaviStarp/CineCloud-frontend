@@ -9,6 +9,7 @@ import { MediaListComponent } from './media-list/media-list.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { MediaGalleryComponent } from './media-gallery/media-gallery.component';
 import { MovieDetailComponent } from './movie-detail/movie-detail.component';
+import { SerieDetailComponent } from './serie-detail/serie-detail.component';
 export const routes: Routes = [
     { 
         path: '', 
@@ -27,5 +28,6 @@ export const routes: Routes = [
     { path: 'prueba',component:MediaListComponent},
     { path: 'lista',component:MediaGalleryComponent},
     { path: 'movie/:id', component: MovieDetailComponent}, 
+    { path: 'serie/:id', component: SerieDetailComponent},
     { path: '**', component:NotFoundComponent} 
 ];
