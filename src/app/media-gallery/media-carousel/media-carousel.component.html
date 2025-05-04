@@ -20,6 +20,7 @@
           class="px-2 flex-shrink-0" 
           [style.width.px]="itemWidth">
           <app-media-card
+          (click)="goToDetail(item.id,itemType)"
             [thumbnail]="item.imagen"
             [title]="item.titulo"
             [description]="item.descripcion"

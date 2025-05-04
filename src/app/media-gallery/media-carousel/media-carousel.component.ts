@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { MediaCardComponent } from '../media-card/media-card.component';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-media-carousel',
-  imports: [CommonModule,MediaCardComponent],
+  imports: [CommonModule, MediaCardComponent, RouterModule],
   templateUrl: './media-carousel.component.html',
   styleUrl: './media-carousel.component.css'
 })
@@ -21,7 +22,7 @@ export class MediaCarouselComponent {
   currentPage: number = 0;
   pages: number = 1;
   
-  constructor() {}
+  constructor(private router: Router) {}  
   
   ngAfterViewInit() {
     setTimeout(() => this.calculateItemsPerPage(), 0);
@@ -85,6 +86,19 @@ export class MediaCarouselComponent {
   
   getDots() {
     return new Array(this.pages);
+  }
+
+  goToDetail(id:number,type:string) {
+    console.log('Navigating to detail with ID:', id, 'and type:', type);
+    try {
+      if (type === 'pelicula') {
+        this.router.navigate([`/movie/${id}/`]);
+      } else if (type === 'serie') {
+        this.router.navigate([`/serie/${id}/`]);
+      }
+    } catch (error) {
+      console.error('Error navigating to detail page:', error);
+    }
   }
 
 }

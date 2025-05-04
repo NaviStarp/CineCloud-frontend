@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { MediaCardComponent } from "./media-card/media-card.component";
 import { LoadingComponent } from "../general/loading/loading.component";
 import { MediaCarouselComponent } from "./media-carousel/media-carousel.component";
+import { RouterModule } from '@angular/router';
 interface Media {
   id: string;
   titulo: string;
@@ -18,7 +19,7 @@ interface Media {
 
 @Component({
   selector: 'app-media-gallery',
-  imports: [HeaderComponent, CommonModule, MediaCarouselComponent, LoadingComponent],
+  imports: [HeaderComponent, CommonModule, MediaCarouselComponent, LoadingComponent,RouterModule],
   standalone: true,
   templateUrl: './media-gallery.component.html',
   styleUrl: './media-gallery.component.css'

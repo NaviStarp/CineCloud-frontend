@@ -1,0 +1,76 @@
+<media-header
+  [opcionSeleccionada]="'Miedo'"
+  class="w-full bg-neutral-900 text-white"
+>
+</media-header>
+
+<div class="movie-detail relative min-h-screen  bg-neutral-900 text-white">
+  <!-- Background image -->
+  <div class="absolute inset-0 z-0 overflow-hidden">
+    <img *ngIf="imageUrl && !showVideo" [src]="imageUrl" alt="{{ title }}" class="w-full h-full object-cover object-center" />
+  </div>
+  
+  <!-- Overlay gradient -->
+  <div class="absolute inset-0 bg-gradient-to-r from-neutral-900 via-neutral-900/80 to-transparent z-10"></div>
+  
+  <!-- Content container -->
+<div class="absolute bottom-10 z-20 px-6 md:px-16 py-8">
+  
+  <!-- Title -->
+<h1 class="text-5xl md:text-6xl font-bold mb-4">{{ title }}</h1>
+
+<!-- Description -->
+<p class="max-w-4xl text-base md:text-lg mb-8">{{ description }}</p>
+
+<div class="flex items-center space-x-4 text-base text-neutral-400 mb-6">
+    <span>{{ releaseDate }}</span>
+    <span *ngIf="duration == ''">23 episodes</span>
+    <span *ngIf="duration != ''">{{ duration | number:'1.0-0' }} minutos</span>
+</div>
+
+<!-- Categories -->
+<div class="flex items-center space-x-3 text-base mb-8">
+    <span class="text-white">{{ categories[0] }}</span>
+    <span class="text-neutral-400">•</span>
+    <span class="text-white">{{ categories[1] }}</span>
+    <span class="text-neutral-400">•</span>
+    <span class="text-white">{{ categories[2] }}</span>
+    <span class="text-neutral-400">•</span>
+    <span class="text-white">{{ categories[3] }}</span>
+</div>
+
+<!-- Action buttons -->
+<div class="flex flex-wrap items-center space-x-3 mb-8">
+    <button (click)="showVideo=true" class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-lg">
+        <fa-icon [icon]="faPlay" class="mr-3"></fa-icon>
+        Reproducir
+    </button>
+    <button (click)="copyUrlToClipboard();$event.stopPropagation();" class="w-12 h-12 bg-neutral-700 hover:bg-neutral-600 rounded-full flex items-center justify-center">
+        <fa-icon [icon]="faShare" class="text-2xl hover:text-primary-400"></fa-icon>
+    </button>
+</div>
+    </div>
+    </div>
+    <h2 class="mt-6 text-2xl font-bold text-gray-100 mb-4">Te podrían interesar:</h2>
+    <section  *ngFor="let categoria of categories" class="bg-gray-50 dark:bg-gray-800 rounded-xl shadow-lg p-6 mt-2">
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4 border-b pb-2">Categoría: {{categoria}}</h2>
+        <!-- Series Carousel
+        <div *ngIf="filterMediaByCategory(categoria,series).length > 0" class="mb-6">
+          <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-3">Series</h3>
+          <app-media-carousel [items]="filterMediaByCategory(categoria,series)" [itemType]="'serie'"></app-media-carousel>
+        </div> -->        
+        <!-- Películas Carousel -->
+        <div *ngIf="filterMediaByCategory(categoria, peliculas).length > 0">
+          <!-- <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-3">Películas</h3> -->
+          <app-media-carousel [items]="filterMediaByCategory(categoria, peliculas)" [itemType]="'pelicula'"></app-media-carousel>
+        </div>
+      </section>
+  <!-- Video player component -->
+  <app-video-player
+    *ngIf="hlsUrl && showVideo"
+    [videoUrl]="hlsUrl"
+    [title]="title"
+    [episodeInfo]="description"
+    (videoClosed)="showVideo = false"
+    class="w-full h-full fixed inset-0 z-50"
+  ></app-video-player>

@@ -366,6 +366,21 @@ public async getVideos(): Promise<MediaResponse> {
     });
     return response.json();
   }
+  public async getMovie(id:string): Promise<any> {
+    if(!this.getToken() || this.getServerUrl() === ''){
+      return {};
+    }
+    const response = await fetch(`${this.getServerUrl()}/movies/${id}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${this.getToken()}`
+      }
+    });
+    var movie = await response.json();
+    movie.imagen = await this.getThumnailUrl(movie.imagen.replace('/media/', ''));
+    movie.video = this.getHLSUrl(movie.video.replace('/media/','/'));
+    return movie;
+  }
   
 }
 

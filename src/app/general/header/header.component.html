@@ -1,11 +1,11 @@
-<header [ngClass]="{'bg-neutral-900/80 backdrop-blur-md h-16': !scroll, 'bg-neutral-900 backdrop-blur-lg shadow-lg h-12': scroll}"
+<header [ngClass]="{'bg-neutral-900/80 backdrop-blur-md h-16': !scroll && categorias.length > 0, 'bg-neutral-900 backdrop-blur-lg shadow-lg h-12': scroll || categorias.length == 0}"
  class="border-b border-neutral-700 fixed w-full z-50 transition-all duration-300">
   <div class="container mx-auto px-4">
-    <div class="flex items-center justify-between" [ngClass]="{'h-16': !scroll, 'h-12': scroll}">
+    <div class="flex items-center justify-between" [ngClass]="{'h-16': !scroll && categorias.length > 0, 'h-12': scroll || categorias.length == 0}">
       <!-- Logo -->
       <div class="flex items-center flex-shrink-0">
-        <img src="Logo1.png" alt="Logo" [ngClass]="{'h-10 w-10': !scroll, 'h-8 w-8': scroll}" class="mr-2 transition-all duration-300">
-        <span class="font-bold text-primary-500 transition-all duration-300" [ngClass]="{'text-2xl': !scroll, 'text-xl': scroll}">CineCloud</span>
+        <img src="Logo1.png" alt="Logo" [ngClass]="{'h-10 w-10': !scroll && categorias.length > 0, 'h-8 w-8': scroll || categorias.length == 0}" class="mr-2 transition-all duration-300">
+        <span class="font-bold text-primary-500 transition-all duration-300" [ngClass]="{'text-2xl': !scroll && categorias.length > 0, 'text-xl': scroll || categorias.length == 0}">CineCloud</span>
       </div>
       <!-- Navegación principal -->
       <div class="hidden md:block">
@@ -17,7 +17,7 @@
         </div>
       </div>
       <!-- Elementos que se muestran sólo cuando no hay scroll -->
-      <div class="flex items-center space-x-4" [ngClass]="{'opacity-100': !scroll, 'opacity-0 hidden': scroll}">
+      <div class="flex items-center space-x-4" [ngClass]="{'opacity-100': !scroll && categorias.length > 0, 'opacity-0 hidden': scroll || categorias.length == 0}">
         <!-- Búsqueda -->
         <div class="relative">
           <input type="text" placeholder="Buscar contenido" class="bg-neutral-800 text-neutral-200 px-4 py-1 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 border border-neutral-700 w-32 md:w-64">
@@ -25,38 +25,22 @@
             <fa-icon [icon]="faSearch" class="h-5 w-5"></fa-icon>
           </button>
         </div>
-        <!-- Perfil
-        <div class="relative">
-          <button class="text-neutral-200 hover:text-primary-500 transition-colors p-2 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </button>
-        </div>
-        Notificaciones 
-        <div class="relative">
-          <button class="text-neutral-200 hover:text-primary-500 transition-colors p-2 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-          </button>
-        </div>-->
       </div>
     </div>
   </div>
 </header>
 <!-- Barra de navegación secundaria -->
-<div [ngClass]="{'block': !scroll, 'hidden': scroll}" class="bg-neutral-800 py-2 transition-all duration-300 fixed w-full z-40" style="top: 64px;">
+<div *ngIf="categorias && categorias.length > 0" [ngClass]="{'block': !scroll, 'hidden': scroll}" class="bg-neutral-800 py-2 transition-all duration-300 fixed w-full z-40" style="top: 64px;">
   <div class="container mx-auto px-4">
     <div class="flex flex-wrap text-sm">
-    <a href="#" 
-        [ngClass]="{'text-primary-500 font-bold': categoria === opcionSeleccionada}"
-       class="text-neutral-300 hover:text-primary-500 transition-colors mr-6" 
-       *ngFor="let categoria of categorias" >
-      {{ categoria }}
-    </a>
+      <a href="#" 
+         [ngClass]="{'text-primary-500 font-bold': categoria === opcionSeleccionada}"
+         class="text-neutral-300 hover:text-primary-500 transition-colors mr-6" 
+         *ngFor="let categoria of categorias">
+        {{ categoria }}
+      </a>
     </div>
   </div>
 </div>
 <!-- Espaciador para el contenido -->
-<div [ngClass]="{'h-24': !scroll, 'h-12': scroll}" class="transition-all duration-300"></div>
+<div [ngClass]="{'h-24': !scroll && categorias.length > 0, 'h-12': scroll || categorias.length == 0}" class="transition-all duration-300"></div>

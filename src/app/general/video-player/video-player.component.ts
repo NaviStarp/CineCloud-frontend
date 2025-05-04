@@ -1,20 +1,25 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, ElementRef, Inject, Input, OnChanges, OnDestroy, OnInit, PLATFORM_ID, SimpleChange, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Inject, Input, OnChanges, OnDestroy, OnInit, Output, PLATFORM_ID, SimpleChange, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { FaIconComponent, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import Hls from 'hls.js';
 
 @Component({
   selector: 'app-video-player',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FontAwesomeModule],
   templateUrl: './video-player.component.html',
   styleUrls: ['./video-player.component.css']
 })
 export class VideoPlayerComponent implements OnInit, OnDestroy {
   @Input() videoUrl: string = 'http://localhost:8000/hls/pelicula/Cubo/playlist.m3u8';
-  @Input() videoTitle: string = 'Video Title';
+  @Input() videoTitle: string = '';
   @Input() episodeInfo: string = '';
+  @Output() videoClosed = new EventEmitter<void>();
 
+  // Iconos
+  faTimes= faTimes;
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['videoUrl'] && !changes['videoUrl'].firstChange) {
       this.reloadVideo();
@@ -70,6 +75,7 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    console.log(this.videoTitle, this.episodeInfo);
     if(this.isBrowser()) {
     try {
       this.authToken = localStorage.getItem('token') || '';

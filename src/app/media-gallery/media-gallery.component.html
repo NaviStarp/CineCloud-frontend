@@ -5,7 +5,7 @@
 >
 </media-header>
 
-<div *ngIf="!loading" class="container mx-auto px-4 py-8">
+<div *ngIf="!loading && peliculas.length > 0" class="container mx-auto px-4 py-8">
   <div class="space-y-10">
     <!-- Películas Section -->
     <section *ngIf="peliculas.length > 0" class="bg-gray-50 dark:bg-gray-800 rounded-xl shadow-lg p-6">
@@ -41,6 +41,10 @@
 </div>
 
 <app-loading *ngIf="loading" class="flex justify-center items-center h-screen w-full"></app-loading>
+
+<div *ngIf="!loading && peliculas.length === 0 && series.length === 0" class="flex justify-center items-center h-screen w-full">
+  <p class="text-gray-500 dark:text-gray-300">No se encontraron resultados.</p>
+</div>
 
 <app-loading
   *ngIf="loading"

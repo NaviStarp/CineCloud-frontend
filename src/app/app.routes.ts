@@ -5,10 +5,10 @@ import { MediaUploaderComponent } from './media-uploader/media-uploader.componen
 import { MediaFormComponent } from './media-form/media-form.component';
 import { AuthGuard } from './services/auth.service';
 import { ServerConfigComponent } from './server-config/server-config.component';
-import { PruebaComponent } from './prueba/prueba.component';
 import { MediaListComponent } from './media-list/media-list.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { MediaGalleryComponent } from './media-gallery/media-gallery.component';
+import { MovieDetailComponent } from './movie-detail/movie-detail.component';
 export const routes: Routes = [
     { 
         path: '', 
@@ -26,5 +26,6 @@ export const routes: Routes = [
     { path: 'server/config', component: ServerConfigComponent },
     { path: 'prueba',component:MediaListComponent},
     { path: 'lista',component:MediaGalleryComponent},
+    { path: 'movie/:id', component: MovieDetailComponent}, 
     { path: '**', component:NotFoundComponent} 
 ];
