@@ -27,7 +27,7 @@ export const routes: Routes = [
     { path: 'server/config', component: ServerConfigComponent },
     { path: 'prueba',component:MediaListComponent},
     { path: 'lista',component:MediaGalleryComponent},
-    { path: 'movie/:id', component: MovieDetailComponent}, 
+    { path: 'pelicula/:id', component: MovieDetailComponent}, 
     { path: 'serie/:id', component: SerieDetailComponent},
     { path: '**', component:NotFoundComponent} 
 ];

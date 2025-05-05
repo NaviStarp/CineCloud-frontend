@@ -42,13 +42,11 @@ export class SerieDetailComponent implements OnInit {
   faShare = faShareAlt;
   
   constructor(private route: ActivatedRoute, private auth: AuthService, private router: Router) {
-    console.log('SerieDetailComponent initialized');
   }
 
   async ngOnInit(): Promise<void> {
     this.route.params.subscribe(params => {
       this.id = params['id'];
-      console.log('Serie ID from route:', this.id);
       this.loadSerieData();
     });
     
@@ -57,8 +55,6 @@ export class SerieDetailComponent implements OnInit {
       if (data) {
         this.peliculas = data.peliculas || [];
         this.series = data.series || [];
-        console.log('Peliculas:', this.peliculas);
-        console.log('Series:', this.series);
       }
     } catch (error) {
       console.error('Error loading videos:', error);
@@ -70,7 +66,6 @@ export class SerieDetailComponent implements OnInit {
     
     try {
       const data = await this.auth.getSerie(this.id);
-      console.log('Raw serie data received:', data);
       
       if (data) {
         this.title = data.titulo || 'No Title';
@@ -105,9 +100,6 @@ export class SerieDetailComponent implements OnInit {
           this.episodes = [];
         }
         
-        console.log('Serie data loaded:', this.title, this.description, this.imageUrl);
-        console.log('Processed episodes for EpisodeListComponent:', this.episodes);
-        console.log('Number of seasons:', this.season);
       }
     } catch (error) {
       console.error('Error loading serie:', error);
@@ -119,7 +111,6 @@ export class SerieDetailComponent implements OnInit {
   copyUrlToClipboard(): void {
     const url = window.location.href;
     navigator.clipboard.writeText(url).then(() => {
-      console.log('URL copied to clipboard:', url);
       this.showToolTip = true;
       setTimeout(() => {
         this.showToolTip = false;
@@ -134,22 +125,19 @@ export class SerieDetailComponent implements OnInit {
     this.showVideo = true;
   }
   
-  filterMediaByRelation() {
+  filterMediaByRelation(): any[] {
     const relatedMedia = [...this.peliculas, ...this.series]
       .filter((media) => {
         return this.categories.some((category) => 
-          media.categorias?.includes(category)) && media.id !== this.id;
+          media.categorias?.includes(category)) && media.id !== +this.id;
       })
       .filter((media, index, self) =>
         index === self.findIndex((m) => m.id === media.id)
       );
-    
-    console.log('Related Media:', relatedMedia);
     return relatedMedia;
   }
   
   selectEpisode(episode: any): void {
-    console.log('Episode selected:', episode);
     this.hlsUrl = episode.video || episode.videoUrl;
     this.showVideo = true;
   }

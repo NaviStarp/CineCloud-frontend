@@ -19,16 +19,17 @@
           *ngFor="let item of items" 
           class="px-2 flex-shrink-0" 
           [style.width.px]="itemWidth">
-          <app-media-card
-          (click)="goToDetail(item.id,itemType)"
-            [thumbnail]="item.imagen"
-            [title]="item.titulo"
-            [description]="item.descripcion"
-            [date]="item.fecha_estreno"
-            [duration]="item.duracion"
-            [type]="itemType"
-            class="h-full rounded-lg overflow-hidden shadow-md hover:shadow-xl transform transition duration-300">
-          </app-media-card>
+          <a href="/{{itemType}}/{{item.id}}" target="_blank">
+            <app-media-card
+              [thumbnail]="item.imagen"
+              [title]="item.titulo"
+              [description]="item.descripcion"
+              [date]="item.fecha_estreno"
+              [duration]="item.duracion"
+              [type]="itemType"
+              class="h-full rounded-lg overflow-hidden shadow-md hover:shadow-xl transform transition duration-300">
+            </app-media-card>
+          </a>
         </div>
       </div>
     </div>

@@ -5,7 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-media-carousel',
-  imports: [CommonModule, MediaCardComponent, RouterModule],
+  imports: [CommonModule, MediaCardComponent,RouterModule],
   templateUrl: './media-carousel.component.html',
   styleUrl: './media-carousel.component.css'
 })
@@ -16,15 +16,17 @@ export class MediaCarouselComponent {
   @ViewChild('carouselSlider') carouselSlider!: ElementRef;
   
   currentIndex: number = 0;
-  itemWidth: number = 280; // Default width, will be calculated based on container size
-  itemsPerPage: number = 4; // Default, will be adjusted based on screen size
+  itemWidth: number = 280; 
+  itemsPerPage: number = 4;
   maxIndex: number = 0;
   currentPage: number = 0;
   pages: number = 1;
   
-  constructor(private router: Router) {}  
+  constructor() {}  
   
   ngAfterViewInit() {
+    this.removeDuplicates();
+    console.log('Carousel initialized with items:', this.items);
     setTimeout(() => this.calculateItemsPerPage(), 0);
     
     window.addEventListener('resize', () => {
@@ -87,18 +89,14 @@ export class MediaCarouselComponent {
   getDots() {
     return new Array(this.pages);
   }
+  removeDuplicates() {
+    this.items = this.items.filter((item, index, self) =>
+      index === self.findIndex((t) => (
+        t.id === item.id
+      ))
+    );
+    console.log('Items after removing duplicates:', this.items);
 
-  goToDetail(id:number,type:string) {
-    console.log('Navigating to detail with ID:', id, 'and type:', type);
-    try {
-      if (type === 'pelicula') {
-        this.router.navigate([`/movie/${id}/`]);
-      } else if (type === 'serie') {
-        this.router.navigate([`/serie/${id}/`]);
-      }
-    } catch (error) {
-      console.error('Error navigating to detail page:', error);
-    }
   }
 
 }
