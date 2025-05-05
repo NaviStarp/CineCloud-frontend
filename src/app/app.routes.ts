@@ -24,10 +24,10 @@ export const routes: Routes = [
         component: MediaFormComponent,
         canActivate: [AuthGuard] 
     },
-    { path: 'server/config', component: ServerConfigComponent },
-    { path: 'prueba',component:MediaListComponent},
-    { path: 'lista',component:MediaGalleryComponent},
-    { path: 'movie/:id', component: MovieDetailComponent}, 
-    { path: 'serie/:id', component: SerieDetailComponent},
+    { path: 'server/config', component: ServerConfigComponent},
+    { path: 'prueba',component:MediaListComponent,canActivate: [AuthGuard] },
+    { path: 'lista',component:MediaGalleryComponent,canActivate: [AuthGuard] },
+    { path: 'movie/:id', component: MovieDetailComponent,canActivate: [AuthGuard] }, 
+    { path: 'serie/:id', component: SerieDetailComponent,canActivate: [AuthGuard] },
     { path: '**', component:NotFoundComponent} 
 ];
