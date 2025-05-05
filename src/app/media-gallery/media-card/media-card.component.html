@@ -21,7 +21,6 @@
   <!-- Contenido inferior -->
   <div class="p-4 bg-neutral-900 rounded-b-xl">
     <h3 class="font-semibold text-white text-base truncate">{{ title }}</h3>
-    <p class="text-sm text-neutral-400 mt-1 line-clamp-2">{{ description }}</p>
     <div class="flex justify-between items-center mt-2">
       <p class="text-xs text-neutral-300 mt-1 text-center line-clamp-3" *ngIf="duration && +duration > 0" >
         {{ duration | number:'1.0-0' }} Minutos

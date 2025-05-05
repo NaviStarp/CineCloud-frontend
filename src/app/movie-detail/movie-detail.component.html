@@ -53,30 +53,52 @@
         <fa-icon [icon]="faShare" class="text-xl hover:text-primary-400"></fa-icon>
       </button>
       <span *ngIf="showToolTip" 
-      class="absolute min-w-40 bottom-full text-green-100 mb-2 left-1/2 transform -translate-x-1/2 bg-neutral-800 text-green-500 text-sm px-3 py-1 rounded shadow-lg">
+      class="absolute min-w-40 bottom-full  mb-2 left-1/2 transform -translate-x-1/2 bg-neutral-800 text-green-500 text-sm px-3 py-1 rounded shadow-lg">
       <fa-icon [icon]="faCheck" class="mr-1"></fa-icon>
       ¡Enlace copiado!
-</span>
+      </span>
     </div>
 </div>
     </div>
     </div>
-    <h2 class="mt-6 text-2xl font-bold text-gray-100 mb-4">Te podrían interesar:</h2>
-    <section  *ngFor="let categoria of categories" >
-      <div *ngIf="filterMediaByCategory(categoria, peliculas).length > 0" class="bg-gray-800 rounded-xl shadow-lg p-6 mt-2">
-        <h2 class="text-2xl font-bold text-white mb-4 border-b pb-2">Categoría: {{categoria}}</h2>
-        <!-- Series Carousel
-        <div *ngIf="filterMediaByCategory(categoria,series).length > 0" class="mb-6">
-          <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-3">Series</h3>
-          <app-media-carousel [items]="filterMediaByCategory(categoria,series)" [itemType]="'serie'"></app-media-carousel>
-        </div> -->        
-        <!-- Películas Carousel -->
-        <div>
-          <!-- <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-3">Películas</h3> -->
-          <app-media-carousel [items]="filterMediaByCategory(categoria, peliculas)" [itemType]="'pelicula'"></app-media-carousel>
+    <div class="mt-8 px-4 md:px-8">
+      <div class="border-b border-neutral-700 mb-6">
+        <div class="flex">
+          <button [class]="selectedView === 'description' ? 'border-b-2 border-primary-500 text-white' : 'text-neutral-400'" 
+                  class="py-3 px-6 font-medium"
+                  (click)="selectedView = 'description'">
+            Descripción
+          </button>
+          <button [class]="selectedView === 'related' ? 'border-b-2 border-primary-500 text-white' : 'text-neutral-400'"
+                  class="py-3 px-6 font-medium"
+                  (click)="selectedView = 'related'">
+            Relacionados
+          </button>
         </div>
       </div>
-      </section>
+
+      <div *ngIf="selectedView === 'description'">
+        <div *ngIf="description!==''" class="text-neutral-200 text-lg font-semibold mb-6 bg-neutral-800 p-4 rounded-lg shadow-lg">
+          {{ description }}
+        </div>
+        <ng-container  *ngIf="description===''">
+          <div class="text-center py-8 text-neutral-400">
+            No hay descripción disponible.
+          </div>
+        </ng-container>
+      </div>
+
+      <div *ngIf="selectedView === 'related'">
+        <div *ngIf="filterMediaByRelation().length === 0" class="text-center py-8 text-neutral-400">
+          No hay contenido relacionado disponible.
+        </div>
+        <app-media-carousel 
+          *ngIf="filterMediaByRelation().length > 0"
+          [items]="filterMediaByRelation()" 
+          [title]="'Contenido relacionado'">
+        </app-media-carousel>
+    </div>
+</div>
   <!-- Video player component -->
   <app-video-player
     *ngIf="hlsUrl && showVideo"

@@ -24,9 +24,6 @@ export class EpisodeListComponent implements OnInit {
  faPlay = faPlay
  faChevronDown = faChevronDown;
   ngOnInit(): void {
-    console.log('EpisodeListComponent initialized');
-    console.log('Seasons received:', this.seasons);
-    console.log('Episodes received:', this.episodes);
     
     this.groupEpisodesBySeason();
     
@@ -35,7 +32,6 @@ export class EpisodeListComponent implements OnInit {
     }
     
     this.filteredEpisodes = this.getEpisodesBySeason(this.selectedSeason);
-    console.log('Initial filtered episodes:', this.filteredEpisodes);
   }
   
   groupEpisodesBySeason(): void {
@@ -67,7 +63,6 @@ export class EpisodeListComponent implements OnInit {
     
     this.groupedEpisodes.sort((a, b) => a.key - b.key);
     
-    console.log('Grouped episodes by season:', this.groupedEpisodes);
   }
   
   sortEpisodesByNumber(episodes: any[]): any[] {
@@ -84,13 +79,11 @@ export class EpisodeListComponent implements OnInit {
   }
   
   onSeasonChange(season: number): void {
-    console.log('Season changed to:', season);
     this.selectedSeason = season;
     this.filteredEpisodes = this.getEpisodesBySeason(this.selectedSeason);
   }
   
   selectEpisode(episode: any): void {
-    console.log('Episode selected:', episode);
     this.episodeSelected.emit(episode);
   }
 }

@@ -142,7 +142,6 @@ export class AuthService {
       formData.append(`videos[${index}][name]`, video.name);
       formData.append(`videos[${index}][description]`, video.description || '');
       formData.append(`videos[${index}][categorias]`, JSON.stringify(video.categories || []));
-      console.log("Categorias",video.categories);
       formData.append(`videos[${index}][video]`, video.videoBlob, video.name);
       
       if (typeof video.thumbnail === 'string' && video.thumbnail.startsWith('data:image')) {
@@ -276,7 +275,6 @@ export class AuthService {
   public async createCategory(name: string) {
     const formData = new FormData();
     formData.append('nombre', name);
-    console.log('FormData:', formData);
     try {
       const response = await fetch(`${this.getServerUrl()}/categories/new/`, {
         method: 'POST',
@@ -311,7 +309,6 @@ public async getVideos(): Promise<MediaResponse> {
   });
 
   const videos = await response.json();
-  console.log('Videos:', videos);
   // Helper function to process video thumbnails
   const processThumbnails = async (videos: any[]) => {
     for (const video of videos) {
@@ -383,12 +380,10 @@ public async getVideos(): Promise<MediaResponse> {
   }
   public async getSerie(id: string): Promise<any> {
     if (!this.getToken() || this.getServerUrl() === '') {
-      console.error('Missing token or server URL');
       return {};
     }
     
     try {
-      console.log(`Fetching serie with ID: ${id}`);
       const response = await fetch(`${this.getServerUrl()}/series/${id}`, {
         method: 'GET',
         headers: {
@@ -403,7 +398,6 @@ public async getVideos(): Promise<MediaResponse> {
       }
       
       const serie = await response.json();
-      console.log('Raw API response:', serie);
       
       // Procesar la imagen de la serie
       if (serie.imagen) {

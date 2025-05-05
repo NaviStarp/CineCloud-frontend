@@ -29,20 +29,19 @@ export class MovieDetailComponent implements OnInit {
   showVideo: boolean = false;
   loading: boolean = true;
   showToolTip: boolean = false;
+  selectedView: string = 'description';
   // Iconos
   faPlay = faPlay;
   faCheck = faCheck;
   faShare = faShareAlt;
 
   constructor(private route: ActivatedRoute, private auth: AuthService, private router: Router) {
-    console.log('MovieDetailComponent initialized');
   }
 
   ngOnInit(): void {
     // Escuchar cambios en los parámetros de la ruta
     this.route.params.subscribe(params => {
       this.id = params['id'];
-      console.log('Movie ID from route:', this.id);
       this.loadMovieData();
     });
 
@@ -65,7 +64,6 @@ export class MovieDetailComponent implements OnInit {
       this.duration = data.duracion;
       this.categories = data.categorias;
       this.hlsUrl = data.video;
-      console.log('Movie data:', data);
       this.loading = false;
     }).catch((error: any) => {
       console.error('Error loading movie data:', error);
@@ -76,23 +74,20 @@ export class MovieDetailComponent implements OnInit {
   copyUrlToClipboard(): void {
     const currentUrl = window.location.href;
     navigator.clipboard.writeText(currentUrl).then(() => {
-      console.log('Current URL copied to clipboard:', currentUrl);
     }).catch((error) => {
       console.error('Error copying URL to clipboard:', error);
     });
   }
 
-  filterMediaByCategory(categoria: string | null = null, media: any[]): any[] {
-    if (this.loading) {
-      console.warn('Loading data, please wait...');
-      return [];
-    }
-    if (!media || media.length === 0) {
-      console.warn('No media available for filtering');
-      return [];
-    }
-    return categoria
-      ? media.filter((item) => item.categorias.includes(categoria) && String(item.id) !== String(this.id))
-      : media;
+  filterMediaByRelation(): any[] {
+    const relatedMedia = [...this.peliculas, ...this.series]
+      .filter((media) => {
+        return this.categories.some((category) => 
+          media.categorias?.includes(category)) && media.id !== +this.id;
+      })
+      .filter((media, index, self) =>
+        index === self.findIndex((m) => m.id === media.id)
+      );
+    return relatedMedia;
   }
 }

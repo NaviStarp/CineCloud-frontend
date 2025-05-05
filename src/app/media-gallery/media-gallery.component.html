@@ -1,52 +1,72 @@
 <media-header
-*ngIf="!loading"
-[categorias]="categorias"
-[opcionSeleccionada]="'Miedo'"
->
+  *ngIf="!loading"
+  [categorias]="categorias"
+  [opcionSeleccionada]="opcionSeleccionada"
+  >
 </media-header>
 
-<div *ngIf="!loading && peliculas.length > 0" class="container mx-auto px-4 py-8">
+<!-- Sin resultados -->
+<div
+  *ngIf="!loading && filteredPeliculas.length === 0 && filteredSeries.length === 0"
+  class="flex justify-center items-center h-screen w-full">
+  <p class="text-gray-500 dark:text-gray-300">No se encontraron resultados para "{{opcionSeleccionada}}".</p>
+</div>
+
+<!-- Contenedor principal -->
+<div *ngIf="!loading" class="container mx-auto px-4 py-8">
   <div class="space-y-10">
-    <!-- Películas Section -->
-    <section *ngIf="peliculas.length > 0" class="bg-gray-800 rounded-xl shadow-lg p-6">
-      <h2 class="text-2xl font-bold text-white mb-4 border-b pb-2">Películas: {{opcionSeleccionada}}</h2>
-      
-      <app-media-carousel [items]="peliculas" [itemType]="'pelicula'"></app-media-carousel>
-    </section>
+    <!-- Secciones individuales por categoría -->
+    <ng-container>
+      <!-- Sección de Películas -->
+        <section *ngIf="filteredPeliculas.length > 0" class="bg-gray-800 rounded-xl shadow-lg p-6">
+          <h2 class="text-2xl font-bold text-white mb-4 border-b pb-2">
+          Películas: {{opcionSeleccionada}}
+          </h2>
+          <app-media-carousel
+          [items]="filteredPeliculas"
+          [itemType]="'pelicula'">
+          </app-media-carousel>
+          </section>
+          <!-- Sección de Series -->
+          <section *ngIf="filteredSeries.length > 0" class="bg-gray-800 rounded-xl shadow-lg p-6">
+          <h2 class="text-2xl font-bold text-white mb-4 border-b pb-2">
+          Series: {{opcionSeleccionada}}
+          </h2>
+          <app-media-carousel
+          [items]="filteredSeries"
+          [itemType]="'serie'">
+          </app-media-carousel>
+          </section>
+      <section
+        *ngFor="let categoria of categorias"
+        class="bg-gray-800 rounded-xl shadow-lg p-6"
+        [class.hidden]="!hasMediaInCategory(categoria)">
+        <h2 class="text-2xl font-bold text-white mb-4 border-b pb-2">
+          {{categoria}}
+        </h2>
 
-    <!-- Series Section -->
-    <section *ngIf="series.length > 0" class="bg-gray-800 rounded-xl shadow-lg p-6">
-      <h2 class="text-2xl font-bold text-white mb-4 border-b pb-2">Series: {{opcionSeleccionada}}</h2>
-      
-      <app-media-carousel [items]="series" [itemType]="'serie'"></app-media-carousel>
-    </section>
-
-    <!-- Categorias -->
-    <section *ngFor="let categoria of categorias" class="bg-gray-800 rounded-xl shadow-lg p-6">
-      <h2 class="text-2xl font-bold text-white mb-4 border-b pb-2">Categoría: {{categoria}}</h2>
-      
-      <!-- Series Carousel -->
-      <div *ngIf="filterCategorie(categoria, series).length > 0" class="mb-6">
-        <h3 class="text-lg font-semibold text-gray-300 mb-3">Series</h3>
-        <app-media-carousel [items]="filterCategorie(categoria, series)" [itemType]="'serie'"></app-media-carousel>
-      </div>
-      
-      <!-- Películas Carousel -->
-      <div *ngIf="filterCategorie(categoria, peliculas).length > 0">
-        <h3 class="text-lg font-semibold text-gray-300 mb-3">Películas</h3>
-        <app-media-carousel [items]="filterCategorie(categoria, peliculas)" [itemType]="'pelicula'"></app-media-carousel>
-      </div>
-    </section>
+        <!-- Carrusel de Series -->
+        <ng-container *ngIf="getSeriesForCategory(categoria).length > 0">
+          <div class="mb-6">
+            <h3 class="text-lg font-semibold text-gray-300 mb-3">Series</h3>
+            <app-media-carousel
+              [items]="getSeriesForCategory(categoria)"
+              [itemType]="'serie'">
+            </app-media-carousel>
+          </div>
+        </ng-container>
+        
+        <!-- Carrusel de Películas -->
+        <ng-container *ngIf="getPeliculasForCategory(categoria).length > 0">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-300 mb-3">Películas</h3>
+            <app-media-carousel
+              [items]="getPeliculasForCategory(categoria)"
+              [itemType]="'pelicula'">
+            </app-media-carousel>
+          </div>
+        </ng-container>
+      </section>
+    </ng-container>
   </div>
 </div>
-
-<app-loading *ngIf="loading" class="flex justify-center items-center h-screen w-full"></app-loading>
-
-<div *ngIf="!loading && peliculas.length === 0 && series.length === 0" class="flex justify-center items-center h-screen w-full">
-  <p class="text-gray-500 dark:text-gray-300">No se encontraron resultados.</p>
-</div>
-
-<app-loading
-  *ngIf="loading"
-  class="flex justify-center items-center h-screen w-full">
-</app-loading>

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService, MediaResponse } from '../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { MediaViewComponent } from './media-view/media-view.component';
-import { DomSanitizer } from '@angular/platform-browser';
 import { ModalErrorComponent } from "../general/modal-error/modal-error.component";
 import { VideoPlayerComponent } from "../general/video-player/video-player.component";
 
@@ -17,12 +16,12 @@ export class MediaListComponent implements OnInit {
   videoUrl: string  = '';
   showVideo: boolean = false;
   showSelectEpisode: boolean = false;
-  // Error handling properties
+  // Variables para la modal de error
   errorTitle: string = '';
   errorMessage: string = '';
   showError: boolean = false;
 
-  constructor(private auth: AuthService, private sanitizer: DomSanitizer) {}
+  constructor(private auth: AuthService) {}
 
   ngOnInit(): void {
     this.loadVideos();
