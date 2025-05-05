@@ -70,3 +70,8 @@
     </ng-container>
   </div>
 </div>
+
+<div *ngIf="loading" class="fixed inset-0 flex items-center justify-center z-50">
+  <!-- Componente de carga -->
+<app-loading *ngIf="loading" ></app-loading>
+</div>

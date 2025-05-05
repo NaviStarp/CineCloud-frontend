@@ -1,103 +1,109 @@
-<div class="container" *ngIf="!showVideo">
-  <media-header></media-header>
+<media-header
+  [opcionSeleccionada]="'Miedo'"
+  class="w-full bg-neutral-900 text-white"
+></media-header>
 
-  <div *ngIf="loading" class="flex flex-col items-center justify-center min-h-[300px]">
-    <div class="spinner w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
-    <p class="mt-4 text-neutral-300">Cargando detalles de la serie...</p>
+<div class="movie-detail relative min-h-screen bg-neutral-900 text-white">
+  <!-- Fondos -->
+  <div class="absolute inset-0 z-0 overflow-hidden">
+    <img *ngIf="imageUrl && !showVideo" [src]="imageUrl" alt="{{ title }}" class="w-full h-full object-cover object-center" />
   </div>
 
-  <div *ngIf="!loading" class="serie-container relative min-h-screen min-w-screen text-white">
-    <!-- Fondos -->
-    <div class="absolute inset-0 z-0 overflow-hidden">
-      <img *ngIf="imageUrl && !showVideo" [src]="imageUrl" alt="{{ title }}"
-        class="w-full h-full object-cover object-center" />
+  <!-- Gradiente -->
+  <div class="absolute inset-0 bg-gradient-to-r from-neutral-900 via-neutral-900/80 to-transparent z-10"></div>
+
+  <!-- Contenido -->
+  <div class="absolute bottom-10 z-20 px-6 md:px-16 py-8">
+    <!-- Titulo -->
+    <h1 class="text-5xl md:text-6xl font-bold mb-4">{{ title }}</h1>
+
+    <!-- Descripcion -->
+    <p class="max-w-4xl text-base md:text-lg mb-8">{{ description }}</p>
+
+    <div class="flex items-center space-x-4 text-base text-neutral-400 mb-6">
+      <span>{{ releaseDate }}</span>
+      <span *ngIf="episodes.length > 1">{{episodes.length}} episodios</span>
+      <span *ngIf="episodes.length <= 1">{{ episodes.length }} episodio</span>
     </div>
 
-    <!-- Gradiente -->
-    <div class="absolute inset-0 bg-gradient-to-r from-neutral-900 via-neutral-900/80 to-transparent z-10"></div>
-
-    <!-- Contenido -->
-    <div class="absolute bottom-10 z-20 px-6 md:px-16 py-8">
-
-      <!-- Titulo -->
-      <h1 class="text-5xl md:text-6xl font-bold mb-4">{{ title }}</h1>
-
-      <!-- Descripcion -->
-      <p class="max-w-4xl text-base md:text-lg mb-8">{{ description }}</p>
-
-      <div class="flex items-center space-x-4 text-base text-neutral-400 mb-6">
-        <span>{{ releaseDate }}</span>
-        <span>{{ episodes.length }} episodios</span>
-      </div>
-
-      <!-- Categorias -->
-      <div class="flex items-center space-x-3 text-base mb-8">
-        <ng-container *ngFor="let category of categories; let i = index">
-          <ng-container *ngIf="i < 3">
-            <span class="bg-neutral-700 text-neutral-200 px-3 py-1 rounded-full text-sm">
-              {{ category }}
-            </span>
-            <span *ngIf="i < categories.length - 1" class="text-neutral-400">|</span>
-          </ng-container>
-        </ng-container>
-      </div>
-
-      <!-- Botones -->
-      <div class="flex flex-wrap items-center space-x-3 mb-8">
-        <button (click)="showVideo=true"
-          class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-lg">
-          <fa-icon [icon]="faPlay" class="mr-3"></fa-icon>
-          Reproducir
-        </button>
-        <div class="relative">
-          <button (click)="copyUrlToClipboard(); showToolTip = true; $event.stopPropagation();"
-            (mouseleave)="showToolTip = false"
-            class="w-12 h-12 bg-neutral-700 hover:bg-neutral-600 rounded-full flex items-center justify-center">
-            <fa-icon [icon]="faShare" class="text-xl hover:text-primary-400"></fa-icon>
-          </button>
-          <span *ngIf="showToolTip"
-            class="absolute min-w-40 bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-neutral-800 text-green-500 text-sm px-3 py-1 rounded shadow-lg">
-            <fa-icon [icon]="faCheck" class="mr-1"></fa-icon>
-            ¡Enlace copiado!
+    <!-- Categorias -->
+    <div class="flex items-center space-x-3 text-base mb-8">
+      <ng-container *ngFor="let category of categories; let i = index">
+        <ng-container *ngIf="i < 3">
+          <span class="bg-neutral-700 text-neutral-200 px-3 py-1 rounded-full text-sm">
+            {{ category }}
           </span>
-        </div>
-      </div>
+          <span *ngIf="i < categories.length - 1" class="text-neutral-400">|</span>
+        </ng-container>
+      </ng-container>
+    </div>
 
-      <!-- Episodios y Relacionados -->
-      <div class="relative z-20 mt-8 px-4 md:px-8">
-        <div class="border-b border-neutral-700 mb-6">
-          <div class="flex">
-            <button [class]="selectedView === 'episodes' ? 'border-b-2 border-primary-500 text-white' : 'text-neutral-400'"
-              class="py-3 px-6 font-medium" (click)="selectedView = 'episodes'">
-              Episodios
-            </button>
-            <button [class]="selectedView === 'related' ? 'border-b-2 border-primary-500 text-white' : 'text-neutral-400'"
-              class="py-3 px-6 font-medium" (click)="selectedView = 'related'">
-              Relacionados
-            </button>
-          </div>
-        </div>
-
-        <div *ngIf="selectedView === 'episodes'">
-          <div *ngIf="episodes.length === 0" class="text-center py-8 text-neutral-400">
-            No hay episodios disponibles para esta serie.
-          </div>
-
-          <app-episode-list *ngIf="episodes.length > 0" [episodes]="episodes" [seasons]="season"
-            (episodeSelected)="selectEpisode($event)" class="mb-6">
-          </app-episode-list>
-        </div>
-
-        <div *ngIf="selectedView === 'related'">
-          <div *ngIf="filterMediaByRelation().length === 0" class="text-center py-8 text-neutral-400">
-            No hay contenido relacionado disponible.
-          </div>
-          <app-media-carousel *ngIf="filterMediaByRelation().length > 0" [items]="filterMediaByRelation()"
-            [title]="'Contenido relacionado'">
-          </app-media-carousel>
-        </div>
+    <!-- Botones -->
+    <div class="flex flex-wrap items-center space-x-3 mb-8">
+      <button (click)="showVideo=true" class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-lg">
+        <fa-icon [icon]="faPlay" class="mr-3"></fa-icon>
+        Reproducir
+      </button>
+      <div class="relative">
+        <button (click)="copyUrlToClipboard(); showToolTip = true; $event.stopPropagation();" 
+                (mouseleave)="showToolTip = false" 
+                class="w-12 h-12 bg-neutral-700 hover:bg-neutral-600 rounded-full flex items-center justify-center">
+          <fa-icon [icon]="faShare" class="text-xl hover:text-primary-400"></fa-icon>
+        </button>
+        <span *ngIf="showToolTip" 
+              class="absolute min-w-40 bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-neutral-800 text-green-500 text-sm px-3 py-1 rounded shadow-lg">
+          <fa-icon [icon]="faCheck" class="mr-1"></fa-icon>
+          ¡Enlace copiado!
+        </span>
       </div>
     </div>
   </div>
 </div>
-<app-video-player *ngIf="showVideo" [videoUrl]="hlsUrl" (videoClosed)="showVideo = false"></app-video-player>
+
+  <div class="mt-8 px-4 md:px-8">
+    <div class="border-b border-neutral-700 mb-6">
+      <div class="flex">
+        <button [class]="selectedView === 'episodes' ? 'border-b-2 border-primary-500 text-white' : 'text-neutral-400'" 
+                class="py-3 px-6 font-medium"
+                (click)="selectedView = 'episodes'">
+          Episodios
+        </button>
+        <button [class]="selectedView === 'related' ? 'border-b-2 border-primary-500 text-white' : 'text-neutral-400'"
+                class="py-3 px-6 font-medium"
+                (click)="selectedView = 'related'">
+          Relacionados
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="selectedView === 'episodes'">
+      <div *ngIf="episodes.length === 0" class="text-center py-8 text-neutral-400">
+        No hay episodios disponibles para esta serie.
+      </div>
+
+      <app-episode-list *ngIf="episodes.length > 0" [episodes]="episodes" [seasons]="season"
+        (episodeSelected)="selectEpisode($event)" class="mb-6">
+      </app-episode-list>
+    </div>
+
+    <div *ngIf="selectedView === 'related'">
+      <div *ngIf="filterMediaByRelation().length === 0" class="text-center py-8 text-neutral-400">
+        No hay contenido relacionado disponible.
+      </div>
+      <app-media-carousel 
+        *ngIf="filterMediaByRelation().length > 0"
+        [items]="filterMediaByRelation()" 
+        [title]="'Contenido relacionado'">
+      </app-media-carousel>
+    </div>
+  </div>
+
+  <!-- Video player component -->
+  <app-video-player
+    *ngIf="hlsUrl && showVideo"
+    [videoUrl]="hlsUrl"
+    [videoTitle]="title"
+    [episodeInfo]="description"
+    (videoClosed)="showVideo = false"
+    class="w-full h-full fixed inset-0 z-50"
+  ></app-video-player>

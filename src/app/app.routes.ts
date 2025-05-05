@@ -27,7 +27,7 @@ export const routes: Routes = [
     { path: 'server/config', component: ServerConfigComponent},
     { path: 'prueba',component:MediaListComponent,canActivate: [AuthGuard] },
     { path: 'lista',component:MediaGalleryComponent,canActivate: [AuthGuard] },
-    { path: 'movie/:id', component: MovieDetailComponent,canActivate: [AuthGuard] }, 
+    { path: 'pelicula/:id', component: MovieDetailComponent,canActivate: [AuthGuard] }, 
     { path: 'serie/:id', component: SerieDetailComponent,canActivate: [AuthGuard] },
     { path: '**', component:NotFoundComponent} 
 ];

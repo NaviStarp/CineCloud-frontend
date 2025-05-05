@@ -1,65 +1,75 @@
-<div class="container mx-auto px-6 md:px-16 py-8">
-    <div *ngIf="episodes.length === 0" class="text-center py-8">
-      <p class="text-lg text-neutral-400">No hay episodios disponibles para esta serie.</p>
-    </div>
-    
-    <div *ngIf="episodes.length > 0">
-      <div *ngIf="groupedEpisodes.length > 1" class="mb-6">
-        <label for="seasonSelect" class="block text-sm font-medium text-neutral-300 mb-2">Seleccionar temporada:</label>
-        <div class="relative">
-          <select
-            id="seasonSelect"
-            class="bg-neutral-800 text-white border border-neutral-700 rounded-lg px-4 py-2 w-full md:w-64 appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500"
-            [(ngModel)]="selectedSeason"
-            (change)="onSeasonChange(selectedSeason)">
-            <option *ngFor="let season of groupedEpisodes" [value]="season.key">
-              Temporada {{ season.key }}
-            </option>
-          </select>
-          <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-            <fa-icon [icon]="faChevronDown" class="text-neutral-400"></fa-icon>
-          </div>
+<div class="container mx-auto px-4 py-6 mb-20">
+  <!-- Mensaje cuando no hay episodios -->
+  <div *ngIf="episodes.length === 0" class="text-center py-8">
+    <p class="text-lg text-neutral-400">No hay episodios disponibles para esta serie.</p>
+  </div>
+
+  <!-- Contenido cuando hay episodios -->
+  <div *ngIf="episodes.length > 0" class="space-y-6">
+    <!-- Selector de temporada -->
+    <div *ngIf="groupedEpisodes.length > 1" class="w-full max-w-xs">
+      <label for="seasonSelect" class="block text-sm font-medium text-neutral-300 mb-2">Seleccionar temporada:</label>
+      <div class="relative">
+        <select
+          id="seasonSelect"
+          class="bg-neutral-800 text-white border border-neutral-700 rounded-lg px-4 py-2 w-full appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500"
+          [(ngModel)]="selectedSeason"
+          (change)="onSeasonChange(selectedSeason)">
+          <option *ngFor="let season of groupedEpisodes" [value]="season.key">
+            Temporada {{ season.key }}
+          </option>
+        </select>
+        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+          <fa-icon [icon]="faChevronDown" class="text-neutral-400"></fa-icon>
         </div>
       </div>
-      
-      <h2 class="text-2xl text-white font-bold mb-6">Temporada {{ selectedSeason }}</h2>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div
-          *ngFor="let episode of filteredEpisodes"
-          class="bg-neutral-800 border border-neutral-700 rounded-xl shadow-lg overflow-hidden cursor-pointer hover:bg-neutral-700 transition-all transform hover:scale-105"
-          (click)="selectEpisode(episode)">
-          <div class="relative">
+    </div>
+
+    <!-- Título de la temporada -->
+    <h2 class="text-2xl text-white font-bold">Temporada {{ selectedSeason }}</h2>
+
+    <!-- Lista vertical de episodios -->
+    <div class="space-y-4">
+      <div
+        *ngFor="let episode of filteredEpisodes"
+        class="bg-neutral-800 border border-neutral-700 rounded-lg shadow-md overflow-hidden cursor-pointer hover:bg-neutral-700 transition-all"
+        (click)="selectEpisode(episode)">
+        <div class="flex flex-col md:flex-row">
+          <!-- Imagen del episodio -->
+          <div class="relative w-full md:w-48 h-48 md:h-auto flex-shrink-0">
             <img
               [src]="episode.imagen || episode.imageUrl"
               [alt]="episode.titulo || episode.title"
-              class="w-full h-48 object-cover"
+              class="w-full h-full object-cover"
               onerror="this.src='/assets/images/no-image.jpg'">
+              <fa-icon [icon]="faPlay" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-4xl"></fa-icon>
+            <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-50"></div>
             <div *ngIf="episode.duracion || episode.duration" class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded-md">
               {{ episode.duracion || episode.duration }} min
             </div>
-            <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-              <div class="w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center">
-                <fa-icon [icon]="faPlay" class="text-white"></fa-icon>
-              </div>
-            </div>
           </div>
-          <div class="p-4">
-            <h3 class="text-lg font-semibold text-white">
-              {{ episode.titulo || episode.title }}
-            </h3>
-            <p class="text-sm text-neutral-400 mt-1">
-              Episodio {{ episode.numero || episode.number }}
-            </p>
-            <p class="text-sm text-neutral-300 mt-3 line-clamp-2">
+          
+          <!-- Información del episodio -->
+          <div class="p-4 flex-grow">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="text-lg font-semibold text-white">
+                  {{ episode.titulo || episode.title }}
+                </h3>
+                <p class="text-sm text-neutral-400 mt-1">
+                  Episodio {{ episode.numero || episode.number }}
+                </p>
+              </div>
+              <button class="flex items-center justify-center w-10 h-10 bg-primary-600 rounded-full text-white hover:bg-primary-500 transition-colors">
+                <fa-icon [icon]="faPlay"></fa-icon>
+              </button>
+            </div>
+            <p class="text-sm text-neutral-300 mt-3">
               {{ episode.descripcion || episode.description || 'Sin descripción' }}
             </p>
-            <button class="mt-4 flex items-center text-primary-400 hover:text-primary-300 transition-colors">
-              <fa-icon [icon]="faPlay" class="mr-2"></fa-icon>
-              Reproducir
-            </button>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
