@@ -19,7 +19,7 @@
       <div class="flex items-center space-x-4" [ngClass]="{'opacity-100': !scroll && categorias.length > 0, 'opacity-0 hidden': scroll || categorias.length == 0}">
         <!-- Búsqueda -->
         <div class="relative">
-          <input type="text" placeholder="Buscar contenido" class="bg-neutral-800 text-neutral-200 px-4 py-1 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 border border-neutral-700 w-32 md:w-64">
+          <input type="text" (input)="onSearch($event)" placeholder="Buscar contenido" class="bg-neutral-800 text-neutral-200 px-4 py-1 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 border border-neutral-700 w-32 md:w-64">
           <button class="absolute right-2 top-0.5 text-primary-500 hover:text-primary-400 transition-colors">
             <fa-icon [icon]="faSearch" class="h-5 w-5"></fa-icon>
           </button>

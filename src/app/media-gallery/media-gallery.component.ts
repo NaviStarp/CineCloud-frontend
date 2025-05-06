@@ -39,7 +39,12 @@ export class MediaGalleryComponent implements OnInit {
   // Mapas para almacenar medios únicos por categoría e ID
   peliculasPorCategoria: Record<string, Map<string, Media>> = {};
   seriesPorCategoria: Record<string, Map<string, Media>> = {};
-
+  
+  // Variables para búsqueda
+  terminoBusqueda: string = '';
+  peliculasFiltradas: Media[] = [];
+  seriesFiltradas: Media[] = [];
+  
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
@@ -68,6 +73,8 @@ export class MediaGalleryComponent implements OnInit {
         this.peliculas = videos.peliculas;
         this.series = videos.series;
         this.groupMediaByCategory();
+        // Inicializa las listas filtradas con todos los valores
+        this.actualizarListasFiltradas();
       })
       .catch(error => {
         console.error('Error al cargar los videos:', error);
@@ -79,6 +86,8 @@ export class MediaGalleryComponent implements OnInit {
 
   onCategoryChange(category: string): void {
     this.opcionSeleccionada = category;
+    // Al cambiar la categoría, también actualizamos las listas filtradas
+    this.actualizarListasFiltradas();
   }
 
   /**
@@ -143,7 +152,7 @@ export class MediaGalleryComponent implements OnInit {
   /**
    * Obtiene las películas filtradas según la categoría seleccionada como un array
    */
-  get filteredPeliculas(): Media[] {
+  get baseFilteredPeliculas(): Media[] {
     if (this.opcionSeleccionada === 'Todos') {
       // Retorna todas las películas únicas
       const uniquePeliculas = new Map<string, Media>();
@@ -160,7 +169,7 @@ export class MediaGalleryComponent implements OnInit {
   /**
    * Obtiene las series filtradas según la categoría seleccionada como un array
    */
-  get filteredSeries(): Media[] {
+  get baseFilteredSeries(): Media[] {
     if (this.opcionSeleccionada === 'Todos') {
       // Retorna todas las series únicas
       const uniqueSeries = new Map<string, Media>();
@@ -195,5 +204,54 @@ export class MediaGalleryComponent implements OnInit {
     const hasPeliculas = (this.peliculasPorCategoria[categoria]?.size ?? 0) > 0;
     const hasSeries = (this.seriesPorCategoria[categoria]?.size ?? 0) > 0;
     return hasPeliculas || hasSeries;
+  }
+
+  /**
+   * Método para manejar el evento de cambio en la búsqueda
+   * @param busqueda La cadena de búsqueda
+   */
+  onBusquedaCambio(busqueda: string): void {
+    this.terminoBusqueda = busqueda;
+    this.actualizarListasFiltradas();
+  }
+
+  /**
+   * Actualiza las listas filtradas basándose en la categoría seleccionada y el término de búsqueda
+   */
+  private actualizarListasFiltradas(): void {
+    // Primero obtenemos los medios filtrados por categoría
+    const peliculasCategoria = this.baseFilteredPeliculas;
+    const seriesCategoria = this.baseFilteredSeries;
+
+    // Si no hay término de búsqueda, simplemente usamos los filtrados por categoría
+    if (!this.terminoBusqueda || this.terminoBusqueda.trim() === '') {
+      this.peliculasFiltradas = peliculasCategoria;
+      this.seriesFiltradas = seriesCategoria;
+      return;
+    }
+
+    // Filtramos por el término de búsqueda
+    const termino = this.terminoBusqueda.toLowerCase().trim();
+    
+    this.peliculasFiltradas = peliculasCategoria.filter(pelicula => 
+      pelicula.titulo.toLowerCase().includes(termino) || 
+      pelicula.descripcion.toLowerCase().includes(termino)
+    );
+    
+    this.seriesFiltradas = seriesCategoria.filter(serie => 
+      serie.titulo.toLowerCase().includes(termino) || 
+      serie.descripcion.toLowerCase().includes(termino)
+    );
+  }
+
+  /**
+   * Getters para acceder a las listas filtradas desde la plantilla
+   */
+  get filteredPeliculas(): Media[] {
+    return this.peliculasFiltradas;
+  }
+
+  get filteredSeries(): Media[] {
+    return this.seriesFiltradas;
   }
 }

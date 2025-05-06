@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
@@ -13,6 +13,9 @@ export class HeaderComponent  implements OnInit {
   // Variables
   @Input() categorias: string[] = [];
   @Input() opcionSeleccionada:string|null = null;
+  @Output() busquedaCambio: EventEmitter<string> = new EventEmitter<string>();
+  //Busqueda
+  busqueda:string = '';
   scroll: boolean = false;
   // Iconos
   faSearch = faSearch;
@@ -48,4 +51,15 @@ export class HeaderComponent  implements OnInit {
         });
       }
     }
-}
+
+  /**
+   * Emite el valor de búsqueda al componente padre
+   * @param event El evento de entrada
+   * @param value El valor de búsqueda
+    **/
+  onSearch(event: Event) {
+    const target = event.target as HTMLInputElement | null;
+    this.busqueda = target?.value || '';
+    this.busquedaCambio.emit(this.busqueda);
+  }
+  }
