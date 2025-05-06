@@ -1,4 +1,3 @@
-// media-gallery.component.ts
 import { Component, OnInit } from '@angular/core';
 import { HeaderComponent } from '../general/header/header.component';
 import { AuthService } from '../services/auth.service';
@@ -32,12 +31,12 @@ interface Media {
 })
 export class MediaGalleryComponent implements OnInit {
   categorias: string[] = [];
-  opcionSeleccionada: string = 'Todos'; // Default value
+  opcionSeleccionada: string = 'Todos'; // Valor por defecto
   peliculas: Media[] = [];
   series: Media[] = [];
   loading: boolean = true;
   
-  // Maps to store unique media by category and ID
+  // Mapas para almacenar medios únicos por categoría e ID
   peliculasPorCategoria: Record<string, Map<string, Media>> = {};
   seriesPorCategoria: Record<string, Map<string, Media>> = {};
 
@@ -48,22 +47,34 @@ export class MediaGalleryComponent implements OnInit {
   }
 
   loadData(): void {
-    Promise.all([
-      this.authService.getCategories(),
-      this.authService.getVideos()
-    ])
-    .then(([categories, videos]: [string[], { peliculas: Media[], series: Media[] }]) => {
-      this.categorias = categories;
-      this.peliculas = videos.peliculas;
-      this.series = videos.series;
-      this.groupMediaByCategory();
-    })
-    .catch((error: any) => {
-      console.error('Error loading data:', error);
-    })
-    .finally(() => {
-      this.loading = false;
-    });
+    this.loading = true;
+
+    // Inicia la carga de categorías y videos en paralelo
+    const categoriesPromise = this.authService.getCategories();
+    const videosPromise = this.authService.getVideos();
+
+    // Procesa las categorías tan pronto como estén disponibles
+    categoriesPromise
+      .then(categories => {
+        this.categorias = categories;
+      })
+      .catch(error => {
+        console.error('Error al cargar las categorías:', error);
+      });
+
+    // Procesa los videos tan pronto como estén disponibles
+    videosPromise
+      .then(videos => {
+        this.peliculas = videos.peliculas;
+        this.series = videos.series;
+        this.groupMediaByCategory();
+      })
+      .catch(error => {
+        console.error('Error al cargar los videos:', error);
+      })
+      .finally(() => {
+        this.loading = false;
+      });
   }
 
   onCategoryChange(category: string): void {
@@ -71,17 +82,17 @@ export class MediaGalleryComponent implements OnInit {
   }
 
   /**
-   * Filter media by category while ensuring uniqueness by ID
-   * @param category Category to filter by
-   * @param mediaList List of media items to filter
-   * @returns Filtered media list with unique items
+   * Filtra los medios por categoría asegurando que sean únicos por ID
+   * @param category Categoría por la cual filtrar
+   * @param mediaList Lista de medios a filtrar
+   * @returns Lista de medios filtrados y únicos
    */
   private filterByCategory(category: string, mediaList: Media[]): Media[] {
     if (category === 'Todos') {
       return mediaList;
     }
     
-    // Use a Map to ensure uniqueness by ID
+    // Usa un Map para garantizar unicidad por ID
     const uniqueMedia = new Map<string, Media>();
     
     mediaList.forEach(item => {
@@ -94,33 +105,33 @@ export class MediaGalleryComponent implements OnInit {
   }
 
   /**
-   * Wrapper method for template usage to filter media by category
+   * Método de envoltura para usar en la plantilla y filtrar medios por categoría
    */
   filterCategories(category: string, mediaList: Media[]): Media[] {
     return this.filterByCategory(category, mediaList);
   }
 
   /**
-   * Group all media by their categories, ensuring no duplicates
+   * Agrupa todos los medios por sus categorías, asegurando que no haya duplicados
    */
   groupMediaByCategory(): void {
-    // Initialize category maps
+    // Inicializa los mapas de categorías
     this.peliculasPorCategoria = {};
     this.seriesPorCategoria = {};
     
     this.categorias.forEach(categoria => {
-      // Create Maps to store unique media by ID for each category
+      // Crea mapas para almacenar medios únicos por ID para cada categoría
       this.peliculasPorCategoria[categoria] = new Map<string, Media>();
       this.seriesPorCategoria[categoria] = new Map<string, Media>();
       
-      // Process movies for this category
+      // Procesa las películas para esta categoría
       this.peliculas.forEach(pelicula => {
         if (pelicula.categorias && pelicula.categorias.includes(categoria)) {
           this.peliculasPorCategoria[categoria].set(pelicula.id, pelicula);
         }
       });
       
-      // Process series for this category
+      // Procesa las series para esta categoría
       this.series.forEach(serie => {
         if (serie.categorias && serie.categorias.includes(categoria)) {
           this.seriesPorCategoria[categoria].set(serie.id, serie);
@@ -130,55 +141,55 @@ export class MediaGalleryComponent implements OnInit {
   }
 
   /**
-   * Get filtered movies based on selected category as array
+   * Obtiene las películas filtradas según la categoría seleccionada como un array
    */
   get filteredPeliculas(): Media[] {
     if (this.opcionSeleccionada === 'Todos') {
-      // Return all unique movies
+      // Retorna todas las películas únicas
       const uniquePeliculas = new Map<string, Media>();
       this.peliculas.forEach(pelicula => {
         uniquePeliculas.set(pelicula.id, pelicula);
       });
       return Array.from(uniquePeliculas.values());
     } else {
-      // Return category-filtered movies
+      // Retorna las películas filtradas por categoría
       return Array.from(this.peliculasPorCategoria[this.opcionSeleccionada]?.values() || []);
     }
   }
 
   /**
-   * Get filtered series based on selected category as array
+   * Obtiene las series filtradas según la categoría seleccionada como un array
    */
   get filteredSeries(): Media[] {
     if (this.opcionSeleccionada === 'Todos') {
-      // Return all unique series
+      // Retorna todas las series únicas
       const uniqueSeries = new Map<string, Media>();
       this.series.forEach(serie => {
         uniqueSeries.set(serie.id, serie);
       });
       return Array.from(uniqueSeries.values());
     } else {
-      // Return category-filtered series
+      // Retorna las series filtradas por categoría
       return Array.from(this.seriesPorCategoria[this.opcionSeleccionada]?.values() || []);
     }
   }
 
   /**
-   * Get movies for a specific category as array
+   * Obtiene las películas para una categoría específica como un array
    */
   getPeliculasForCategory(categoria: string): Media[] {
     return Array.from(this.peliculasPorCategoria[categoria]?.values() || []);
   }
 
   /**
-   * Get series for a specific category as array
+   * Obtiene las series para una categoría específica como un array
    */
   getSeriesForCategory(categoria: string): Media[] {
     return Array.from(this.seriesPorCategoria[categoria]?.values() || []);
   }
 
   /**
-   * Check if a category has any movies or series
+   * Verifica si una categoría tiene películas o series
    */
   hasMediaInCategory(categoria: string): boolean {
     const hasPeliculas = (this.peliculasPorCategoria[categoria]?.size ?? 0) > 0;

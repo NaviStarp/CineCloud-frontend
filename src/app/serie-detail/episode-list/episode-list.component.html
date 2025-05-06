@@ -8,7 +8,6 @@
   <div *ngIf="episodes.length > 0" class="space-y-6">
     <!-- Selector de temporada -->
     <div *ngIf="groupedEpisodes.length > 1" class="w-full max-w-xs">
-      <label for="seasonSelect" class="block text-sm font-medium text-neutral-300 mb-2">Seleccionar temporada:</label>
       <div class="relative">
         <select
           id="seasonSelect"
@@ -30,46 +29,12 @@
 
     <!-- Lista vertical de episodios -->
     <div class="space-y-4">
-      <div
-        *ngFor="let episode of filteredEpisodes"
-        class="bg-neutral-800 border border-neutral-700 rounded-lg shadow-md overflow-hidden cursor-pointer hover:bg-neutral-700 transition-all"
-        (click)="selectEpisode(episode)">
-        <div class="flex flex-col md:flex-row">
-          <!-- Imagen del episodio -->
-          <div class="relative w-full md:w-48 h-48 md:h-auto flex-shrink-0">
-            <img
-              [src]="episode.imagen || episode.imageUrl"
-              [alt]="episode.titulo || episode.title"
-              class="w-full h-full object-cover"
-              onerror="this.src='/assets/images/no-image.jpg'">
-              <fa-icon [icon]="faPlay" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-4xl"></fa-icon>
-            <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-50"></div>
-            <div *ngIf="episode.duracion || episode.duration" class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded-md">
-              {{ episode.duracion || episode.duration }} min
-            </div>
-          </div>
-          
-          <!-- Información del episodio -->
-          <div class="p-4 flex-grow">
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="text-lg font-semibold text-white">
-                  {{ episode.titulo || episode.title }}
-                </h3>
-                <p class="text-sm text-neutral-400 mt-1">
-                  Episodio {{ episode.numero || episode.number }}
-                </p>
-              </div>
-              <button class="flex items-center justify-center w-10 h-10 bg-primary-600 rounded-full text-white hover:bg-primary-500 transition-colors">
-                <fa-icon [icon]="faPlay"></fa-icon>
-              </button>
-            </div>
-            <p class="text-sm text-neutral-300 mt-3">
-              {{ episode.descripcion || episode.description || 'Sin descripción' }}
-            </p>
-          </div>
-        </div>
-      </div>
+      <ng-container *ngFor="let episode of filteredEpisodes">
+        <app-episode-card
+          [episode]="episode"
+          (episodeSelected)="selectEpisode(episode)">
+        </app-episode-card>
+      </ng-container>
     </div>
   </div>
 </div>

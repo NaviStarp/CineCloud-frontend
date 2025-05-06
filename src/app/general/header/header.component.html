@@ -32,12 +32,12 @@
 <div *ngIf="categorias && categorias.length > 0" [ngClass]="{'block': !scroll, 'hidden': scroll}" class="bg-neutral-800 py-2 transition-all duration-300 fixed w-full z-40" style="top: 64px;">
   <div class="container mx-auto px-4">
     <div class="flex flex-wrap text-sm">
-      <a href="#" 
+      <button (click)="scrollToCategory(categoria)"
          [ngClass]="{'text-primary-500 font-bold': categoria === opcionSeleccionada}"
          class="text-neutral-300 hover:text-primary-500 transition-colors mr-6" 
          *ngFor="let categoria of categorias">
         {{ categoria }}
-      </a>
+    </button>
     </div>
   </div>
 </div>

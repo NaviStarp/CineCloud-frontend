@@ -46,9 +46,10 @@
       </button>
       <div class="relative">
         <button (click)="copyUrlToClipboard(); showToolTip = true; $event.stopPropagation();" 
-                (mouseleave)="showToolTip = false" 
-                class="w-12 h-12 bg-neutral-700 hover:bg-neutral-600 rounded-full flex items-center justify-center">
-          <fa-icon [icon]="faShare" class="text-xl hover:text-primary-400"></fa-icon>
+          (mouseleave)="showToolTip = false" 
+          class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-lg">
+          <fa-icon [icon]="faShare" class="text-xl text-white mr-3 group-hover:text-primary-400"></fa-icon>
+          Compartir
         </button>
         <span *ngIf="showToolTip" 
               class="absolute min-w-40 bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-neutral-800 text-green-500 text-sm px-3 py-1 rounded shadow-lg">
@@ -102,8 +103,8 @@
   <app-video-player
     *ngIf="hlsUrl && showVideo"
     [videoUrl]="hlsUrl"
-    [videoTitle]="title"
-    [episodeInfo]="description"
+    [videoTitle]="videoTitle"
+    [episodeInfo]="videoDescription"
     (videoClosed)="showVideo = false"
     class="w-full h-full fixed inset-0 z-50"
   ></app-video-player>

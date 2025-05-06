@@ -38,10 +38,11 @@
           </app-media-carousel>
           </section>
       <section
+        [id]="categoria"
         *ngFor="let categoria of categorias"
         class="bg-gray-800 rounded-xl shadow-lg p-6"
         [class.hidden]="!hasMediaInCategory(categoria)">
-        <h2 class="text-2xl font-bold text-white mb-4 border-b pb-2">
+        <h2  class="text-2xl font-bold text-white mb-4 border-b pb-2">
           {{categoria}}
         </h2>
 

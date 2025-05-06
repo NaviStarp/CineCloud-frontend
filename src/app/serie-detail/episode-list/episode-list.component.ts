@@ -3,11 +3,12 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faPlay } from '@fortawesome/free-solid-svg-icons';
+import { EpisodeCardComponent } from "./episode-card/episode-card.component";
 
 @Component({
   selector: 'app-episode-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, FaIconComponent],
+  imports: [CommonModule, FormsModule, FaIconComponent, EpisodeCardComponent],
   templateUrl: './episode-list.component.html',
   styleUrl: './episode-list.component.css'
 })

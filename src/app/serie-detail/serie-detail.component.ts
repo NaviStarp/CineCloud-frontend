@@ -35,7 +35,8 @@ export class SerieDetailComponent implements OnInit {
   selectedView: string = 'episodes';
   showToolTip: boolean = false;
   hlsUrl: string = '';
-  
+  videoTitle: string = '';
+  videoDescription: string = '';
   // Iconos
   faPlay = faPlay;
   faCheck = faCheck;
@@ -139,6 +140,8 @@ export class SerieDetailComponent implements OnInit {
   
   selectEpisode(episode: any): void {
     this.hlsUrl = episode.video || episode.videoUrl;
+    this.videoTitle = episode.titulo || episode.title || 'No Title';
+    this.videoDescription = episode.descripcion || episode.description || 'No Description';
     this.showVideo = true;
   }
 }

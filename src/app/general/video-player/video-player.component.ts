@@ -27,7 +27,7 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
   }
   reloadVideo() {
     const video = this.videoRef.nativeElement;
-  
+    console.log("Recargando video:", this.videoUrl);
     // Pausar y limpiar fuente actual
     video.pause();
     video.removeAttribute('src');
@@ -95,7 +95,7 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     // Ensure volume is set and not muted
     video.volume = this.volume;
     video.muted = false;
-
+    video.autoplay = true;
     // Set up event listeners
     video.addEventListener('timeupdate', this.updateProgress.bind(this));
     video.addEventListener('loadedmetadata', this.initializeVideo.bind(this));

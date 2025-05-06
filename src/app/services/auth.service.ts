@@ -296,35 +296,42 @@ export class AuthService {
       throw error;
     }
   }
+// Este método obtiene todos los videos (películas, series y episodios) desde el servidor
 public async getVideos(): Promise<MediaResponse> {
+  // Verifica si hay un token y una URL del servidor configurados
   if (!this.getToken() || this.getServerUrl() === '') {
-    return { peliculas: [], series: [], episodios: [] };
+    return { peliculas: [], series: [], episodios: [] }; // Devuelve un objeto vacío si no hay token o URL
   }
 
+  // Realiza una solicitud GET al endpoint de medios
   const response = await fetch(`${this.getServerUrl()}/media/`, {
     method: 'GET',
     headers: {
-      'Authorization': `Token ${this.getToken()}`
+      'Authorization': `Token ${this.getToken()}` // Incluye el token en los encabezados
     }
   });
 
-  const videos = await response.json();
-  // Helper function to process video thumbnails
-  const processThumbnails = async (videos: any[]) => {
-    for (const video of videos) {
-      video.imagen = video.imagen.replace('/media/', '');
-      video.imagen = await this.getThumnailUrl(video.imagen);
-    }
+  const videos = await response.json(); // Convierte la respuesta en JSON
+
+  // Procesa las miniaturas (thumbnails) de los videos en paralelo
+  const processThumbnails = (videos: any[]) => {
+    return Promise.all(
+      videos.map(async (video) => {
+        video.imagen = video.imagen.replace('/media/', ''); // Ajusta la ruta de la imagen
+        video.imagen = await this.getThumnailUrl(video.imagen); // Obtiene la URL de la miniatura
+        return video;
+      })
+    );
   };
 
-  // Wait for all thumbnails to be processed
+  // Procesa las miniaturas de películas, series y episodios en paralelo
   await Promise.all([
     processThumbnails(videos.peliculas),
     processThumbnails(videos.series),
     processThumbnails(videos.episodios)
   ]);
 
-  return videos;
+  return videos; // Devuelve los videos procesados
 }
   public async getSeries(): Promise<Series[]> {
     if(!this.getToken() || this.getServerUrl() === ''){
