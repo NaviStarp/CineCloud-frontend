@@ -500,7 +500,7 @@ export class AuthGuard implements CanActivate {
     }
 
     // Redirigo al login si no esta logueado o si ocurre un error
-    this.router.navigate(['/login']);
+    this.router.createUrlTree(['/login']);
     return false;
   }
 }
