@@ -20,8 +20,8 @@ import { EpisodeListComponent } from "./episode-list/episode-list.component";
 })
 export class SerieDetailComponent implements OnInit {
   id!: string;
-  title: string = 'Serie Detail';
-  description: string = 'Serie Description';
+  title: string = 'Cargando';
+  description: string = 'Cargando';
   imageUrl: string = '';
   season: number = 1; 
   temporadas: number = 1;
