@@ -9,7 +9,7 @@ import { faPlay } from '@fortawesome/free-solid-svg-icons';
   templateUrl: './media-card.component.html',
   styleUrl: './media-card.component.css'
 })
-export class MediaCardComponent  {
+export class MediaCardComponent implements OnInit  {
   @Input() thumbnail: string = '';
   @Input() title: string = '';
   @Input() description: string = '';
@@ -17,6 +17,15 @@ export class MediaCardComponent  {
   @Input() date: string = '';
   @Input() duration: string = '';
 
+  ngOnInit(): void {
+    console.log('MediaCardComponent initialized');
+    console.log(this.thumbnail);
+    console.log(this.title);
+    console.log(this.description);
+    console.log(this.type);
+    console.log(this.date);
+    console.log(this.duration);
+  }
   // Variables
   hover: boolean = false;
 

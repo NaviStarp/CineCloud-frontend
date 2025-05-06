@@ -27,7 +27,7 @@ export interface Series {
   id: number;
   episodios: Episode[];
   titulo: string;
-  categorias:string[];
+  categorias: string[];
   descripcion: string;
   fecha_estreno: string;
   temporadas: number;
@@ -42,8 +42,8 @@ export class AuthService {
   // Devuelve la URL del servidor
   public getServerUrl(): string {
     if (isPlatformBrowser(this.platformId)) {
-      const ip =  environment.url  || localStorage.getItem('serverIp') ;
-      const port =  environment.port || localStorage.getItem('serverPort');
+      const ip = environment.url || localStorage.getItem('serverIp');
+      const port = environment.port || localStorage.getItem('serverPort');
       if (ip && port) {
         return `http://${ip}:${port}`;
       }
@@ -143,7 +143,7 @@ export class AuthService {
       formData.append(`videos[${index}][description]`, video.description || '');
       formData.append(`videos[${index}][categorias]`, JSON.stringify(video.categories || []));
       formData.append(`videos[${index}][video]`, video.videoBlob, video.name);
-      
+
       if (typeof video.thumbnail === 'string' && video.thumbnail.startsWith('data:image')) {
         const byteString = atob(video.thumbnail.split(',')[1]);
         const arrayBuffer = new ArrayBuffer(byteString.length);
@@ -154,12 +154,12 @@ export class AuthService {
         const blob = new Blob([uint8Array], { type: 'image/jpeg' });
         formData.append(`videos[${index}][thumbnail]`, blob, `${video.name}-thumbnail.jpg`);
       }
-      
+
       formData.append(`videos[${index}][mediaType]`, video.mediaType);
-      
+
       const releaseDate = video.releaseDate instanceof Date ? video.releaseDate : new Date(video.releaseDate);
       formData.append(`videos[${index}][releaseDate]`, releaseDate.toISOString().split('T')[0]);
-      if(video.duration){
+      if (video.duration) {
         formData.append(`videos[${index}][duration]`, video.duration.toString());
       }
       if (video.mediaType === 'series') {
@@ -171,7 +171,7 @@ export class AuthService {
         formData.append(`videos[${index}][seriesReleaseDate]`, seriesReleaseDate.toISOString().split('T')[0]);
       }
     });
-  
+
     try {
       const response = await fetch(`${this.getServerUrl()}/media/upload/`, {
         method: 'POST',
@@ -180,13 +180,13 @@ export class AuthService {
         },
         body: formData
       });
-  
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Upload error:', response.status, errorText);
         throw new Error(`Upload failed: ${response.status} ${errorText}`);
       }
-      
+
       return await response.json();
     } catch (error) {
       console.error('Upload exception:', error);
@@ -212,66 +212,66 @@ export class AuthService {
     formData.append('descripcion', series.descripcion);
     formData.append('fecha_estreno', series.fecha_estreno);
     formData.append('temporadas', series.temporadas.toString());
-    
+
     // Manejar las categorías como un array JSON
     if (series.categorias && series.categorias.length > 0) {
-        // Opción 1: Enviar como JSON string
-        formData.append('categorias', JSON.stringify(series.categorias));
-        
-        // Opción 2: Si el backend espera múltiples valores con el mismo nombre
-        // series.categorias.forEach(categoria => {
-        //     formData.append('categorias', categoria.toString());
-        // });
+      // Opción 1: Enviar como JSON string
+      formData.append('categorias', JSON.stringify(series.categorias));
+
+      // Opción 2: Si el backend espera múltiples valores con el mismo nombre
+      // series.categorias.forEach(categoria => {
+      //     formData.append('categorias', categoria.toString());
+      // });
     }
-    
+
     // Manejar la imagen
     if (typeof series.imagen === 'string' && series.imagen.startsWith('data:image')) {
-        // Convertir base64 a blob
-        const parts = series.imagen.split(';base64,');
-        const imageType = parts[0].split(':')[1];
-        const byteString = atob(parts[1]);
-        const arrayBuffer = new ArrayBuffer(byteString.length);
-        const uint8Array = new Uint8Array(arrayBuffer);
-        
-        for (let i = 0; i < byteString.length; i++) {
-            uint8Array[i] = byteString.charCodeAt(i);
-        }
-        
-        const blob = new Blob([uint8Array], { type: imageType });
-        formData.append('imagen', blob, `${series.titulo.replace(/\s+/g, '-')}-thumbnail.jpg`);
-    } 
-     else {
-        console.error('Formato de imagen no válido:', series.imagen);
-        throw new Error('La imagen debe ser un string base64 o un objeto File/Blob');
+      // Convertir base64 a blob
+      const parts = series.imagen.split(';base64,');
+      const imageType = parts[0].split(':')[1];
+      const byteString = atob(parts[1]);
+      const arrayBuffer = new ArrayBuffer(byteString.length);
+      const uint8Array = new Uint8Array(arrayBuffer);
+
+      for (let i = 0; i < byteString.length; i++) {
+        uint8Array[i] = byteString.charCodeAt(i);
+      }
+
+      const blob = new Blob([uint8Array], { type: imageType });
+      formData.append('imagen', blob, `${series.titulo.replace(/\s+/g, '-')}-thumbnail.jpg`);
     }
-    
+    else {
+      console.error('Formato de imagen no válido:', series.imagen);
+      throw new Error('La imagen debe ser un string base64 o un objeto File/Blob');
+    }
+
     try {
-        const token = this.getToken();
-        if (!token) {
-            throw new Error('No se encontró el token de autenticación');
-        }
-        
-        const response = await fetch(`${this.getServerUrl()}/series/new/`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Token ${token}`
-                // No incluir 'Content-Type' para que el navegador establezca el boundary del FormData correctamente
-            },
-            body: formData
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => response.text());
-            console.error('Error en la creación de serie:', response.status, errorData);
-            throw new Error(typeof errorData === 'string' ? errorData : JSON.stringify(errorData));
-        }
-        
-        return await response.json();
+      const token = this.getToken();
+      if (!token) {
+        throw new Error('No se encontró el token de autenticación');
+      }
+
+      const response = await fetch(`${this.getServerUrl()}/series/new/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Token ${token}`
+          // No incluir 'Content-Type' para que el navegador establezca el boundary del FormData correctamente
+        },
+        body: formData
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => response.text());
+        console.error('Error en la creación de serie:', response.status, errorData);
+        throw new Error(typeof errorData === 'string' ? errorData : JSON.stringify(errorData));
+      }
+
+      return await response.json();
     } catch (error) {
-        console.error('Excepción en createSeries:', error);
-        throw error;
+      console.error('Excepción en createSeries:', error);
+      throw error;
     }
-}
+  }
   public async createCategory(name: string) {
     const formData = new FormData();
     formData.append('nombre', name);
@@ -283,58 +283,58 @@ export class AuthService {
         },
         body: formData
       });
-  
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Upload error:', response.status, errorText);
         throw new Error(`Upload failed: ${response.status} ${errorText}`);
       }
-      
+
       return await response.json();
     } catch (error) {
       console.error('Upload exception:', error);
       throw error;
     }
   }
-// Este método obtiene todos los videos (películas, series y episodios) desde el servidor
-public async getVideos(): Promise<MediaResponse> {
-  // Verifica si hay un token y una URL del servidor configurados
-  if (!this.getToken() || this.getServerUrl() === '') {
-    return { peliculas: [], series: [], episodios: [] }; // Devuelve un objeto vacío si no hay token o URL
-  }
-
-  // Realiza una solicitud GET al endpoint de medios
-  const response = await fetch(`${this.getServerUrl()}/media/`, {
-    method: 'GET',
-    headers: {
-      'Authorization': `Token ${this.getToken()}` // Incluye el token en los encabezados
+  // Este método obtiene todos los videos (películas, series y episodios) desde el servidor
+  public async getVideos(): Promise<MediaResponse> {
+    // Verifica si hay un token y una URL del servidor configurados
+    if (!this.getToken() || this.getServerUrl() === '') {
+      return { peliculas: [], series: [], episodios: [] }; // Devuelve un objeto vacío si no hay token o URL
     }
-  });
 
-  const videos = await response.json(); // Convierte la respuesta en JSON
+    // Realiza una solicitud GET al endpoint de medios
+    const response = await fetch(`${this.getServerUrl()}/media/`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${this.getToken()}` // Incluye el token en los encabezados
+      }
+    });
 
-  // Procesa las miniaturas (thumbnails) de los videos en paralelo
-  const processThumbnails = (videos: any[]) => {
-    return Promise.all(
-      videos.map(async (video) => {
-        video.imagen = video.imagen.replace('/media/', ''); // Ajusta la ruta de la imagen
-        video.imagen = await this.getThumnailUrl(video.imagen); // Obtiene la URL de la miniatura
-        return video;
-      })
-    );
-  };
+    const videos = await response.json(); // Convierte la respuesta en JSON
 
-  // Procesa las miniaturas de películas, series y episodios en paralelo
-  await Promise.all([
-    processThumbnails(videos.peliculas),
-    processThumbnails(videos.series),
-    processThumbnails(videos.episodios)
-  ]);
+    // Procesa las miniaturas (thumbnails) de los videos en paralelo
+    const processThumbnails = (videos: any[]) => {
+      return Promise.all(
+        videos.map(async (video) => {
+          video.imagen = video.imagen.replace('/media/', ''); // Ajusta la ruta de la imagen
+          video.imagen = await this.getThumnailUrl(video.imagen); // Obtiene la URL de la miniatura
+          return video;
+        })
+      );
+    };
 
-  return videos; // Devuelve los videos procesados
-}
+    // Procesa las miniaturas de películas, series y episodios en paralelo
+    await Promise.all([
+      processThumbnails(videos.peliculas),
+      processThumbnails(videos.series),
+      processThumbnails(videos.episodios)
+    ]);
+
+    return videos; // Devuelve los videos procesados
+  }
   public async getSeries(): Promise<Series[]> {
-    if(!this.getToken() || this.getServerUrl() === ''){
+    if (!this.getToken() || this.getServerUrl() === '') {
       return [];
     }
     const response = await fetch(`${this.getServerUrl()}/series/`, {
@@ -344,12 +344,43 @@ public async getVideos(): Promise<MediaResponse> {
       }
     });
     var series = await response.json();
-    series.forEach((serie: Series) => {
-       serie.imagen = serie.imagen.replace('/media/', '');
-    });
+    await Promise.all(series.map(async (serie: any) => {
+      if (serie.imagen) {
+        serie.imagen = await this.getThumnailUrl(serie.imagen.replace('/media/', ''));
+      }
+      if (serie.episodios) {
+        serie.episodios = serie.episodios.map((episodio: any) => {
+          episodio.imagen = episodio.imagen.replace('/media/', '');
+          return episodio;
+        });
+      }
+    }
+    ));
     return series;
   }
-  public async getThumnailUrl(url:string){
+  public async getMovies(): Promise<any[]> {
+    if (!this.getToken() || this.getServerUrl() === '') {
+      return [];
+    }
+    const response = await fetch(`${this.getServerUrl()}/movies/`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${this.getToken()}`
+      }
+    });
+    var movies = await response.json();
+    await Promise.all(movies.map(async (movie: any) => {
+      if (movie.imagen) {
+        movie.imagen = await this.getThumnailUrl(movie.imagen.replace('/media/', ''));
+      }
+      if (movie.video) {
+        movie.video = await this.getHLSUrl(movie.video.replace('/media/', '/'));
+      }
+      movie.categorias = movie.categorias.map((categoria: any) => categoria.nombre);
+    }));
+    return movies;
+  }
+  public async getThumnailUrl(url: string) {
     const response = await fetch(`${this.getServerUrl()}/media/${url}`, {
       method: 'GET',
       headers: {
@@ -358,8 +389,8 @@ public async getVideos(): Promise<MediaResponse> {
     }).then(res => res.blob().then(blob => URL.createObjectURL(blob)));
     return response;
   }
-  public async getSerieEpisodes(id:string): Promise<any[]> {
-    if(!this.getToken() || this.getServerUrl() === ''){
+  public async getSerieEpisodes(id: string): Promise<any[]> {
+    if (!this.getToken() || this.getServerUrl() === '') {
       return [];
     }
     const response = await fetch(`${this.getServerUrl()}/series/${id}`, {
@@ -370,8 +401,8 @@ public async getVideos(): Promise<MediaResponse> {
     });
     return response.json();
   }
-  public async getMovie(id:string): Promise<any> {
-    if(!this.getToken() || this.getServerUrl() === ''){
+  public async getMovie(id: string): Promise<any> {
+    if (!this.getToken() || this.getServerUrl() === '') {
       return {};
     }
     const response = await fetch(`${this.getServerUrl()}/movies/${id}`, {
@@ -381,15 +412,19 @@ public async getVideos(): Promise<MediaResponse> {
       }
     });
     var movie = await response.json();
-    movie.imagen = await this.getThumnailUrl(movie.imagen.replace('/media/', ''));
-    movie.video = this.getHLSUrl(movie.video.replace('/media/','/'));
+    if (movie.imagen) {
+      movie.imagen = await this.getThumnailUrl(movie.imagen.replace('/media/', ''));
+    }
+    if (movie.video) {
+      movie.video = await this.getHLSUrl(movie.video.replace('/media/', '/'));
+    }
     return movie;
   }
   public async getSerie(id: string): Promise<any> {
     if (!this.getToken() || this.getServerUrl() === '') {
       return {};
     }
-    
+
     try {
       const response = await fetch(`${this.getServerUrl()}/series/${id}`, {
         method: 'GET',
@@ -399,18 +434,18 @@ public async getVideos(): Promise<MediaResponse> {
           'Content-Type': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      
+
       const serie = await response.json();
-      
+
       // Procesar la imagen de la serie
       if (serie.imagen) {
         serie.imagen = await this.getThumnailUrl(serie.imagen.replace('/media/', ''));
       }
-      
+
       // Procesar episodios si exsiten
       if (serie.episodios && Array.isArray(serie.episodios)) {
         serie.episodios = await Promise.all(serie.episodios.map(async (episodio: any) => {
@@ -419,12 +454,12 @@ public async getVideos(): Promise<MediaResponse> {
             if (episodio.video) {
               episodio.video = await this.getHLSUrl(episodio.video.replace('/media/', '/'));
             }
-            
+
             // Procesar la imagen del episodio
             if (episodio.imagen) {
               episodio.imagen = await this.getThumnailUrl(episodio.imagen.replace('/media/', ''));
             }
-            
+
             return episodio;
           } catch (error) {
             console.error(`Error processing episode ${episodio.id}:`, error);
@@ -435,14 +470,14 @@ public async getVideos(): Promise<MediaResponse> {
         serie.episodios = [];
         console.warn('No episodes found in API response');
       }
-      
+
       return serie;
     } catch (error) {
       console.error('Error fetching serie details:', error);
       throw error; // Devuelve error
     }
   }
-  
+
 }
 
 @Injectable({

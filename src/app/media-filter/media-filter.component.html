@@ -1,0 +1,35 @@
+<media-header
+  *ngIf="!isLoading"
+  >
+</media-header>
+
+<!-- Contenedor principal -->
+<div *ngIf="!isLoading" class="container mx-auto px-4 py-8">
+  <div class="space-y-10">
+    <!-- Secciones individuales por categoría -->
+    <ng-container>
+      <!-- Sección de Películas -->
+        <section *ngIf="media.length > 0" class="bg-gray-800 rounded-xl shadow-lg p-6">
+          <h2 class="text-2xl font-bold text-white mb-4 border-b pb-2">
+            <span>{{ mediaType === 'movies' ? 'Películas' : 'Series' }}</span>
+          </h2>
+         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <ng-container *ngFor="let mediaItem of media">
+                <a href="/{{mediaItem.type}}/{{mediaItem.id}}" target="_blank">
+                <app-media-card
+                    [title]="mediaItem.titulo"
+                    [type]="mediaItem.type"
+                    [thumbnail]="mediaItem.imagen"
+                    [description]="mediaItem.descripcion"
+                    [date]="mediaItem.fecha_estreno"
+                    [duration]="mediaItem.duracion">
+                </app-media-card>
+                </a>
+            </ng-container>
+            </div>
+          </section>
+
+<div *ngIf="isLoading" class="fixed inset-0 flex items-center justify-center z-50">
+  <!-- Componente de carga -->
+<app-loading *ngIf="isLoading" ></app-loading>
+</div>
