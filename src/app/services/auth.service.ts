@@ -77,19 +77,31 @@ export class AuthService {
     if (!token) {
       return false;
     }
+  
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
-      'Authorization': 'Token '
+      'Authorization': 'Token ' + token
     };
-    if (token) {
-      headers['Authorization'] += token;
+  
+    try {
+      const response = await fetch(`${this.getServerUrl()}/token/test`, {
+        method: 'GET',
+        headers: headers,
+      });
+  
+      if (!response.ok) {
+        return false;
+      }
+  
+      const result = await response.json();
+      console.log('Token test result:', result);
+      return result === true; 
+    } catch (error) {
+      console.error('Error en la solicitud:', error);
+      return false;
     }
-    const response = await fetch(`${this.getServerUrl()}/token/test`, {
-      method: 'GET',
-      headers: headers,
-    });
-    return response.json();
   }
+  
 
   // Prueba la conexión con el servidor
   public async testServer(ip: string, port: string): Promise<boolean> {
@@ -478,29 +490,4 @@ export class AuthService {
     }
   }
 
-}
-
-@Injectable({
-  providedIn: 'root'
-})
-export class AuthGuard implements CanActivate {
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) { }
-
-  // Verifica si el usuario está logueado
-  async canActivate(): Promise<GuardResult> {
-    try {
-      if (await this.authService.loggedIn()) {
-        return true;
-      }
-    } catch (error) {
-      console.error('Error verificando el token:', error);
-    }
-
-    // Redirigo al login si no esta logueado o si ocurre un error
-    this.router.createUrlTree(['/login']);
-    return false;
-  }
 }

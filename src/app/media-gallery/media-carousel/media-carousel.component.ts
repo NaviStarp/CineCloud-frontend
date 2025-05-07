@@ -26,7 +26,6 @@ export class MediaCarouselComponent {
   
   ngAfterViewInit() {
     this.removeDuplicates();
-    console.log('Carousel initialized with items:', this.items);
     setTimeout(() => this.calculateItemsPerPage(), 0);
     
     window.addEventListener('resize', () => {
@@ -95,7 +94,6 @@ export class MediaCarouselComponent {
         t.id === item.id
       ))
     );
-    console.log('Items after removing duplicates:', this.items);
 
   }
 

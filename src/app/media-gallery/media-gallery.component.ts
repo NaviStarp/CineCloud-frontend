@@ -14,6 +14,7 @@ interface Media {
   imagen: string;
   duracion: string;
   fecha_estreno: string;
+  temporadas: number;
   categorias: string[];
 }
 
@@ -249,10 +250,12 @@ export class MediaGalleryComponent implements OnInit {
    * Getters para acceder a las listas filtradas desde la plantilla
    */
   get filteredPeliculas(): Media[] {
+    console.log('Peliculas filtradas:', this.peliculasFiltradas);
     return this.peliculasFiltradas;
   }
 
   get filteredSeries(): Media[] {
+    console.log('Peliculas filtradas:', this.peliculasFiltradas);
     return this.seriesFiltradas;
   }
 }
