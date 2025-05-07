@@ -1,0 +1,82 @@
+<div class="container mx-auto px-4 py-8">
+    <div *ngFor="let category of [1, 2, 3]" class="bg-gradient-to-b from-neutral-800 to-neutral-900 rounded-xl shadow-lg p-6 mb-8">
+      <!-- Skeleton del encabezado de categoría -->
+      <div class="flex items-center justify-between mb-6 border-b border-neutral-700 pb-3">
+        <div class="h-8 bg-neutral-700 rounded w-40 animate-pulse"></div>
+        <div class="h-5 bg-neutral-700 rounded w-8 animate-pulse"></div>
+      </div>
+      
+      <!-- Skeleton para Series -->
+      <div class="mb-6 relative">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center">
+            <div class="h-6 bg-neutral-700 rounded w-24 animate-pulse"></div>
+            <div class="ml-2 h-4 bg-neutral-700 rounded w-12 animate-pulse"></div>
+          </div>
+          <div class="h-4 bg-neutral-700 rounded w-20 animate-pulse"></div>
+        </div>
+        
+        <!-- Skeleton de Carousel -->
+        <div class="relative">
+          <div class="overflow-x-hidden overflow-y-hidden">
+            <div class="flex">
+              <ng-container *ngFor="let item of [1, 2, 3, 4, 5, 6]">
+                <div class="px-2 flex-shrink-0" [style.width.px]="itemWidth">
+                  <div class="media-card-skeleton bg-gradient-to-b border-2 border-neutral-800 from-neutral-800 via-neutral-900 to-black rounded-xl overflow-hidden shadow-xl">
+                    <!-- Imagen skeleton -->
+                    <div class="w-full h-48 bg-neutral-700 animate-pulse"></div>
+                    <!-- Contenido inferior skeleton -->
+                    <div class="p-4 bg-neutral-900 rounded-b-xl">
+                      <div class="h-5 bg-neutral-700 rounded w-3/4 animate-pulse"></div>
+                      <div class="flex justify-between items-center mt-2">
+                        <div class="h-4 bg-neutral-700 rounded w-16 animate-pulse"></div>
+                        <div class="h-4 bg-neutral-700 rounded w-20 animate-pulse"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Separador skeleton -->
+      <div class="h-0.5 bg-gradient-to-r from-transparent via-neutral-700 to-transparent my-6 rounded-full"></div>
+      
+      <!-- Skeleton para Películas -->
+      <div class="relative">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center">
+            <div class="h-6 bg-neutral-700 rounded w-24 animate-pulse"></div>
+            <div class="ml-2 h-4 bg-neutral-700 rounded w-12 animate-pulse"></div>
+          </div>
+          <div class="h-4 bg-neutral-700 rounded w-20 animate-pulse"></div>
+        </div>
+        
+        <!-- Skeleton de Carousel -->
+        <div class="relative">
+          <div class="overflow-x-hidden overflow-y-hidden">
+            <div class="flex">
+              <ng-container *ngFor="let item of [1, 2, 3, 4, 5, 6]">
+                <div class="px-2 flex-shrink-0" [style.width.px]="itemWidth">
+                  <div class="media-card-skeleton bg-gradient-to-b border-2 border-neutral-800 from-neutral-800 via-neutral-900 to-black rounded-xl overflow-hidden shadow-xl">
+                    <!-- Imagen skeleton -->
+                    <div class="w-full h-48 bg-neutral-700 animate-pulse"></div>
+                    <!-- Contenido inferior skeleton -->
+                    <div class="p-4 bg-neutral-900 rounded-b-xl">
+                      <div class="h-5 bg-neutral-700 rounded w-3/4 animate-pulse"></div>
+                      <div class="flex justify-between items-center mt-2">
+                        <div class="h-4 bg-neutral-700 rounded w-16 animate-pulse"></div>
+                        <div class="h-4 bg-neutral-700 rounded w-20 animate-pulse"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

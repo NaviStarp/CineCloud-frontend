@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { LoadingComponent } from "../general/loading/loading.component";
 import { MediaCarouselComponent } from "./media-carousel/media-carousel.component";
 import { RouterModule } from '@angular/router';
+import { SkeletonLoaderComponent } from "./skeleton-loader/skeleton-loader.component";
 
 interface Media {
   id: string;
@@ -21,10 +22,10 @@ interface Media {
   imports: [
     CommonModule,
     MediaCarouselComponent,
-    LoadingComponent,
     RouterModule,
-    HeaderComponent
-  ],
+    HeaderComponent,
+    SkeletonLoaderComponent
+],
   standalone: true,
   templateUrl: './media-gallery.component.html',
   styleUrl: './media-gallery.component.css'

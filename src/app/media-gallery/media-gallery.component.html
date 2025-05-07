@@ -1,5 +1,4 @@
 <media-header
-  *ngIf="!loading"
   [categorias]="categorias"
   [opcionSeleccionada]="opcionSeleccionada"
   (busquedaCambio)="onBusquedaCambio($event)"
@@ -30,7 +29,10 @@
   </section>
 </div>
 
-<!-- Contenedor principal -->
+<!-- Skeleton Loader -->
+<app-skeleton-loader *ngIf="loading" [itemWidth]="200"></app-skeleton-loader>
+
+<!-- Contenedor principal (sólo visible cuando no está cargando) -->
 <div *ngIf="!loading" class="container mx-auto px-4 py-8">
   <div class="space-y-10"></div>
     <!-- Sección de Todos/Resultados -->
@@ -145,9 +147,4 @@
         </section>
         </ng-container>
   </div>
-</div>
-
-<div *ngIf="loading" class="fixed inset-0 flex items-center justify-center z-50">
-  <!-- Componente de carga -->
-<app-loading *ngIf="loading" ></app-loading>
 </div>

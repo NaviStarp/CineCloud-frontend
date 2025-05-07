@@ -16,38 +16,42 @@ export const routes: Routes = [
         path: '', 
         component: MediaUploaderComponent,
         canActivate: [AuthGuard],
+        data: { animation: 'default' }
     },
-    { path: 'login', component: LoginComponent },
-    { path: 'register', component: SignupComponent },
+    { path: 'login', component: LoginComponent,data: { animation: 'default' }},
+    { path: 'register', component: SignupComponent ,data: { animation: 'default' }},
     { 
         path: 'subir/2', 
         component: MediaFormComponent,
-        canActivate: [AuthGuard] 
+        canActivate: [AuthGuard] ,
+        data: { animation: 'default' }
     },
-    { path: 'server/config', component: ServerConfigComponent },
-    { path: 'prueba', component: MediaListComponent, canActivate: [AuthGuard] },
-    { path: 'lista', component: MediaGalleryComponent, canActivate: [AuthGuard] },
+    { path: 'server/config', component: ServerConfigComponent ,data: { animation: 'default' }},
+    { path: 'prueba', component: MediaListComponent, canActivate: [AuthGuard],data: { animation: 'default' } },
+    { path: 'lista', component: MediaGalleryComponent, canActivate: [AuthGuard],data: { animation: 'default' } },
     { 
         path: 'peliculas', 
         component: MediaFilterComponent, 
         canActivate: [AuthGuard],
-        data: { type: 'movies' } 
+        data: { type: 'movies',animation: 'default' } 
     },
     { 
         path: 'pelicula/:id', 
         component: MovieDetailComponent, 
-        canActivate: [AuthGuard] 
+        canActivate: [AuthGuard] ,
+        data: { animation: 'default' }
     }, 
     { 
         path: 'series', 
         component: MediaFilterComponent, 
         canActivate: [AuthGuard],
-        data: { type: 'series' } 
+        data: { type: 'series',animation: 'default' } 
     },
     { 
         path: 'serie/:id', 
         component: SerieDetailComponent, 
-        canActivate: [AuthGuard] 
+        canActivate: [AuthGuard] ,
+        data: { animation: 'default' }
     },
     { path: '**', component: NotFoundComponent } 
 ];
