@@ -1,5 +1,7 @@
 <!-- Encabezado simple -->
-<media-header>
+<media-header
+  (busquedaCambio)="onBusquedaCambio($event)"
+>
 </media-header>
 
 <!-- Contenedor principal con mejores prácticas de Tailwind -->
@@ -15,12 +17,12 @@
             <i class="fas fa-film mr-2"></i> {{ mediaType === 'movies' ? 'Películas' : 'Series' }}
           </h3>
           <div class="flex items-center space-x-2">
-            <span class="ml-2 text-lg text-neutral-500">({{ media.length }})</span>
+            <span class="ml-2 text-lg text-neutral-500">({{ mediaFiltrada.length }})</span>
           </div>
         </div>
         <!-- Contenedor de cartas -->
         <div class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
-          <ng-container *ngFor="let mediaItem of media">
+          <ng-container *ngFor="let mediaItem of mediaFiltrada">
             <a href="/{{mediaItem.type}}/{{mediaItem.id}}" class="block transition-transform duration-200 hover:scale-105">
               <app-media-card
                 [title]="mediaItem.titulo"

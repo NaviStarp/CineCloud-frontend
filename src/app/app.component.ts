@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import {
   trigger,
   transition,
@@ -8,6 +8,8 @@ import {
   query,
   group
 } from '@angular/animations';
+import { AuthService } from './services/auth.service';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -33,10 +35,29 @@ import {
     ])
   ]
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'CineCloud';
-
+  constructor(private auth: AuthService,private router:Router) {}
+  async ngOnInit(): Promise<void> {
+    await this.redirectToLogin();
+  }
+  async redirectToLogin() {
+    if(!(await this.auth.loggedIn())){
+      try {
+      const ip = environment.url || localStorage.getItem('serverIp')
+      const port = environment.port || localStorage.getItem('serverPort');
+      
+        if(ip && port && await this.auth.testServer(ip,port)){
+        this.router.navigate(['/login']);
+      } else {
+        this.router.navigate(['/server/config']);
+      }
+    }catch(e) {
+    }
+    }
+  }
   getRouteAnimationData(outlet: RouterOutlet) {
     return outlet?.activatedRouteData?.['animation'];
   }
+  
 }

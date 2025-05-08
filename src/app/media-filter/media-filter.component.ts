@@ -8,42 +8,57 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-media-filter',
-  imports: [HeaderComponent, MediaCardComponent, LoadingComponent,CommonModule],
+  imports: [HeaderComponent, MediaCardComponent, CommonModule],
   templateUrl: './media-filter.component.html',
   styleUrl: './media-filter.component.css'
 })
 export class MediaFilterComponent {
-  constructor(private route:ActivatedRoute,private auth:AuthService) { }
-  media:any[] = [];
+  constructor(private route: ActivatedRoute, private auth: AuthService) { }
+  media: any[] = [];
   mediaType: string = '';
   isLoading: boolean = true;
+  terminoBusqueda: string = '';
+  mediaFiltrada: any[] = [];
+
   async ngOnInit() {
     this.mediaType = this.route.snapshot.data['type'];
     await this.getMedia();
-    console.log(this.media);
-    console.log(this.mediaType);
+    this.mediaFiltrada = this.media; // Inicialmente, la lista filtrada es igual a la lista completa
     this.isLoading = false;
   }
 
   async getMedia() {
-    // Lógica para obtener los medios según el tipo
     if (this.mediaType === 'movies') {
-      // Obtener películas
-      this.media = await this.auth.getMovies()
-      for(let i = 0; i < this.media.length; i++){
-        this.media[i].type = 'pelicula';
-      }
+      this.media = await this.auth.getMovies();
+      this.media.forEach(item => item.type = 'pelicula');
     } else if (this.mediaType === 'series') {
-      // Obtener series
-      this.media = await this.auth.getSeries()
-      for(let i = 0; i < this.media.length; i++){
-        this.media[i].type = 'serie';
-        console.log(this.media[i]);
-      }
+      this.media = await this.auth.getSeries();
+      this.media.forEach(item => item.type = 'serie');
     }
   }
 
+  /**
+   * Maneja el evento de cambio en la búsqueda
+   * @param busqueda La cadena de búsqueda
+   */
+  onBusquedaCambio(busqueda: string): void {
+    this.terminoBusqueda = busqueda;
+    this.actualizarMediaFiltrada();
+  }
 
-  
+  /**
+   * Actualiza la lista de medios filtrados basándose en el término de búsqueda
+   */
+  private actualizarMediaFiltrada(): void {
+    if (!this.terminoBusqueda || this.terminoBusqueda.trim() === '') {
+      this.mediaFiltrada = this.media; // Si no hay búsqueda, mostrar todos los medios
+      return;
+    }
 
+    const termino = this.terminoBusqueda.toLowerCase().trim();
+    this.mediaFiltrada = this.media.filter(item =>
+      item.titulo.toLowerCase().includes(termino) ||
+      item.descripcion.toLowerCase().includes(termino)
+    );
+  }
 }
