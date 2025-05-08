@@ -9,6 +9,7 @@ import { AuthService } from '../services/auth.service';
 import { faCheck, faPlay, faShareAlt } from '@fortawesome/free-solid-svg-icons';
 import { FormsModule } from '@angular/forms';
 import { EpisodeListComponent } from "./episode-list/episode-list.component";
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-serie-detail',
@@ -16,7 +17,25 @@ import { EpisodeListComponent } from "./episode-list/episode-list.component";
   imports: [CommonModule, HeaderComponent, VideoPlayerComponent, MediaCarouselComponent, 
            FaIconComponent, EpisodeListComponent, FormsModule],
   templateUrl: './serie-detail.component.html',
-  styleUrl: './serie-detail.component.css'
+  styleUrl: './serie-detail.component.css',
+  animations: [
+    trigger('VideoAnimation', [
+      state('hidden', style({
+        opacity: 0,
+        transform: 'scale(0.8)'
+      })),
+      state('visible', style({
+        opacity: 1,
+        transform: 'scale(1)'
+      })),
+      transition('hidden => visible', [
+        animate('300ms ease-out')
+      ]),
+      transition('visible => hidden', [
+        animate('200ms ease-in')
+      ])
+    ])
+  ]
 })
 export class SerieDetailComponent implements OnInit {
   id!: string;
@@ -32,6 +51,7 @@ export class SerieDetailComponent implements OnInit {
   series: any[] = [];
   showVideo: boolean = false;
   loading: boolean = true;
+  animationDone: boolean = false;
   selectedView: string = 'episodes';
   showToolTip: boolean = false;
   hlsUrl: string = '';
@@ -148,4 +168,16 @@ export class SerieDetailComponent implements OnInit {
     this.videoDescription = episode.descripcion || episode.description || 'No Description';
     this.showVideo = true;
   }
+
+  onVideoClosed() {
+    this.showVideo = false;
+    this.animationDone = false;
+  }
+  
+  onAnimationDone() {
+    if (!this.showVideo) {
+      this.animationDone = true;
+    }
+  }
+  
 }

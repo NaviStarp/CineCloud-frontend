@@ -7,17 +7,37 @@ import { VideoPlayerComponent } from "../general/video-player/video-player.compo
 import { MediaCarouselComponent } from "../media-gallery/media-carousel/media-carousel.component";
 import { faCheck, faPlay, faShareAlt } from '@fortawesome/free-solid-svg-icons';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-movie-detail',
-  imports: [CommonModule, HeaderComponent, VideoPlayerComponent, MediaCarouselComponent,FaIconComponent],
+  imports: [CommonModule, HeaderComponent, VideoPlayerComponent, MediaCarouselComponent, FaIconComponent],
   templateUrl: './movie-detail.component.html',
-  styleUrl: './movie-detail.component.css'
+  styleUrls: ['./movie-detail.component.css'],
+  animations: [
+    trigger('VideoAnimation', [
+      state('hidden', style({
+        opacity: 0,
+        transform: 'scale(0.8)'
+      })),
+      state('visible', style({
+        opacity: 1,
+        transform: 'scale(1)'
+      })),
+      transition('hidden => visible', [
+        animate('300ms ease-out')
+      ]),
+      transition('visible => hidden', [
+        animate('200ms ease-in')
+      ])
+    ])
+  ]
+  
 })
 export class MovieDetailComponent implements OnInit {
   id!: string;
-  title: string = 'Movie Detail';
-  description: string = 'Movie Description';
+  title: string = 'Cargando...';
+  description: string = 'Cargando...';
   imageUrl: string = '';
   duration: string = '';
   releaseDate: string = '2023-01-01';
@@ -30,6 +50,7 @@ export class MovieDetailComponent implements OnInit {
   loading: boolean = true;
   showToolTip: boolean = false;
   selectedView: string = 'description';
+  animationDone: boolean = false;
   // Iconos
   faPlay = faPlay;
   faCheck = faCheck;
@@ -90,4 +111,16 @@ export class MovieDetailComponent implements OnInit {
       );
     return relatedMedia;
   }
+  
+  onVideoClosed() {
+    this.showVideo = false;
+    this.animationDone = false;
+  }
+  
+  onAnimationDone() {
+    if (!this.showVideo) {
+      this.animationDone = true;
+    }
+  }
+  
 }

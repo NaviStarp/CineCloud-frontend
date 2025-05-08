@@ -1,5 +1,6 @@
 <media-header
   [opcionSeleccionada]="'Miedo'"
+  [mostrarBusqueda]="false"
   class="w-full bg-neutral-900 text-white"
 >
 </media-header>
@@ -98,12 +99,15 @@
         </app-media-carousel>
     </div>
 </div>
-  <!-- Video player component -->
-  <app-video-player
-    *ngIf="hlsUrl && showVideo"
-    [videoUrl]="hlsUrl"
-    [videoTitle]="title"
-    [episodeInfo]="description"
-    (videoClosed)="showVideo = false"
-    class="w-full h-full fixed inset-0 z-50"
-  ></app-video-player>
+
+
+<app-video-player
+  [@VideoAnimation]="showVideo ? 'visible' : 'hidden'"
+  [videoUrl]="hlsUrl"
+  [videoTitle]="title"
+  [episodeInfo]="description"
+  (videoClosed)="onVideoClosed()"
+  [ngClass]="{ 'hidden': !showVideo && animationDone }"
+  (@VideoAnimation.done)="onAnimationDone()"
+  class="w-full h-full fixed inset-0 z-50"
+></app-video-player>

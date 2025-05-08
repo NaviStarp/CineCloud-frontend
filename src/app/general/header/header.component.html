@@ -28,7 +28,7 @@
       </div>
  
       <!-- Búsqueda (desktop) -->
-      <div class="hidden md:flex items-center space-x-4">
+      <div class="hidden md:flex items-center space-x-4" *ngIf="mostrarBusqueda">
         <div class="relative">
           <input type="text" (input)="onSearch($event)" placeholder="Buscar contenido" class="bg-neutral-800 text-neutral-200 px-4 py-1 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 border border-neutral-700 w-64">
           <button class="absolute right-2 top-0.5 text-primary-500 hover:text-primary-400 transition-colors">
@@ -41,7 +41,7 @@
  </header>
  
  <!-- Barra de búsqueda móvil expandible -->
- <div *ngIf="mobileSearchVisible" class="fixed w-full bg-neutral-800 z-40 px-4 py-2 transition-all duration-300 shadow-lg" [ngStyle]="{'top': (!scroll && categorias.length > 0) ? '64px' : '48px'}">
+ <div *ngIf="mobileSearchVisible && mostrarBusqueda" class="fixed w-full bg-neutral-800 z-40 px-4 py-2 transition-all duration-300 shadow-lg" [ngStyle]="{'top': (!scroll && categorias.length > 0) ? '64px' : '48px'}">
    <div class="relative">
      <input type="text" (input)="onSearch($event)" placeholder="Buscar contenido" class="bg-neutral-700 text-neutral-200 px-4 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 border border-neutral-600 w-full">
      <button (click)="toggleMobileSearch()" class="absolute right-2 top-2 text-neutral-400 hover:text-neutral-200 transition-colors">
@@ -74,6 +74,6 @@
  </div>
  
  <!-- Espaciador para el contenido -->
- <div [ngClass]="{'h-36': !scroll && categorias.length > 0, 'h-24': scroll || categorias.length == 0}" 
-      [ngStyle]="{'height': mobileMenuVisible || mobileSearchVisible ? '120px' : '100px'}"
+ <div [ngClass]="{'h-12':categorias.length==0, 'h-36': !scroll && categorias.length > 0, 'h-24': scroll || categorias.length == 0}" 
+      [ngStyle]="{'height': (mobileMenuVisible || mobileSearchVisible || categorias.length > 0) ? '120px' : '50px'}"
       class="transition-all duration-300"></div>

@@ -1,8 +1,9 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Inject, Input, OnChanges, OnDestroy, OnInit, Output, PLATFORM_ID, SimpleChange, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FaIconComponent, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faBackward, faChevronDown, faCog, faCompress, faExpand, faForward, faPause, faPlay, faRedo, faTimes, faVolumeMute, faVolumeUp } from '@fortawesome/free-solid-svg-icons';
 import Hls from 'hls.js';
 
 @Component({
@@ -10,7 +11,7 @@ import Hls from 'hls.js';
   standalone: true,
   imports: [CommonModule, FormsModule, FontAwesomeModule],
   templateUrl: './video-player.component.html',
-  styleUrls: ['./video-player.component.css']
+  styleUrls: ['./video-player.component.css'],
 })
 export class VideoPlayerComponent implements OnInit, OnDestroy {
   @Input() videoUrl: string = 'http://localhost:8000/hls/pelicula/Cubo/playlist.m3u8';
@@ -19,6 +20,16 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
   @Output() videoClosed = new EventEmitter<void>();
 
   // Iconos
+  faExpand = faExpand;
+  faCompress = faCompress;
+  faPause = faPause;
+  faPlay = faPlay;
+  faBackward = faBackward;
+  faForward = faForward;
+  faVolumeUp = faVolumeUp;
+  faVolumeMute = faVolumeMute;
+  faCog = faCog;
+  faRedo = faRedo;
   faTimes= faTimes;
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['videoUrl'] && !changes['videoUrl'].firstChange) {
@@ -244,12 +255,19 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
   }
   
   seek(event: MouseEvent) {
+    event.stopPropagation();
     const progressBar = event.currentTarget as HTMLElement;
     const rect = progressBar.getBoundingClientRect();
     const pos = (event.clientX - rect.left) / rect.width;
     const video = this.videoRef.nativeElement;
     
     video.currentTime = pos * video.duration;
+  }
+
+  redo() {
+    const video = this.videoRef.nativeElement;
+    video.currentTime = 0;
+    video.play();
   }
   
 setVolume(event: Event) {

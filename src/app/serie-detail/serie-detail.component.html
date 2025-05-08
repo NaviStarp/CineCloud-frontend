@@ -1,5 +1,6 @@
 <media-header
   [opcionSeleccionada]="'Miedo'"
+  [mostrarBusqueda]="false"
   class="w-full bg-neutral-900 text-white"
 ></media-header>
 
@@ -40,14 +41,14 @@
 
     <!-- Botones -->
     <div class="flex flex-wrap items-center space-x-3 mb-8">
-      <button (click)="selectEpisode(episodes[0])" class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-lg">
+      <button (click)="selectEpisode(episodes[0])" class="flex items-center bg-neutral-800 cursor-pointer hover:bg-neutral-700 text-white py-3 px-5 rounded text-lg">
         <fa-icon [icon]="faPlay" class="mr-3"></fa-icon>
-        {{episodes.length > 1 ? 'Ver episodio 1' : 'No hay episodios disponibles'}}
+        {{episodes.length >= 1 ? 'Ver episodio 1' : 'No hay episodios disponibles'}}
       </button>
       <div class="relative">
         <button (click)="copyUrlToClipboard(); showToolTip = true; $event.stopPropagation();" 
           (mouseleave)="showToolTip = false" 
-          class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-lg">
+          class="flex items-center bg-neutral-800 cursor-pointer  hover:bg-neutral-700 text-white py-3 px-5 rounded text-lg">
           <fa-icon [icon]="faShare" class="text-xl text-white mr-3 group-hover:text-primary-400"></fa-icon>
           Compartir
         </button>
@@ -99,12 +100,13 @@
     </div>
   </div>
 
-  <!-- Video player component -->
-  <app-video-player
-    *ngIf="hlsUrl && showVideo"
-    [videoUrl]="hlsUrl"
-    [videoTitle]="videoTitle"
-    [episodeInfo]="videoDescription"
-    (videoClosed)="showVideo = false"
-    class="w-full h-full fixed inset-0 z-50"
-  ></app-video-player>
+<app-video-player
+  [@VideoAnimation]="showVideo ? 'visible' : 'hidden'"
+  [videoUrl]="hlsUrl"
+  [videoTitle]="title"
+  [episodeInfo]="description"
+  (videoClosed)="onVideoClosed()"
+  [ngClass]="{ 'hidden': !showVideo && animationDone }"
+  (@VideoAnimation.done)="onAnimationDone()"
+  class="w-full h-full fixed inset-0 z-50"
+></app-video-player>

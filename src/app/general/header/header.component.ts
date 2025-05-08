@@ -13,6 +13,7 @@ export class HeaderComponent  implements OnInit {
   // Variables
   @Input() categorias: string[] = [];
   @Input() opcionSeleccionada:string|null = null;
+  @Input() mostrarBusqueda:boolean = true;
   @Output() busquedaCambio: EventEmitter<string> = new EventEmitter<string>();
   //Busqueda
   busqueda:string = '';
