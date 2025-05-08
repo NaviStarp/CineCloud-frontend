@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { HeaderComponent } from '../general/header/header.component';
 import { VideoPlayerComponent } from '../general/video-player/video-player.component';
 import { MediaCarouselComponent } from '../media-gallery/media-carousel/media-carousel.component';
@@ -57,6 +57,7 @@ export class SerieDetailComponent implements OnInit {
   hlsUrl: string = '';
   videoTitle: string = '';
   videoDescription: string = '';
+  @ViewChild('videoPlayer') videoPlayer!: VideoPlayerComponent;
   // Iconos
   faPlay = faPlay;
   faCheck = faCheck;
@@ -157,18 +158,21 @@ export class SerieDetailComponent implements OnInit {
       );
     return relatedMedia;
   }
-  
+
   selectEpisode(episode: any): void {
     if (!episode) {
       console.error('No episode selected');
       return;
     }
-    this.hlsUrl = episode.video || episode.videoUrl;
-    this.videoTitle = episode.titulo || episode.title || 'No Title';
-    this.videoDescription = episode.descripcion || episode.description || 'No Description';
+    console.log('Selected episode:', episode);
+    this.videoPlayer.videoUrl = episode.video || episode.videoUrl;
+    this.videoPlayer.videoTitle = episode.titulo || episode.title || 'No Title';
+    this.videoPlayer.episodeInfo = `${episode.season || ''}x${episode.episode || ''}`;
+  
+    this.videoPlayer.reloadVideo();
     this.showVideo = true;
   }
-
+  
   onVideoClosed() {
     this.showVideo = false;
     this.animationDone = false;

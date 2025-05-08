@@ -101,10 +101,12 @@
   </div>
 
 <app-video-player
+  #videoPlayer
   [@VideoAnimation]="showVideo ? 'visible' : 'hidden'"
   [videoUrl]="hlsUrl"
   [videoTitle]="title"
   [episodeInfo]="description"
+  [episodes]="episodes"
   (videoClosed)="onVideoClosed()"
   [ngClass]="{ 'hidden': !showVideo && animationDone }"
   (@VideoAnimation.done)="onAnimationDone()"

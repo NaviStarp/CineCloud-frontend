@@ -118,7 +118,7 @@
 
     <!-- Botones especiales -->
     <div *ngIf="showControls" class="absolute bottom-24 right-8">
-      <button class="bg-white/10 hover:bg-white/20 text-white py-2 px-4 rounded text-sm">
+      <button (click)="nextEpisode();$event.stopPropagation()" *ngIf="isThereNextEpisode()" class="bg-white/10 hover:bg-white/20 text-white py-2 px-4 rounded text-sm">
         Siguiente episodio
       </button>
     </div>
@@ -132,13 +132,13 @@
   <button 
     class="flex items-center justify-center w-16 h-16 bg-white/10 hover:bg-white/20 text-white rounded-full transition-transform transform hover:scale-110 focus:outline-none"
     (click)="duration == currentTime ? redo(): togglePlay(); $event.stopPropagation()"
-    [@buttonAnimation]="isPlaying ? 'pause' : 'play'">
+    >
     <div class="flex items-center justify-center">
       <fa-icon 
       *ngIf="!isPlaying && currentTime != duration"
     [icon]="faPause" 
     class="text-4xl transition-opacity" 
-    [@iconAnimation]="isPlaying ? 'hidden' : 'visible'">
+    >
       </fa-icon>
       <fa-icon 
       *ngIf="duration == currentTime"

@@ -17,6 +17,7 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
   @Input() videoUrl: string = 'http://localhost:8000/hls/pelicula/Cubo/playlist.m3u8';
   @Input() videoTitle: string = '';
   @Input() episodeInfo: string = '';
+  @Input() episodes: any[] = [];
   @Output() videoClosed = new EventEmitter<void>();
 
   // Iconos
@@ -32,7 +33,9 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
   faRedo = faRedo;
   faTimes= faTimes;
   ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes)
     if (changes['videoUrl'] && !changes['videoUrl'].firstChange) {
+      console.log('URL del video ha cambiado:', changes['videoUrl'].currentValue);
       this.reloadVideo();
     }
   }
@@ -43,7 +46,7 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     video.pause();
     video.removeAttribute('src');
     video.load();
-  
+    console.log('URL DEL VIDEO:', this.videoUrl);
     // Destruir instancia HLS anterior si existe
     if (this.hls) {
       this.hls.destroy();
@@ -126,8 +129,16 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
   }
   ngAfterViewInit() {
     this.setup();
+    this.eventEmiitter();
     }
   
+    eventEmiitter() {
+      this.videoClosed.subscribe(() => {
+        this.setup();
+      }
+      );
+    }
+    
   initializeHls(video: HTMLVideoElement) {
     this.hls = new Hls({
       xhrSetup: (xhr: XMLHttpRequest) => {
@@ -264,6 +275,20 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     video.currentTime = pos * video.duration;
   }
 
+  nextEpisode() {
+    const currentIndex = this.episodes.findIndex(episode => episode.videoUrl === this.videoUrl);
+    if (currentIndex < this.episodes.length - 1) {
+      const nextEpisode = this.episodes[currentIndex + 1];
+      this.videoUrl = nextEpisode.video;
+      this.videoTitle = nextEpisode.title;
+      this.episodeInfo = `${nextEpisode.season}x${nextEpisode.episode}`;
+      this.setup();
+    }
+  }
+  isThereNextEpisode(): boolean {
+    const currentIndex = this.episodes.findIndex(episode => episode.videoUrl === this.videoUrl);
+    return currentIndex < this.episodes.length - 1;
+  }
   redo() {
     const video = this.videoRef.nativeElement;
     video.currentTime = 0;
