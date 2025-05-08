@@ -15,10 +15,10 @@
           <p class="mb-2 text-sm text-neutral-300"><span class="font-semibold">Haz clic para seleccionar</span> o arrastra y suelta</p>
           <p class="text-xs text-neutral-400">Importación de peliculas/series</p>
           <div class="mt-4 text-xs px-3 py-1 bg-neutral-600 text-neutral-300 rounded-full">
-            Formatos aceptados: .mp4, .avi, .mov, .wmv
+            Formatos aceptados: .mp4, .avi, .mov, .wmv , .webm
           </div>
         </div>
-        <input id="archivo" name="file" type="file" multiple class="hidden" accept=".mp4,.avi,.mov,.wmv" (change)="onFileSelected($event)" #fileInput />
+        <input id="archivo" name="file" type="file" multiple class="hidden" accept=".mp4,.avi,.mov,.wmv,.webm" (change)="onFileSelected($event)" #fileInput />
       </label>
     </div>
     <div class="bg-neutral-800 rounded-lg shadow-sm p-1 transition-all" 

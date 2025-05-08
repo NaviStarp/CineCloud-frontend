@@ -97,7 +97,7 @@ export class MediaUploaderComponent {
   compatibleFiles(files: File[] = this.selectedFiles) {
     let compatible = true;
     files.forEach(file => {
-      if (!/\.(mp4|avi|mkv|mov|wmv)$/i.test(file.name)) {
+      if (!/\.(mp4|avi|mkv|mov|wmv|webm)$/i.test(file.name)) {
         compatible = false;
       }
       else if (!file.type.includes('video')) {

@@ -17,9 +17,10 @@
     <div class="flex justify-center items-center py-16">
       <div class="text-center">
         <i class="fas fa-search-minus text-4xl text-neutral-500 mb-4"></i>
-        <p class="text-neutral-400 text-lg">No se encontraron resultados para "<span class="text-primary-400">{{terminoBusqueda}}</span>".</p>
-        <p class="text-neutral-500 text-sm mt-2">Intenta con otra categoría o término de búsqueda.</p>
+        <p class="text-neutral-400 text-lg">No se encontraron resultados  <span *ngIf="terminoBusqueda !==''" class="text-primary-400">para {{terminoBusqueda}}</span>.</p>
+        <p *ngIf="terminoBusqueda !==''" class="text-neutral-500 text-sm mt-2">Intenta con otra categoría o término de búsqueda.</p>
         <button
+          *ngIf="terminoBusqueda !== ''"
           (click)="onBusquedaCambio('')"
           class="mt-4 bg-primary-500 hover:bg-primary-400 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200">
           Volver a la lista
@@ -34,10 +35,10 @@
 
 <!-- Contenedor principal (sólo visible cuando no está cargando) -->
 <div *ngIf="!loading" class="container mx-auto px-4 py-8">
-  <div class="space-y-10"></div>
+  <div class="space-y-10">
     <!-- Sección de Todos/Resultados -->
     <div class="bg-gradient-to-b from-neutral-800 to-neutral-900 rounded-xl shadow-lg">
-      <section *ngIf="filteredSeries.length > 0 and filteredPeliculas.length  > 0"  class="p-6 mb-8 transition-all duration-300 hover:shadow-xl">
+      <section   class="p-6 mb-8 transition-all duration-300 hover:shadow-xl">
         <!-- Encabezado de la seccion Todos-->
         <div class="flex items-center justify-between mb-6 border-b border-neutral-700 pb-3">
           <h2 class="text-2xl font-bold text-white flex items-center">
@@ -60,7 +61,7 @@
             <app-media-carousel [items]="filteredSeries" [itemType]="'serie'"></app-media-carousel>
           </div>
         </ng-container>
-
+        <ng-container *ngIf="seriesFiltradas.length < 1 && peliculasFiltradas.length < 1"></ng-container>
         <!-- Separador con estilo -->
         <div *ngIf="filteredSeries.length > 0 && filteredPeliculas.length > 0" 
           class="h-0.5 bg-gradient-to-r from-transparent via-neutral-700 to-transparent my-6 rounded-full">
@@ -147,4 +148,5 @@
         </section>
         </ng-container>
   </div>
+</div>
 </div>

@@ -3,7 +3,7 @@
 </media-header>
 
 <!-- Contenedor principal con mejores prácticas de Tailwind -->
-<div *ngIf="!isLoading" class="container mx-auto px-4 sm:px-6 py-8 max-w-7xl">
+<div *ngIf="!isLoading and media.length > 0" class="container mx-auto px-4 sm:px-6 py-8 max-w-7xl">
   <div class="space-y-8">
     <!-- Secciones individuales por categoría -->
     <ng-container>
@@ -35,6 +35,18 @@
         </div>
       </section>
     </ng-container>
+  </div>
+</div>
+
+<!--No resultados-->
+<div *ngIf="!isLoading && media.length === 0" class="container mx-auto px-4 sm:px-6 py-8 max-w-7xl">
+  <div class="bg-gradient-to-b from-neutral-800 to-neutral-900 rounded-xl shadow-lg p-4 sm:p-6">
+    <div class="flex items-center justify-between mb-4 border-b border-neutral-700 pb-3">
+      <h3 class="text-xl font-semibold text-neutral-300 flex items-center">
+        <i class="fas fa-film mr-2"></i> No se encontraron resultados
+      </h3>
+    </div>
+    <p class="text-neutral-500">No se encontraron resultados para "{{mediaType == 'movies'?'Peliculas':'Series'}}".</p>
   </div>
 </div>
 

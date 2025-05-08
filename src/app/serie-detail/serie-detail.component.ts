@@ -139,6 +139,10 @@ export class SerieDetailComponent implements OnInit {
   }
   
   selectEpisode(episode: any): void {
+    if (!episode) {
+      console.error('No episode selected');
+      return;
+    }
     this.hlsUrl = episode.video || episode.videoUrl;
     this.videoTitle = episode.titulo || episode.title || 'No Title';
     this.videoDescription = episode.descripcion || episode.description || 'No Description';

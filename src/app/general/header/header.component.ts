@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'media-header',
@@ -17,9 +17,12 @@ export class HeaderComponent  implements OnInit {
   //Busqueda
   busqueda:string = '';
   scroll: boolean = false;
+  mobileMenuVisible = false;
+  mobileSearchVisible = false;
   // Iconos
   faSearch = faSearch;
-
+  faTimes = faTimes;
+  faBars = faBars;
   constructor() {
   }
     
@@ -61,5 +64,20 @@ export class HeaderComponent  implements OnInit {
     const target = event.target as HTMLInputElement | null;
     this.busqueda = target?.value || '';
     this.busquedaCambio.emit(this.busqueda);
+  }
+  toggleMobileMenu() {
+    this.mobileMenuVisible = !this.mobileMenuVisible;
+    // Cerrar búsqueda si está abierta
+    if (this.mobileMenuVisible && this.mobileSearchVisible) {
+      this.mobileSearchVisible = false;
+    }
+  }
+
+  toggleMobileSearch() {
+    this.mobileSearchVisible = !this.mobileSearchVisible;
+    // Cerrar menú si está abierto
+    if (this.mobileSearchVisible && this.mobileMenuVisible) {
+      this.mobileMenuVisible = false;
+    }
   }
   }

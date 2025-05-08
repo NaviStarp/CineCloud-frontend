@@ -12,7 +12,7 @@
             <img
                 [src]="episode.imagen || episode.imageUrl"
                 [alt]="episode.titulo || episode.title"
-                class="w-full h-full object-cover transition-transform duration-300"
+                class="w-64 h-32 object-cover transition-transform duration-300"
                 [ngClass]="{ 'scale-110': isHovered }"
                 onerror="this.src='/assets/images/no-image.jpg'">
             <fa-icon *ngIf="isHovered" [icon]="faPlay" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-4xl"></fa-icon>
