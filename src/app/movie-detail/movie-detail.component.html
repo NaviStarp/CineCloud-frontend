@@ -104,6 +104,8 @@
 <app-video-player
   [@VideoAnimation]="showVideo ? 'visible' : 'hidden'"
   [videoUrl]="hlsUrl"
+  [videoType]="'pelicula'"
+  [videoId]="id"
   [videoTitle]="title"
   [episodeInfo]="description"
   (videoClosed)="onVideoClosed()"

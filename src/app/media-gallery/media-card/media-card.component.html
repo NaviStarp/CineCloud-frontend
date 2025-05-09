@@ -6,7 +6,8 @@
     <div class="absolute top-2 right-2 bg-accent-600/90 text-xs font-bold px-2 py-1 rounded text-white shadow-md">
       {{ type | uppercase }}
     </div> -->
-
+    <!--Barra de progreso-->
+    <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 to-primary-400" [style.width.%]="progress"></div>
     <!-- Overlay con botón y descripción -->
     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center p-4">
       <button 

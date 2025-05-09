@@ -14,6 +14,11 @@ export interface MediaResponse {
   series: any[];
   episodios: any[];
 }
+
+export interface VideoProgress {
+  videoId: string;
+  progress: number;
+}
 export interface Episode {
   id: number;
   titulo: string;
@@ -488,6 +493,64 @@ export class AuthService {
       console.error('Error fetching serie details:', error);
       throw error; // Devuelve error
     }
+  }
+  public async setMovieProgress(videoProgress:VideoProgress) {
+    if (!this.getToken() || this.getServerUrl() === '') {
+      return false;
+    }
+    console.log(JSON.stringify(videoProgress));
+    const response = await fetch(`${this.getServerUrl()}/movies/progress/save/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${this.getToken()}`
+      },
+      body: JSON.stringify(videoProgress)
+    });
+    return response.ok;
+  }
+  public async setEpisodeProgress(videoProgress: VideoProgress) {
+    if (!this.getToken() || this.getServerUrl() === '') {
+      return false;
+    }
+    const response = await fetch(`${this.getServerUrl()}/series/progress/save/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${this.getToken()}`
+      },
+      body: JSON.stringify(videoProgress)
+    });
+    
+    return response.ok;
+  }
+
+  public async getMovieProgress(videoId: string) {
+    if (!this.getToken() || this.getServerUrl() === '') {
+      return 0;
+    }
+    console.log('Peticion enviada a : ', `${this.getServerUrl()}/movies/progress/${videoId}/`);
+    const response = await fetch(`${this.getServerUrl()}/movies/progress/${videoId}/`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${this.getToken()}`
+      }
+    });
+    const progress = await response.json();
+    return progress.progress;
+  }
+  public async getEpisodeProgress(videoId: string) {
+    if (!this.getToken() || this.getServerUrl() === '') {
+      return 0;
+    }
+    const response = await fetch(`${this.getServerUrl()}/series/progress/${videoId}/`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${this.getToken()}`
+      }
+    });
+    const progress = await response.json();
+    return progress.progress;
   }
 
 }

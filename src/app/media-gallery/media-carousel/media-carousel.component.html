@@ -21,6 +21,7 @@
           [style.width.px]="itemWidth">
           <a href="/{{itemType}}/{{item.id}}" target="_blank">
             <app-media-card
+              [id]="item.id"
               [thumbnail]="item.imagen"
               [title]="item.titulo"
               [description]="item.descripcion"
