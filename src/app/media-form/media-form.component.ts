@@ -135,7 +135,7 @@ export class MediaFormComponent implements OnInit, AfterViewInit {
         videoElement.onloadedmetadata = () => {
           console.log('Duración del video:', videoElement.duration);
           URL.revokeObjectURL(videoElement.src);
-          resolve(Math.floor(videoElement.duration / 60));
+          resolve(Math.round(videoElement.duration / 60)); 
         };
 
         videoElement.onerror = () => {
@@ -145,7 +145,7 @@ export class MediaFormComponent implements OnInit, AfterViewInit {
         };
       });
     }
-    return 0;
+    return 1;  
   }
   async uploadVideos(event: Event) {
     event.preventDefault();
