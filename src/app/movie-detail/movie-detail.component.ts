@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { CommonModule } from '@angular/common';
@@ -43,7 +43,7 @@ export class MovieDetailComponent implements OnInit {
   releaseDate: string = '2023-01-01';
   categories: string[] = [];
   hlsUrl: string = '';
-
+  @ViewChild('VideoPlayer') videoPlayer: VideoPlayerComponent | undefined;
   peliculas: any[] = [];
   series: any[] = [];
   showVideo: boolean = false;
@@ -98,6 +98,15 @@ export class MovieDetailComponent implements OnInit {
     }).catch((error) => {
       console.error('Error copying URL to clipboard:', error);
     });
+  } 
+  showVideoPlayer(): void {
+    if (this.videoPlayer) {
+      this.videoPlayer.videoUrl = this.hlsUrl;
+      this.videoPlayer.videoTitle = this.title;
+      this.videoPlayer.episodeInfo = this.description;
+      this.showVideo = true;
+      this.videoPlayer?.reloadVideo()
+    }
   }
 
   filterMediaByRelation(): any[] {

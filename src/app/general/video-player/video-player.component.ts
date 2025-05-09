@@ -97,10 +97,6 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['videoUrl'] && !changes['videoUrl'].firstChange) {
-      console.log('La URL del video cambió:', changes['videoUrl'].currentValue);
-      this.reloadVideo();
-    }
     
     if (changes['videoId'] && !changes['videoId'].firstChange) {
       this.progressRestored = false;
@@ -183,14 +179,14 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  private handleSavedProgress(progress: VideoProgress | null): void {
+  private handleSavedProgress(progress: number | null): void {
     if (progress) {
       // Convertir de escala 0-100 a 0-1
-      this.savedProgress = progress.progress / 100;
+      this.savedProgress = progress / 100;
       this.lastSavedProgress = this.savedProgress;
       
       // Si el video ya está inicializado, buscar la posición guardada
-      if (this.videoInitialized && !this.progressRestored) {
+      if (this.videoInitialized && !this.progressRestored && this.savedProgress !== this.duration) {
         this.seekToSavedPosition();
       }
     }
@@ -244,7 +240,6 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, OnChanges {
     // Ensure volume is set and not muted
     video.volume = this.volume;
     video.muted = false;
-    video.autoplay = true;
     
     // Set up event listeners
     video.addEventListener('timeupdate', this.updateProgress.bind(this));
