@@ -1,5 +1,5 @@
-<div class="video-container transition duration-300 relative w-full h-full bg-black" (mousemove)="showControlsTemporarily()"
-  [class.cursor-none]="!showControls" (click)="togglePlay()">
+<div class="video-container transition duration-300 relative w-full h-full bg-black"
+  (mousemove)="showControlsTemporarily()" [class.cursor-none]="!showControls" (click)="togglePlay()">
 
   <!-- Video -->
   <video #videoPlayer class="w-full h-full outline-none" (click)="$event.stopPropagation();togglePlay()">
@@ -17,8 +17,8 @@
       <!-- Pantalla completa  -->
       <button class="text-white hover:text-blue-400 focus:outline-none"
         (click)="toggleFullscreen(); $event.stopPropagation()">
-       <fa-icon *ngIf="!isFullscreen" [icon]="faExpand" class="text-2xl cursor-pointer"></fa-icon>
-       <fa-icon *ngIf="isFullscreen" [icon]="faCompress" class="text-2xl cursor-pointer"></fa-icon>
+        <fa-icon *ngIf="!isFullscreen" [icon]="faExpand" class="text-2xl cursor-pointer"></fa-icon>
+        <fa-icon *ngIf="isFullscreen" [icon]="faCompress" class="text-2xl cursor-pointer"></fa-icon>
       </button>
       <!--Icono separacion-->
       <div class="w-1 h-5 bg-white rounded-full mx-2"></div>
@@ -30,7 +30,7 @@
   </div>
 
   <!-- Barra de abajo -->
-  <div *ngIf="showControls" 
+  <div *ngIf="showControls"
     class="absolute bottom-0 left-0 right-0 p-4 z-10 bg-gradient-to-t from-black/80 to-transparent transition-opacity duration-300">
 
     <!-- Progress Bar -->
@@ -47,13 +47,13 @@
         <!-- Play/Pause -->
         <button class="text-white hover:text-blue-400 focus:outline-none"
           (click)="togglePlay(); $event.stopPropagation()">
-         <fa-icon *ngIf="isPlaying" [icon]="faPause" class="text-white text-2xl cursor-pointer"></fa-icon>
+          <fa-icon *ngIf="isPlaying" [icon]="faPause" class="text-white text-2xl cursor-pointer"></fa-icon>
           <fa-icon *ngIf="!isPlaying" [icon]="faPlay" class="text-white text-2xl cursor-pointer"></fa-icon>
         </button>
 
         <!-- Rewind 10s -->
         <button class="text-white hover:text-blue-400 focus:outline-none" (click)="skip(-10); $event.stopPropagation()">
-         <fa-icon [icon]="faBackward" class="text-white text-2xl cursor-pointer"></fa-icon>
+          <fa-icon [icon]="faBackward" class="text-white text-2xl cursor-pointer"></fa-icon>
         </button>
 
         <!-- Forward 10s -->
@@ -65,8 +65,8 @@
         <div class="relative">
           <button class="text-white hover:text-blue-400 focus:outline-none"
             (click)="toggleVolumeSlider(); $event.stopPropagation()">
-          <fa-icon *ngIf="volume > 0" [icon]="faVolumeUp" class="text-white text-2xl cursor-pointer"></fa-icon>
-          <fa-icon *ngIf="volume === 0" [icon]="faVolumeMute" class="text-white text-2xl cursor-pointer"></fa-icon>
+            <fa-icon *ngIf="volume > 0" [icon]="faVolumeUp" class="text-white text-2xl cursor-pointer"></fa-icon>
+            <fa-icon *ngIf="volume === 0" [icon]="faVolumeMute" class="text-white text-2xl cursor-pointer"></fa-icon>
           </button>
 
           <!-- Volumen -->
@@ -77,11 +77,10 @@
               max="1" step="0.05" [value]="volume" (input)="setVolume($event)">
           </div>
         </div>
-                  <!-- Tiempo -->
+        <!-- Tiempo -->
         <div class="text-white text-sm">
-            {{formatTime(currentTime)}} / {{formatTime(duration)}}
+          {{formatTime(currentTime)}} / {{formatTime(duration)}}
         </div>
-
         <div class="flex items-center space-x-4">
           <!-- Subtitulos -->
           <!-- <button class="text-white hover:text-blue-400 focus:outline-none" 
@@ -91,12 +90,28 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
           </svg>
         </button> -->
-
+          <!--Velocidad del video-->
+          <div class="relative">
+            <button class="text-white hover:text-blue-400 focus:outline-none flex items-center"
+              (click)="toggleSpeedMenu(); $event.stopPropagation()">
+              <fa-icon [icon]="faTachometerAlt" class="text-white text-2xl cursor-pointer"></fa-icon>
+            </button>
+          
+            <!-- Menu velocidad -->
+            <div *ngIf="showSpeedMenu" class="absolute bottom-full right-0 mb-2 py-2 bg-gray-800 rounded shadow-lg"
+              (click)="$event.stopPropagation()">
+              <div *ngFor="let speed of speeds"
+                class="px-4 py-1 text-white hover:bg-gray-700 cursor-pointer text-sm whitespace-nowrap"
+                [class.text-blue-500]="speed.value" (click)="changeSpeed(speed.value)">
+                {{ speed.label }}
+              </div>
+            </div>
+          </div>
           <!-- Calidad -->
           <div class="relative">
             <button class="text-white hover:text-blue-400 focus:outline-none flex items-center"
               (click)="toggleQualityMenu(); $event.stopPropagation()">
-             <fa-icon [icon]="faCog" class="text-white text-2xl cursor-pointer"></fa-icon>
+              <fa-icon [icon]="faCog" class="text-white text-2xl cursor-pointer"></fa-icon>
             </button>
 
             <!-- Menu calidad -->
@@ -109,7 +124,6 @@
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -118,33 +132,22 @@
 
     <!-- Botones especiales -->
     <div *ngIf="showControls" class="absolute bottom-24 right-8">
-      <button (click)="nextEpisode();$event.stopPropagation()" *ngIf="isThereNextEpisode()" class="bg-white/10 hover:bg-white/20 text-white py-2 px-4 rounded text-sm">
+      <button (click)="nextEpisode();$event.stopPropagation()" *ngIf="isThereNextEpisode()"
+        class="bg-white/10 hover:bg-white/20 text-white py-2 px-4 rounded text-sm">
         Siguiente episodio
       </button>
     </div>
-    
+
   </div>
   <!-- Botón de pausa -->
-  <div 
-  class="absolute inset-0 flex items-center justify-center"
-  *ngIf="!isPlaying" 
-  >
-  <button 
-    class="flex items-center justify-center w-16 h-16 bg-white/10 hover:bg-white/20 text-white rounded-full transition-transform transform hover:scale-110 focus:outline-none"
-    (click)="duration == currentTime ? redo(): togglePlay(); $event.stopPropagation()"
-    >
-    <div class="flex items-center justify-center">
-      <fa-icon 
-      *ngIf="!isPlaying && currentTime != duration"
-    [icon]="faPause" 
-    class="text-4xl transition-opacity" 
-    >
-      </fa-icon>
-      <fa-icon 
-      *ngIf="duration == currentTime"
-      [icon]="faRedo"
-      class="text-4xl transition-opacity" 
-  ></fa-icon>
-    </div>
-  </button>
+  <div class="absolute inset-0 flex items-center justify-center" *ngIf="!isPlaying">
+    <button
+      class="flex items-center justify-center w-16 h-16 bg-white/10 hover:bg-white/20 text-white rounded-full transition-transform transform hover:scale-110 focus:outline-none"
+      (click)="duration == currentTime ? redo(): togglePlay(); $event.stopPropagation()">
+      <div class="flex items-center justify-center">
+        <fa-icon *ngIf="!isPlaying && currentTime != duration" [icon]="faPause" class="text-4xl transition-opacity">
+        </fa-icon>
+        <fa-icon *ngIf="duration == currentTime" [icon]="faRedo" class="text-4xl transition-opacity"></fa-icon>
+      </div>
+    </button>
   </div>

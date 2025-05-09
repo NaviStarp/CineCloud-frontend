@@ -3,7 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Inject, Input, OnChanges, OnDestroy, OnInit, Output, PLATFORM_ID, SimpleChange, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FaIconComponent, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faBackward, faChevronDown, faCog, faCompress, faExpand, faForward, faPause, faPlay, faRedo, faTimes, faVolumeMute, faVolumeUp } from '@fortawesome/free-solid-svg-icons';
+import { faBackward, faChevronDown, faCog, faCompress, faExpand, faForward, faPause, faPlay, faRedo, faTachometerAlt, faTimes, faVolumeMute, faVolumeUp } from '@fortawesome/free-solid-svg-icons';
 import Hls from 'hls.js';
 import { BehaviorSubject, Subject, Subscription, debounceTime, filter, takeUntil } from 'rxjs';
 import { AuthService, VideoProgress } from '../../services/auth.service';
@@ -36,11 +36,21 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, OnChanges {
   faCog = faCog;
   faRedo = faRedo;
   faTimes = faTimes;
-
+  faTachometerAlt = faTachometerAlt;
   @ViewChild('videoPlayer') videoRef!: ElementRef<HTMLVideoElement>;
   hls!: Hls;
   authToken: string = '';
   qualityLevels: { index: number; label: string }[] = [];
+  speeds: { label: string; value: number }[] = [
+    { label: '0.5x', value: 0.5 },
+    { label: '0.75x', value: 0.75 },
+    { label: '1x', value: 1 },
+    { label: '1.25x', value: 1.25 },
+    { label: '1.5x', value: 1.5 },
+    { label: '1.75x', value: 1.75 },
+    { label: '2x', value: 2 },
+  ];
+  currentSpeed: number = 1;
   selectedQuality: number = -1; // -1 para "Auto"
   
   isPlaying: boolean = false;
@@ -48,7 +58,7 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, OnChanges {
   isFullscreen: boolean = false;
   showControls: boolean = true;
   controlsTimeout: any;
-  
+  showSpeedMenu: boolean = false;  
   currentTime: number = 0;
   duration: number = 0;
   
@@ -62,7 +72,6 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, OnChanges {
   private destroy$ = new Subject<void>();
   private videoInitialized = false;
   private progressRestored = false;
-  
   volume: number = 1;
   bufferPercent: number = 0;
   
@@ -114,7 +123,16 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, OnChanges {
         this.skip(-10);
       } else if (event.key === 'r') {
         this.redo();
+      } else if (event.key === 's') {
+        this.toggleSpeedMenu();
       }
+      else if (event.key === 'v') {
+        this.toggleVolumeSlider();
+      } else if (event.key === 'q') {
+        this.toggleQualityMenu();
+      } else if (event.key === 'Escape') {
+        this.isFullscreen = false;
+      } 
     }
   }
 
@@ -423,6 +441,9 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, OnChanges {
       this.isPlaying = false;
     }
   }
+  toggleSpeedMenu() {
+    this.showSpeedMenu = !this.showSpeedMenu;
+  }
   
   toggleMute() {
     const video = this.videoRef.nativeElement;
@@ -499,6 +520,13 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, OnChanges {
     this.saveVideoProgress(0);
   }
   
+  changeSpeed(speed: number) {
+    this.currentSpeed = speed;
+    const video = this.videoRef.nativeElement;
+    video.playbackRate = speed;
+    this.showSpeedMenu = false;
+  }
+
   setVolume(event: Event) {
     const target = event.target as HTMLInputElement;
     if (target && target.value) {
