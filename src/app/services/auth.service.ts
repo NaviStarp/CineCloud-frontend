@@ -552,5 +552,19 @@ export class AuthService {
     const progress = await response.json();
     return progress.progress;
   }
+  public async isAdmin(): Promise<boolean> {
+    if (!this.getToken() || this.getServerUrl() === '') {
+      return false;
+    }
+    const response = await fetch(`${this.getServerUrl()}/isAdmin/`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${this.getToken()}`
+      }
+    });
+    const result = await response.json();
+    console.log('isAdmin result:', result);
+    return result === true;
+  }
 
 }

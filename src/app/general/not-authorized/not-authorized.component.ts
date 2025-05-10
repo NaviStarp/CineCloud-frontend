@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-not-found',
+  selector: 'app-not-authorized',
   imports: [],
-  templateUrl: './not-found.component.html',
-  styleUrl: './not-found.component.css'
+  templateUrl: './not-authorized.component.html',
+  styleUrl: './not-authorized.component.css'
 })
-export class NotFoundComponent {
+export class NotAuthorizedComponent {
 
   volver() {
     console.log('Volver a la página principal');

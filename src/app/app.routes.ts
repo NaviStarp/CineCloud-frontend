@@ -11,11 +11,13 @@ import { MovieDetailComponent } from './movie-detail/movie-detail.component';
 import { SerieDetailComponent } from './serie-detail/serie-detail.component';
 import { MediaFilterComponent } from './media-filter/media-filter.component';
 import { authGuard } from './services/auth.guard';
+import { adminGuard } from './services/admin.guard';
+import { NotAuthorizedComponent } from './general/not-authorized/not-authorized.component';
 export const routes: Routes = [
     { 
-        path: '', 
+        path: 'subir', 
         component: MediaUploaderComponent,
-        canActivate: [authGuard],
+        canActivate: [adminGuard],
         data: { animation: 'default' }
     },
     { path: 'login', component: LoginComponent,data: { animation: 'default' }},
@@ -23,12 +25,12 @@ export const routes: Routes = [
     { 
         path: 'subir/2', 
         component: MediaFormComponent,
-        canActivate: [authGuard] ,
+        canActivate: [adminGuard] ,
         data: { animation: 'default' }
     },
     { path: 'server/config', component: ServerConfigComponent ,data: { animation: 'default' }},
     { path: 'prueba', component: MediaListComponent, canActivate: [authGuard],data: { animation: 'default' } },
-    { path: 'lista', component: MediaGalleryComponent, canActivate: [authGuard],data: { animation: 'default' } },
+    { path: '', component: MediaGalleryComponent, canActivate: [authGuard],data: { animation: 'default' } },
     { 
         path: 'peliculas', 
         component: MediaFilterComponent, 
@@ -53,5 +55,6 @@ export const routes: Routes = [
         canActivate: [authGuard] ,
         data: { animation: 'default' }
     },
+    {path: 'not-authorized', component: NotAuthorizedComponent, data: { animation: 'default '}},
     { path: '**', component: NotFoundComponent } 
 ];
