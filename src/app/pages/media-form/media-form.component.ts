@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCheck, faFilm, faHome, faPlus, faSpinner, faTv } from '@fortawesome/free-solid-svg-icons';
-import { IndexedDbService } from '../services/indexed-db.service';
+import { IndexedDbService } from '../../services/indexed-db.service';
 import { Router } from '@angular/router';
-import { VideoEntry } from '../services/indexed-db.service';
-import { AuthService, Series } from '../services/auth.service';
-import { ProgressBarComponent } from '../general/progress-bar/progress-bar.component';
-import { VideoCardComponent } from '../video-card/video-card.component';
+import { VideoEntry } from '../../services/indexed-db.service';
+import { AuthService, Series } from '../../services/auth.service';
+import { ProgressBarComponent } from '../../general/progress-bar/progress-bar.component';
+import { VideoCardComponent } from '../../video-card/video-card.component';
 
 @Component({
   selector: 'app-media-form',
@@ -217,11 +217,6 @@ export class MediaFormComponent implements OnInit, AfterViewInit {
       this.message = 'Error durante la subida: ' + (error instanceof Error ? error.message : 'Error desconocido');
       this.isLoading = false;
     }
-  }
-
-  addVideos(event: Event) {
-    event.preventDefault();
-    this.router.navigate(['/']);
   }
 
 }

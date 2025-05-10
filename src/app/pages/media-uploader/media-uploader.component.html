@@ -1,83 +1,130 @@
-<media-header
-  [mostrarBusqueda]="false"
->
-</media-header>
+<media-header [mostrarBusqueda]="false"></media-header>
 
-<div [ngClass]="{'bg-opacity-50': modalAbierta, 'bg-opacity-100': !modalAbierta}"
- class="bg-gradient-to-br from-neutral-900 to-neutral-800 min-h-screen flex items-center justify-center p-4">
-<div class="bg-neutral-800 p-10 rounded-xl shadow-2xl w-full max-w-lg border border-neutral-700">
-
-  <div class="flex items-center mb-6">
-    <fa-icon [icon]="faCloudUploadAlt" class="text-primary-500 text-3xl mr-3"></fa-icon>
-    <h1 class="text-3xl font-bold text-primary-500">Subir Archivos</h1>
-  </div>
-  <form (submit)="continuar()" (dragleave)="onDragLeave($event)" (dragover)="onDragOver($event)" (drop)="onDrop($event)" method="post" enctype="multipart/form-data" class="space-y-6">
-    <div id="fileContainer" class="flex items-center justify-center w-full">
-      <label for="archivo" class="flex flex-col items-center justify-center w-full h-72 border-2 border-neutral-600 border-dashed rounded-lg cursor-pointer bg-neutral-700 hover:bg-neutral-600 transition-all duration-300 group">
-        <div class="flex flex-col items-center justify-center pt-5 pb-6 px-4 text-center">
-          <div class="mb-4 text-accent-400 group-hover:text-accent-300">
-            <fa-icon [icon]="faCloudUploadAlt" class="text-6xl animate-pulse-slow"></fa-icon>
-          </div>
-          <p class="mb-2 text-sm text-neutral-300"><span class="font-semibold">Haz clic para seleccionar</span> o arrastra y suelta</p>
-          <p class="text-xs text-neutral-400">Importación de peliculas/series</p>
-          <div class="mt-4 text-xs px-3 py-1 bg-neutral-600 text-neutral-300 rounded-full">
-            Formatos aceptados: .mp4, .avi, .mov, .wmv , .webm
-          </div>
-        </div>
-        <input id="archivo" name="file" type="file" multiple class="hidden" accept=".mp4,.avi,.mov,.wmv,.webm" (change)="onFileSelected($event)" #fileInput />
-      </label>
+<!-- Contenido Principal -->
+<div class="bg-gradient-to-br from-neutral-900 to-neutral-800 min-h-screen flex flex-col items-center justify-center p-4"
+  [ngClass]="{'bg-opacity-50': modalAbierta, 'bg-opacity-100': !modalAbierta}">
+  
+  <!-- Breadcrumbs (migas de pan) -->
+  <div class="w-full max-w-lg mb-4">
+    <div class="flex items-center px-4">
+      <a href="/" class="text-primary-500 hover:text-primary-400 transition-colors cursor-pointer">
+        <fa-icon [icon]="faHome"></fa-icon>
+      </a>
+      <span class="mx-2 text-neutral-500">/</span>
+      <a  class="text-primary-500  transition-colors">
+        <span class="text-primary-400 hover:text-primary-500 cursor-pointer transition-colors">Gestión de Videos</span>
+      </a>
+      <span class="mx-2 text-neutral-500">/</span>
+      <a href="/subir/2" class="text-primary-500 hover:text-primary-400 transition-colors">
+        <span class="text-neutral-300 hover:text-primary-400 transition-colors">Editar Biblioteca</span>
+      </a>
     </div>
-    <div class="bg-neutral-800 rounded-lg shadow-sm p-1 transition-all" 
-    [class.hidden]="selectedFiles.length === 0">
- <div class="space-y-2">
-   <div *ngFor="let file of selectedFiles" 
-        class="flex items-center bg-neutral-700 rounded-md p-2 hover:bg-neutral-600 transition-colors group">
-     <fa-icon [icon]="faFileAlt" 
-              class="text-primary-500  text-xl mr-2 opacity-80 group-hover:opacity-100"></fa-icon>
-     <span class="text-neutral-200  truncate flex-grow">
-       {{ file.name }}
-     </span>
-     <button
-       type="button"
-       class="ml-auto text-neutral-400 hover:text-red-500 rounded-full p-1 
-              hover:bg-red-50/10 opacity-0 group-hover:opacity-100"
-       (click)="removeFile(file)">
-       <fa-icon [icon]="faTimes" class="text-sm"></fa-icon>
-     </button>
-   </div>
- </div>
-</div>
-
-    <div>
-      <button type="button" (click)="continuar()"  class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-300">
-        <fa-icon [icon]="faArrowRight" class="mr-2"></fa-icon> Continuar
-      </button>
-    </div>
-  </form>
-  <div class="mt-6 text-center">
-    <button (click)="toggleModal()" class="text-sm text-blue-400 hover:text-blue-300 transition-colors">¿Necesitas ayuda con la importación?</button>
   </div>
-</div>
-  <app-modal-error [visible]="errorVisible" [title]="tituloError" [message]="mensajeError" (cerrarModal)="errorVisible=false" ></app-modal-error>
 
-    <div   [@slideInOut]  *ngIf="modalAbierta" id="modalInformacion" class="fixed inset-0 flex items-center justify-center z-50">
-      <div [@slideInOut] class="modal-backdrop absolute inset-0 backdrop-brightness-50 bg-opacity-50"></div>
-      <div class="modal-content bg-neutral-800 p-6 rounded-lg shadow-lg w-full max-w-lg relative">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-bold text-accent-500">Información</h2>
-          <button (click)="toggleModal()" class="text-accent-400 hover:text-red-400">
-            <fa-icon [icon]="faTimes"></fa-icon>
-          </button>
-        </div>
-        <div class="text-neutral-300">
-            <p>Para realizar la importación, asegúrate de utilizar archivos en formato <strong>.mp4, .avi, .mov,</strong> o <strong>.wmv</strong>.</p>
-            <p class="mt-4">El procesamiento será más eficiente si el servidor cuenta con una tarjeta gráfica y los controladores actualizados.</p>
-        </div>
-        <div class="mt-6 flex justify-end">
-          <button (click)="toggleModal()" class="bg-neutral-600 hover:bg-neutral-700 text-white py-2 px-4 rounded">
-            Cerrar
-          </button>
+  <div class="bg-neutral-800 p-8 rounded-xl shadow-2xl w-full max-w-lg border border-neutral-700">
+    <!-- Encabezado -->
+    <div class="flex items-center mb-6">
+      <fa-icon [icon]="faCloudUploadAlt" class="text-primary-500 text-3xl mr-3"></fa-icon>
+      <h1 class="text-3xl font-bold text-primary-500">Subir Archivos</h1>
+    </div>
+    
+    <form (submit)="continuar()" 
+          (dragleave)="onDragLeave($event)" 
+          (dragover)="onDragOver($event)" 
+          (drop)="onDrop($event)" 
+          method="post" 
+          enctype="multipart/form-data" 
+          class="space-y-6">
+          
+      <div id="fileContainer" class="w-full">
+        <label for="archivo" 
+               class="flex flex-col items-center justify-center w-full h-64 border-2 border-neutral-600 border-dashed 
+                      rounded-lg cursor-pointer bg-neutral-700 hover:bg-neutral-600 transition-all duration-300 group">
+          <div class="flex flex-col items-center justify-center pt-5 pb-6 px-4 text-center">
+            <div class="mb-4 text-accent-400 group-hover:text-accent-300">
+              <fa-icon [icon]="faCloudUploadAlt" class="text-6xl animate-pulse-slow"></fa-icon>
+            </div>
+            <p class="mb-2 text-sm text-neutral-300"><span class="font-semibold">Haz clic para seleccionar</span> o arrastra y suelta</p>
+            <p class="text-xs text-neutral-400">Importación de películas/series</p>
+            <div class="mt-4 text-xs px-3 py-1 bg-neutral-600 text-neutral-300 rounded-full">
+              Formatos aceptados: .mp4, .avi, .mov, .wmv, .webm
+            </div>
+          </div>
+          <input id="archivo" 
+                 name="file" 
+                 type="file" 
+                 multiple 
+                 class="hidden" 
+                 accept=".mp4,.avi,.mov,.wmv,.webm" 
+                 (change)="onFileSelected($event)" 
+                 #fileInput />
+        </label>
+      </div>
+
+      <!-- Lista de archivos seleccionados -->
+      <div class="bg-neutral-800 rounded-lg shadow-sm p-1 transition-all" 
+           [class.hidden]="selectedFiles.length === 0">
+        <div class="space-y-2">
+          <div *ngFor="let file of selectedFiles" 
+               class="flex items-center bg-neutral-700 rounded-md p-2 hover:bg-neutral-600 transition-colors group">
+            <fa-icon [icon]="faFileAlt" class="text-primary-500 text-xl mr-2 opacity-80 group-hover:opacity-100"></fa-icon>
+            <span class="text-neutral-200 truncate flex-grow">{{ file.name }}</span>
+            <button type="button" 
+                    class="ml-auto text-neutral-400 hover:text-red-500 rounded-full p-1 hover:bg-red-50/10 opacity-0 group-hover:opacity-100" 
+                    (click)="removeFile(file)">
+              <fa-icon [icon]="faTimes" class="text-sm"></fa-icon>
+            </button>
+          </div>
         </div>
       </div>
+
+      <!-- Continue button -->
+      <div>
+        <button type="button" 
+                (click)="continuar()" 
+                class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg 
+                       shadow-sm text-base font-medium text-white bg-primary-600 hover:bg-primary-700 
+                       focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-300">
+          <fa-icon [icon]="faArrowRight" class="mr-2"></fa-icon> Continuar
+        </button>
+      </div>
+    </form>
+
+    <div class="mt-6 text-center">
+      <button (click)="toggleModal()" class="text-sm text-blue-400 hover:text-blue-300 transition-colors">
+        ¿Necesitas ayuda con la importación?
+      </button>
     </div>
+  </div>
+
+  <!-- Modal de error -->
+  <app-modal-error 
+    [visible]="errorVisible" 
+    [title]="tituloError" 
+    [message]="mensajeError" 
+    (cerrarModal)="errorVisible=false">
+  </app-modal-error>
+
+  <!-- Modal de ayuda -->
+  <div [@slideInOut] *ngIf="modalAbierta" class="fixed inset-0 flex items-center justify-center z-50">
+    <div [@slideInOut] class="absolute inset-0 backdrop-filter backdrop-blur-sm bg-transparent bg-opacity-50"></div>
+    <div class="bg-neutral-800 p-6 rounded-lg shadow-lg w-full max-w-lg relative z-10">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-accent-500">Información</h2>
+        <button (click)="toggleModal()" class="text-neutral-400 hover:text-red-400 transition-colors">
+          <fa-icon [icon]="faTimes"></fa-icon>
+        </button>
+      </div>
+      <div class="text-neutral-300 space-y-4">
+        <p>Para realizar la importación, asegúrate de utilizar archivos en formato <strong>.mp4, .avi, .mov, .wmv</strong> o <strong>.webm</strong>.</p>
+        <p>El procesamiento será más eficiente si el servidor cuenta con una tarjeta gráfica y los controladores actualizados.</p>
+      </div>
+      <div class="mt-6 flex justify-end">
+        <button (click)="toggleModal()" 
+                class="bg-neutral-600 hover:bg-neutral-700 text-white py-2 px-4 rounded transition-colors">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

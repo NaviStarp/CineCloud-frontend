@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
-import { MediaFormComponent } from './media-form/media-form.component';
+import { MediaFormComponent } from './pages/media-form/media-form.component';
 import { MediaListComponent } from './media-list/media-list.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { MediaFilterComponent } from './pages/media-filter/media-filter.component';

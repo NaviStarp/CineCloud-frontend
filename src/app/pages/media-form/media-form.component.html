@@ -6,23 +6,23 @@
         <fa-icon [icon]="faHome"></fa-icon>
       </a>
       <span class="mx-2 text-neutral-500">/</span>
-      <a href="/subir" class="text-primary-500 hover:text-primary-400 transition-colors">
-      <span class="text-neutral-300 cursor-pointer">Gestión de Videos</span>
+      <a href="/subir" class="text-primary-500  transition-colors">
+      <span class="text-neutral-300 hover:text-primary-400 transition-colors cursor-pointer">Gestión de Videos</span>
     </a>
-      <span class="mx-2 text-neutral-500">/</span>
-      <span class="text-neutral-300">Editar Biblioteca</span>
+      <span class="mx-2 text-neutral-300">/</span>
+      <span class="text-primary-400 hover:text-primary-500 transition-colors cursor-pointer">Editar Biblioteca</span>
     </div>
     
-    <!-- Videos Container -->
+    <!-- Contenedor de videos -->
     <div class="space-y-4 w-full">
-      <div  class="bg-neutral-800/30 backdrop-blur p-6  transition  hover:shadow-lg shadow-primary-600 rounded-xl  border border-neutral-700/50" *ngFor="let video of videos;let i = index">
+      <div  class="bg-neutral-800/30 backdrop-blur p-6  transition rounded-xl  border border-neutral-700/50" *ngFor="let video of videos;let i = index">
         <app-video-card #videoItem [video]="video"
         (videoChange)="onVideoChanged($event, i)"
       ></app-video-card>
       
       </div>
       <div *ngIf="videos.length > 0" class="flex justify-center mt-4">
-        <button (click)="uploadVideos($event)" class="px-8 py-4 bg-gradient-to-r from-primary-500 to-primary-700 text-white rounded-full hover:from-primary-600 hover:to-primary-800 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-400 shadow-lg transform hover:scale-105">
+        <button (click)="uploadVideos($event)" class="px-8 py-4 bg-gradient-to-r from-primary-500 to-primary-700 text-white rounded-full hover:from-primary-600 hover:to-primary-800 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-400 transform hover:scale-105">
           <div class="flex items-center space-x-2">
         <fa-icon [icon]="faCheck" class="text-lg"></fa-icon>
         <span class="text-lg font-semibold">Confirmar</span>
@@ -30,26 +30,19 @@
         </button>
       </div>
       
-      <!-- Empty State -->
+      <!-- No videos -->
       <div *ngIf="videos.length === 0" class="flex flex-col items-center justify-center py-16 bg-neutral-800/30 backdrop-blur-sm rounded-xl border border-neutral-700/50">
         <div class="text-neutral-500 mb-4">
           <fa-icon [icon]="faFilm" class="text-5xl"></fa-icon>
         </div>
         <h3 class="text-xl font-medium text-neutral-300 mb-2">No hay videos</h3>
         <p class="text-neutral-500 mb-4 text-center max-w-md">Aún no has agregado videos a tu biblioteca. Comienza subiendo tu primer video.</p>
-        <button (click)="addVideos($event)" class="px-5 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500">
+        <a href="/subir" class="px-5 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500">
           <fa-icon [icon]="faPlus" class="mr-2"></fa-icon>
           Agregar Video
-        </button>
+        </a>
       </div>
-    </div>
-    
-    <!-- Add Video Button (Floating) -->
-    <div *ngIf="videos.length > 0" class="fixed bottom-8 right-8">
-      <button  (click)="addVideos($event)" class="w-14 h-14 bg-primary-600 text-white rounded-full hover:bg-primary-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 shadow-lg hover:shadow-xl flex items-center justify-center">
-        <fa-icon [icon]="faPlus" class="text-xl"></fa-icon>
-      </button>
-    </div>
+    </div>    
   </div>
 </div>
 
