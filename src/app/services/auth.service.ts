@@ -103,10 +103,8 @@ export class AuthService {
       }
   
       const result = await response.json();
-      console.log('Token test result:', result);
       return result === true; 
     } catch (error) {
-      console.error('Error en la solicitud:', error);
       return false;
     }
   }
@@ -120,7 +118,6 @@ export class AuthService {
       });
       return response.ok;
     } catch (error) {
-      console.error('Error testing server:', error);
       return false;
     }
   }
@@ -204,13 +201,11 @@ export class AuthService {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Upload error:', response.status, errorText);
         throw new Error(`Upload failed: ${response.status} ${errorText}`);
       }
 
       return await response.json();
     } catch (error) {
-      console.error('Upload exception:', error);
       throw error;
     }
   }
@@ -262,7 +257,6 @@ export class AuthService {
       formData.append('imagen', blob, `${series.titulo.replace(/\s+/g, '-')}-thumbnail.jpg`);
     }
     else {
-      console.error('Formato de imagen no válido:', series.imagen);
       throw new Error('La imagen debe ser un string base64 o un objeto File/Blob');
     }
 
@@ -283,13 +277,11 @@ export class AuthService {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => response.text());
-        console.error('Error en la creación de serie:', response.status, errorData);
         throw new Error(typeof errorData === 'string' ? errorData : JSON.stringify(errorData));
       }
 
       return await response.json();
     } catch (error) {
-      console.error('Excepción en createSeries:', error);
       throw error;
     }
   }
@@ -307,13 +299,11 @@ export class AuthService {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Upload error:', response.status, errorText);
         throw new Error(`Upload failed: ${response.status} ${errorText}`);
       }
 
       return await response.json();
     } catch (error) {
-      console.error('Upload exception:', error);
       throw error;
     }
   }
@@ -483,18 +473,15 @@ export class AuthService {
 
             return episodio;
           } catch (error) {
-            console.error(`Error processing episode ${episodio.id}:`, error);
             return episodio; // Devuelve el episodio original en caso de error
           }
         }));
       } else {
         serie.episodios = [];
-        console.warn('No episodes found in API response');
       }
 
       return serie;
     } catch (error) {
-      console.error('Error fetching serie details:', error);
       throw error; // Devuelve error
     }
   }
@@ -502,7 +489,6 @@ export class AuthService {
     if (!this.getToken() || this.getServerUrl() === '') {
       return false;
     }
-    console.log(JSON.stringify(videoProgress));
     const response = await fetch(`${this.getServerUrl()}/movies/progress/save/`, {
       method: 'POST',
       headers: {
@@ -533,28 +519,36 @@ export class AuthService {
     if (!this.getToken() || this.getServerUrl() === '') {
       return 0;
     }
-    console.log('Peticion enviada a : ', `${this.getServerUrl()}/movies/progress/${videoId}/`);
-    const response = await fetch(`${this.getServerUrl()}/movies/progress/${videoId}/`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Token ${this.getToken()}`
-      }
-    });
-    const progress = await response.json();
-    return progress.progress;
+    try {
+      const response = await fetch(`${this.getServerUrl()}/movies/progress/${videoId}/`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Token ${this.getToken()}`
+        }
+      });
+      const progress = await response.json();
+      return progress.progress;
+    } catch (error) {
+      return 0;
+    }
   }
+
   public async getEpisodeProgress(videoId: string): Promise<number> {
     if (!this.getToken() || this.getServerUrl() === '') {
       return 0;
     }
-    const response = await fetch(`${this.getServerUrl()}/series/progress/${videoId}/`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Token ${this.getToken()}`
-      }
-    });
-    const progress = await response.json();
-    return progress.progress;
+    try {
+      const response = await fetch(`${this.getServerUrl()}/series/progress/${videoId}/`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Token ${this.getToken()}`
+        }
+      });
+      const progress = await response.json();
+      return progress.progress;
+    } catch (error) {
+      return 0;
+    }
   }
   public async isAdmin(): Promise<boolean> {
     if (!this.getToken() || this.getServerUrl() === '') {
@@ -568,7 +562,6 @@ export class AuthService {
       }
     });
     const result = await response.json();
-    console.log('isAdmin result:', result);
     this.isAdminUser = result;
     return result === true;
   }
