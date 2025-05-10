@@ -41,7 +41,7 @@
 
 <!-- Botones -->
 <div class="flex flex-wrap items-center space-x-3 mb-8">
-    <button (click)="showVideo=true" class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-lg">
+    <button (click)="showVideoPlayer()" class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-lg">
         <fa-icon [icon]="faPlay" class="mr-3"></fa-icon>
         Reproducir
     </button>
@@ -102,6 +102,7 @@
 
 
 <app-video-player
+  #VideoPlayer
   [@VideoAnimation]="showVideo ? 'visible' : 'hidden'"
   [videoUrl]="hlsUrl"
   [videoType]="'pelicula'"

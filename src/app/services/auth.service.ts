@@ -539,7 +539,7 @@ export class AuthService {
     const progress = await response.json();
     return progress.progress;
   }
-  public async getEpisodeProgress(videoId: string) {
+  public async getEpisodeProgress(videoId: string): Promise<number> {
     if (!this.getToken() || this.getServerUrl() === '') {
       return 0;
     }
