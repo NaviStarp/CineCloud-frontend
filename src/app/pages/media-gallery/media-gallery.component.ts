@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { HeaderComponent } from '../general/header/header.component';
-import { AuthService } from '../services/auth.service';
+import { HeaderComponent } from '../../general/header/header.component';
+import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
-import { LoadingComponent } from "../general/loading/loading.component";
+import { LoadingComponent } from "../../general/loading/loading.component";
 import { MediaCarouselComponent } from "./media-carousel/media-carousel.component";
 import { RouterModule } from '@angular/router';
 import { SkeletonLoaderComponent } from "./skeleton-loader/skeleton-loader.component";

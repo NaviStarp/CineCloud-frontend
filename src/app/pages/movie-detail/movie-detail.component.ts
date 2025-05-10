@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
-import { HeaderComponent as HeaderComponent } from "../general/header/header.component";
-import { VideoPlayerComponent } from "../general/video-player/video-player.component";
+import { HeaderComponent as HeaderComponent } from "../../general/header/header.component";
+import { VideoPlayerComponent } from "../../general/video-player/video-player.component";
 import { MediaCarouselComponent } from "../media-gallery/media-carousel/media-carousel.component";
 import { faCheck, faPlay, faShareAlt } from '@fortawesome/free-solid-svg-icons';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';

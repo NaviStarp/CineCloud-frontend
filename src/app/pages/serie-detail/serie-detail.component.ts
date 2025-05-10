@@ -1,20 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { HeaderComponent } from '../general/header/header.component';
-import { VideoPlayerComponent } from '../general/video-player/video-player.component';
-import { MediaCarouselComponent } from '../media-gallery/media-carousel/media-carousel.component';
+import { HeaderComponent } from '../../general/header/header.component';
+import { VideoPlayerComponent } from '../../general/video-player/video-player.component';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { faCheck, faPlay, faShareAlt } from '@fortawesome/free-solid-svg-icons';
 import { FormsModule } from '@angular/forms';
 import { EpisodeListComponent } from "./episode-list/episode-list.component";
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { MediaCarouselComponent } from '../media-gallery/media-carousel/media-carousel.component';
 
 @Component({
   selector: 'app-serie-detail',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, VideoPlayerComponent, MediaCarouselComponent, 
+  imports: [CommonModule, HeaderComponent, VideoPlayerComponent,MediaCarouselComponent, 
            FaIconComponent, EpisodeListComponent, FormsModule],
   templateUrl: './serie-detail.component.html',
   styleUrl: './serie-detail.component.css',

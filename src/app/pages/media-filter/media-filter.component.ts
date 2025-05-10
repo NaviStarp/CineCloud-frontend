@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AuthService } from '../services/auth.service';
-import { HeaderComponent } from "../general/header/header.component";
+import { AuthService } from '../../services/auth.service';
+import { HeaderComponent } from "../../general/header/header.component";
 import { MediaCardComponent } from "../media-gallery/media-card/media-card.component";
-import { LoadingComponent } from "../general/loading/loading.component";
+import { LoadingComponent } from "../../general/loading/loading.component";
 import { CommonModule } from '@angular/common';
 
 @Component({

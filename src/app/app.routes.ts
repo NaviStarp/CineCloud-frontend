@@ -1,18 +1,18 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
-import { MediaUploaderComponent } from './media-uploader/media-uploader.component';
 import { MediaFormComponent } from './media-form/media-form.component';
-import { ServerConfigComponent } from './server-config/server-config.component';
 import { MediaListComponent } from './media-list/media-list.component';
 import { NotFoundComponent } from './not-found/not-found.component';
-import { MediaGalleryComponent } from './media-gallery/media-gallery.component';
-import { MovieDetailComponent } from './movie-detail/movie-detail.component';
-import { SerieDetailComponent } from './serie-detail/serie-detail.component';
-import { MediaFilterComponent } from './media-filter/media-filter.component';
+import { MediaFilterComponent } from './pages/media-filter/media-filter.component';
 import { authGuard } from './services/auth.guard';
 import { adminGuard } from './services/admin.guard';
 import { NotAuthorizedComponent } from './general/not-authorized/not-authorized.component';
+import { MediaUploaderComponent } from './pages/media-uploader/media-uploader.component';
+import { ServerConfigComponent } from './pages/server-config/server-config.component';
+import { MediaGalleryComponent } from './pages/media-gallery/media-gallery.component';
+import { MovieDetailComponent } from './pages/movie-detail/movie-detail.component';
+import { SerieDetailComponent } from './pages/serie-detail/serie-detail.component';
 export const routes: Routes = [
     { 
         path: 'subir', 

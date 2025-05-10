@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { InputComponent } from "../login-signup/input/input.component";
+import { InputComponent } from "../../login-signup/input/input.component";
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ButtonComponent } from "../login-signup/button/button.component";
+import { ButtonComponent } from "../../login-signup/button/button.component";
 import { FaIconComponent, FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faServer, faSignal, faCheckCircle, faExclamationTriangle, faSpinner, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import { CommonModule } from '@angular/common';

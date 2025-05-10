@@ -2,10 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowRight,faTimes, faCloudUploadAlt, faFileAlt, faUpload, faHome } from '@fortawesome/free-solid-svg-icons';
-import { ModalErrorComponent } from "../general/modal-error/modal-error.component";
-import { IndexedDbService } from '../services/indexed-db.service';
+import { ModalErrorComponent } from "../../general/modal-error/modal-error.component";
+import { IndexedDbService } from '../../services/indexed-db.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { HeaderComponent } from '../general/header/header.component';
+import { HeaderComponent } from '../../general/header/header.component';
 @Component({
   selector: 'app-media-uploader',
   standalone: true,
