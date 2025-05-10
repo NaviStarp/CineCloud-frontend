@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ViewChildren, ElementRef, QueryList, Afte
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faCheck, faFilm, faPlus, faSpinner, faTv } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faFilm, faHome, faPlus, faSpinner, faTv } from '@fortawesome/free-solid-svg-icons';
 import { IndexedDbService } from '../services/indexed-db.service';
 import { Router } from '@angular/router';
 import { VideoEntry } from '../services/indexed-db.service';
@@ -30,6 +30,7 @@ export class MediaFormComponent implements OnInit, AfterViewInit {
   faPlus = faPlus;
   faCheck = faCheck;
   faSpinner = faSpinner;
+  faHome = faHome;
   isLoading = false;
   videos: VideoEntry[] = [];
   series: Series[] = [];
@@ -209,7 +210,7 @@ export class MediaFormComponent implements OnInit, AfterViewInit {
       
       this.isLoading = false;
       this.indexedDbService.delAll();
-      this.router.navigate(['/lista']);
+      this.router.navigate(['/']);
     } catch (error) {
       console.error('Upload error:', error);
       this.isError = true;

@@ -42,7 +42,11 @@ export interface Series {
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Router) { }
+  isAdminUser: boolean = false;
+
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Router) {
+    this.isAdmin();
+   }
 
   // Devuelve la URL del servidor
   public getServerUrl(): string {
@@ -554,6 +558,7 @@ export class AuthService {
   }
   public async isAdmin(): Promise<boolean> {
     if (!this.getToken() || this.getServerUrl() === '') {
+      this.isAdminUser = false;
       return false;
     }
     const response = await fetch(`${this.getServerUrl()}/isAdmin/`, {
@@ -564,6 +569,7 @@ export class AuthService {
     });
     const result = await response.json();
     console.log('isAdmin result:', result);
+    this.isAdminUser = result;
     return result === true;
   }
 

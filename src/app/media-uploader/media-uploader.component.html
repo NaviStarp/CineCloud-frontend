@@ -1,6 +1,12 @@
+<media-header
+  [mostrarBusqueda]="false"
+>
+</media-header>
+
 <div [ngClass]="{'bg-opacity-50': modalAbierta, 'bg-opacity-100': !modalAbierta}"
  class="bg-gradient-to-br from-neutral-900 to-neutral-800 min-h-screen flex items-center justify-center p-4">
 <div class="bg-neutral-800 p-10 rounded-xl shadow-2xl w-full max-w-lg border border-neutral-700">
+
   <div class="flex items-center mb-6">
     <fa-icon [icon]="faCloudUploadAlt" class="text-primary-500 text-3xl mr-3"></fa-icon>
     <h1 class="text-3xl font-bold text-primary-500">Subir Archivos</h1>
