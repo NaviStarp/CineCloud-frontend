@@ -66,9 +66,6 @@ export class MediaFormComponent implements OnInit, AfterViewInit {
       });
     } 
   }
-  toggleQualityRescale() {
-    this.isQualityRescaleEnabled = !this.isQualityRescaleEnabled;
-  }
 
   async loadVideos() {
     try {

@@ -5,17 +5,18 @@ import { VideoPlayerComponent } from '../../general/video-player/video-player.co
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { faCheck, faPlay, faShareAlt } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faEdit, faPlay, faShareAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FormsModule } from '@angular/forms';
 import { EpisodeListComponent } from "./episode-list/episode-list.component";
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MediaCarouselComponent } from '../media-gallery/media-carousel/media-carousel.component';
+import { DeleteModalComponent } from "../../general/delete-modal/delete-modal.component";
 
 @Component({
   selector: 'app-serie-detail',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, VideoPlayerComponent,MediaCarouselComponent, 
-           FaIconComponent, EpisodeListComponent, FormsModule],
+  imports: [CommonModule, HeaderComponent, VideoPlayerComponent, MediaCarouselComponent,
+    FaIconComponent, EpisodeListComponent, FormsModule, DeleteModalComponent],
   templateUrl: './serie-detail.component.html',
   styleUrl: './serie-detail.component.css',
   animations: [
@@ -53,13 +54,19 @@ export class SerieDetailComponent implements OnInit {
   loading: boolean = true;
   animationDone: boolean = false;
   selectedView: string = 'episodes';
+  isMobile: boolean = window.innerWidth < 700;
+  showFullDescription: boolean = false;
   showToolTip: boolean = false;
+  showDeleteModal: boolean = false;
+  isAdmin: boolean = false;
   hlsUrl: string = '';
   videoTitle: string = '';
   videoDescription: string = '';
   @ViewChild('videoPlayer') videoPlayer!: VideoPlayerComponent;
   // Iconos
   faPlay = faPlay;
+  faTrash = faTrash;
+  faEdit = faEdit;
   faCheck = faCheck;
   faShare = faShareAlt;
   
@@ -72,6 +79,9 @@ export class SerieDetailComponent implements OnInit {
       this.loadSerieData();
     });
     
+    this.auth.isAdmin().then((isAdmin) => {
+      this.isAdmin = isAdmin;
+    });
     try {
       const data = await this.auth.getVideos();
       if (data) {
@@ -166,6 +176,7 @@ export class SerieDetailComponent implements OnInit {
     }
     console.log('Selected episode:', episode);
     this.videoPlayer.videoUrl = episode.video || episode.videoUrl;
+    this.videoPlayer.videoId = episode.id || episode.id;
     this.videoPlayer.videoTitle = episode.titulo || episode.title || 'No Title';
     this.videoPlayer.episodeInfo = `${episode.season || ''}x${episode.episode || ''}`;
   

@@ -3,8 +3,6 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Input } from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
-
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { AuthService } from '../../../../services/auth.service';
 
 @Component({
@@ -20,14 +18,18 @@ export class EpisodeCardComponent implements OnInit {
     isHovered: boolean = false;
     progress: number = 0;
     constructor(private auth:AuthService) {
-      console.log('EPISODIO',this.episode);
     }
     ngOnInit(): void {
-      console.log(this.episode);
-     this.auth.getEpisodeProgress(this.episode.id).then((progress) => {
-        this.progress = progress;
-      });
-      console.log(this.progress);
+      if (this.episode && this.episode.id) {
+        this.auth.getEpisodeProgress(this.episode.id).then((progress) => {
+          this.progress = progress ?? 0;
+          console.log('PROGRESO:', this.progress);
+        }).catch((error) => {
+          this.progress = 0;
+        });
+      } else {
+        this.progress = 0;
+      }
     }
     selectEpisode(episode: any): void {
       console.log('EPISODIO', episode);

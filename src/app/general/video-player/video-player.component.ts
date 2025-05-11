@@ -217,6 +217,7 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, OnChanges {
       progress: Math.floor(progress * 100), // Convertir a escala de 0-100 para mayor precisión
     };
     
+    console.log(this.videoId);
     console.log(`Guardando progreso: ${videoProgress.progress}%`);
     
     if (this.videoType === 'pelicula') {

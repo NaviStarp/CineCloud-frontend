@@ -23,7 +23,7 @@
       </div>
       <div *ngIf="videos.length > 0" class="flex items-center justify-between mt-4">
         <label class="flex items-center cursor-pointer">
-          <input type="checkbox" [(ngModel)]="isQualityRescaleEnabled" (change)="toggleQualityRescale()" class="hidden" />
+          <input type="checkbox" [(ngModel)]="isQualityRescaleEnabled"  class="hidden" />
           <span class="bg-neutral-700 text-neutral-200 px-3 py-1 rounded-full text-sm">Rescalado de calidad</span>
           <span class="ml-2 text-neutral-500">{{ isQualityRescaleEnabled ? 'Activado' : 'Desactivado' }}</span>
         </label>

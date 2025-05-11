@@ -19,7 +19,7 @@
           *ngFor="let item of items" 
           class="px-2 flex-shrink-0" 
           [style.width.px]="itemWidth">
-          <a href="/{{itemType}}/{{item.id}}" target="_blank">
+          <a href="/{{itemType}}/{{item.id}}">
             <app-media-card
               [id]="item.id"
               [thumbnail]="item.imagen"

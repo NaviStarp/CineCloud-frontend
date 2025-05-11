@@ -5,13 +5,14 @@ import { CommonModule } from '@angular/common';
 import { HeaderComponent as HeaderComponent } from "../../general/header/header.component";
 import { VideoPlayerComponent } from "../../general/video-player/video-player.component";
 import { MediaCarouselComponent } from "../media-gallery/media-carousel/media-carousel.component";
-import { faCheck, faPlay, faShareAlt } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faEdit, faPlay, faShareAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { DeleteModalComponent } from "../../general/delete-modal/delete-modal.component";
 
 @Component({
   selector: 'app-movie-detail',
-  imports: [CommonModule, HeaderComponent, VideoPlayerComponent, MediaCarouselComponent, FaIconComponent],
+  imports: [CommonModule, HeaderComponent, VideoPlayerComponent, MediaCarouselComponent, FaIconComponent, DeleteModalComponent],
   templateUrl: './movie-detail.component.html',
   styleUrls: ['./movie-detail.component.css'],
   animations: [
@@ -49,11 +50,15 @@ export class MovieDetailComponent implements OnInit {
   showVideo: boolean = false;
   loading: boolean = true;
   showToolTip: boolean = false;
+  showDeleteModal: boolean = false;
   selectedView: string = 'description';
   animationDone: boolean = false;
+  isAdmin: boolean = false;
   // Iconos
   faPlay = faPlay;
   faCheck = faCheck;
+  faEdit = faEdit;
+  faTrash = faTrash;
   faShare = faShareAlt;
 
   constructor(private route: ActivatedRoute, private auth: AuthService, private router: Router) {
@@ -65,6 +70,9 @@ export class MovieDetailComponent implements OnInit {
       this.id = params['id'];
       this.loadMovieData();
     });
+    this.auth.isAdmin().then((isAdmin) => {
+      this.isAdmin = isAdmin;
+    });
 
     // Cargar las listas de películas y series
     this.auth.getVideos().then((data: any) => {
@@ -74,6 +82,7 @@ export class MovieDetailComponent implements OnInit {
       console.error('Error loading videos:', error);
     });
   }
+
 
   private loadMovieData(): void {
     this.loading = true;

@@ -40,24 +40,36 @@
 </div>
 
 <!-- Botones -->
-<div class="flex flex-wrap items-center space-x-3 mb-8">
-    <button (click)="showVideoPlayer()" class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-lg">
-        <fa-icon [icon]="faPlay" class="mr-3"></fa-icon>
-        Reproducir
-    </button>
-    <div class="relative">
-      <button (click)="copyUrlToClipboard(); showToolTip = true; $event.stopPropagation();" 
-      (mouseleave)="showToolTip = false" 
-      class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-lg">
+<div class="flex flex-wrap items-center gap-3 mb-8">
+  <button (click)="showVideoPlayer()" 
+      class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-base md:text-lg">
+    <fa-icon [icon]="faPlay" class="mr-3"></fa-icon>
+    Reproducir
+  </button>
+  <div class="relative">
+    <button (click)="copyUrlToClipboard(); showToolTip = true; $event.stopPropagation();" 
+        (mouseleave)="showToolTip = false" 
+        class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-base md:text-lg">
       <fa-icon [icon]="faShare" class="text-xl text-white mr-3 group-hover:text-primary-400"></fa-icon>
       Compartir
     </button>
-      <span *ngIf="showToolTip" 
-      class="absolute min-w-40 bottom-full  mb-2 left-1/2 transform -translate-x-1/2 bg-neutral-800 text-green-500 text-sm px-3 py-1 rounded shadow-lg">
+    <span *ngIf="showToolTip" 
+        class="absolute min-w-40 bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-neutral-800 text-green-500 text-sm px-3 py-1 rounded shadow-lg">
       <fa-icon [icon]="faCheck" class="mr-1"></fa-icon>
       ¡Enlace copiado!
-      </span>
-    </div>
+    </span>
+  </div>
+  <button *ngIf="isAdmin" 
+      class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-base md:text-lg">
+    <fa-icon [icon]="faEdit" class="mr-3"></fa-icon>
+    Editar
+  </button>
+  <button *ngIf="isAdmin" 
+      (click)="showDeleteModal = true"
+      class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-base md:text-lg">
+    <fa-icon [icon]="faTrash" class="mr-3"></fa-icon>
+    Eliminar
+  </button>
 </div>
     </div>
     </div>
@@ -114,3 +126,11 @@
   (@VideoAnimation.done)="onAnimationDone()"
   class="w-full h-full fixed inset-0 z-50"
 ></app-video-player>
+
+<app-delete-modal
+  *ngIf="showDeleteModal"
+  [id]="id"
+  [title]="title"
+  [type]="'pelicula'"
+  (closeModal)="showDeleteModal = false"
+  ></app-delete-modal>

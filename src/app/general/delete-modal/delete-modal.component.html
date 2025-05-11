@@ -1,0 +1,40 @@
+<!-- confirmation-modal.component.html -->
+<div  class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-lg bg-transparent transform transition-all duration-300">
+    <div class="bg-neutral-800 bg-opacity-80 rounded-lg shadow-xl max-w-md w-full p-6 relative border-l-4 border-red-600">
+      <div class="flex items-center mb-4">
+        <fa-icon [icon]="faExclamationTriangle" class="text-red-500 text-3xl mr-3"></fa-icon>
+        <h2 class="text-xl font-bold text-red-500">Eliminar {{type}}</h2>
+      </div>
+        <p class="text-primary-200 mb-6 leading-relaxed">
+            ¿Estás seguro de que deseas eliminar <span class="font-semibold text-white">{{title}}</span>?<br>
+            <span class="text-red-400 font-semibold">Esta acción es irreversible y no se puede deshacer.</span>
+        </p>
+            
+        <input
+        [(ngModel)]="name"
+        type="text"
+        [attr.placeholder]="title"
+        [ngClass]="{
+        'border-red-500 text-red-500': name !== title,
+        'border-green-500 text-green-500': name === title
+        }"
+        class="w-full border rounded-lg p-2 mb-6 focus:outline-none focus:ring-2 focus:ring-primary-500 bg-neutral-800 text-white placeholder-gray-400"
+        />
+      
+      <div class="flex justify-end space-x-3">
+        <button
+          (click)="close()"
+          class="px-4 py-2 bg-neutral-700 text-neutral-300 rounded-lg hover:bg-neutral-600 transition-colors"
+        >
+          Cancelar
+        </button>
+        <button
+          (click)="confirm()"
+          [disabled]="!name || name !== title"
+          class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>

@@ -393,13 +393,10 @@ export class AuthService {
     return movies;
   }
   public async getThumnailUrl(url: string) {
-    const response = await fetch(`${this.getServerUrl()}/media/${url}`, {
+    const response = await fetch(`${this.getServerUrl()}/get-signed-url/${url}`, {
       method: 'GET',
-      headers: {
-        'Authorization': `Token ${this.getToken()}`
-      },
-    }).then(res => res.blob().then(blob => URL.createObjectURL(blob)));
-    return response;
+    }).then(res => res.json());
+    return `${this.getServerUrl()}${response.signed_url}`;
   }
   public async getSerieEpisodes(id: string): Promise<any[]> {
     if (!this.getToken() || this.getServerUrl() === '') {
@@ -504,6 +501,7 @@ export class AuthService {
     if (!this.getToken() || this.getServerUrl() === '') {
       return false;
     }
+    console.log('PROGRESO:', videoProgress);
     const response = await fetch(`${this.getServerUrl()}/series/progress/save/`, {
       method: 'POST',
       headers: {
@@ -566,5 +564,31 @@ export class AuthService {
     this.isAdminUser = result;
     return result === true;
   }
+  public async deleteMovie(id: string): Promise<boolean> {
+    if (!this.getToken() || this.getServerUrl() === '') {
+      return false;
+    }
+    const response = await fetch(`${this.getServerUrl()}/movies/delete/${id}/`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Token ${this.getToken()}`
+      }
+    });
+    return response.ok;
+  }
+
+  public async deleteSeries(id: string): Promise<boolean> {
+    if (!this.getToken() || this.getServerUrl() === '') {
+      return false;
+    }
+    const response = await fetch(`${this.getServerUrl()}/series/delete/${id}/`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Token ${this.getToken()}`
+      }
+    });
+    return response.ok;
+  }
+
 
 }
