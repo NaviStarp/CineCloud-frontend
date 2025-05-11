@@ -32,16 +32,27 @@
       </div>
     </div>
     
-    <!-- Action Buttons -->
-    <div class="video-actions flex items-center pr-5 space-x-3 min-w-2.5">
+    <!-- Botones -->
+    <div class="video-actions flex items-center pr-10 space-x-1   min-w-[2.5rem]">
+      <!-- Boton editar -->
       <button
-        class="action-button text-neutral-400 hover:text-primary-400 p-2 transition-colors duration-200 rounded-full hover:bg-neutral-700/50"
-        (click)="toggleEdit($event)"
+      class="action-button p-2 rounded-full transition-all duration-200 text-neutral-400 hover:text-primary-400 hover:bg-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-primary-400"
+      (click)="toggleEdit($event)"
+      aria-label="Edit Video"
       >
-        <fa-icon [icon]="faEdit" class="text-lg"></fa-icon>
+      <fa-icon [icon]="faEdit" class="text-lg"></fa-icon>
+      </button>
+      
+      <!-- Boton borrar -->
+      <button
+      class="action-button p-2 rounded-full transition-all duration-200 text-neutral-400 hover:text-red-500 hover:bg-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-red-500"
+      (click)="deleteVideo($event)"
+      aria-label="Delete Video"
+      >
+      <fa-icon [icon]="faTrash" class="text-lg"></fa-icon>
       </button>
     </div>
-  </div>
+</div>
   
   <!-- Video Form Component -->
   <app-video-form

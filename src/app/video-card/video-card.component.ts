@@ -1,5 +1,5 @@
 import { Component, Input, ViewChild, ElementRef, Output, EventEmitter, OnInit } from '@angular/core';
-import { faPlay, faEdit, faTimes, faFilm, faPlus, faSearch, faTv } from '@fortawesome/free-solid-svg-icons';
+import { faPlay, faEdit, faTimes, faFilm, faPlus, faSearch, faTv, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -44,6 +44,7 @@ export class VideoCardComponent implements OnInit {
   // Iconos
   faPlay = faPlay;
   faEdit = faEdit;
+  faTrash = faTrash;
   faTimes = faTimes;
   faFilm = faFilm;
   
@@ -93,7 +94,19 @@ export class VideoCardComponent implements OnInit {
       this.isVideoPlaying = true;
     }, 100);
   }
-  
+
+  // Función para borrar el video
+  async deleteVideo(event: Event) {
+    event.stopPropagation();
+    this.indexedDbService.deleteVideo(this.video.id).then(() => {
+      console.log("Video deleted successfully");
+      window.location.reload();
+    }
+    ).catch((error) => {
+      console.error("Error deleting video:", error);
+    }
+    );
+  } 
   // Función para cerrar el video
   closeVideo(event: Event) {
     event.stopPropagation();

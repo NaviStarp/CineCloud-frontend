@@ -111,6 +111,8 @@ export class MediaFormComponent implements OnInit, AfterViewInit {
     this.refreshSeriesInAllComponents();
     this.saveVideoChanges(updatedVideo, index);
   }
+
+
   
   // Método para guardar los cambios en la base de datos
   async saveVideoChanges(video: VideoEntry, index: number) {

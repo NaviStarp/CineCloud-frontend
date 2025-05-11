@@ -44,18 +44,18 @@
     <!-- Controles -->
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-4">
+
+
+        <!-- Rewind 10s -->
+        <button class="text-white hover:text-blue-400 focus:outline-none" (click)="skip(-10); $event.stopPropagation()">
+          <fa-icon [icon]="faBackward" class="text-white text-2xl cursor-pointer"></fa-icon>
+        </button>
         <!-- Play/Pause -->
         <button class="text-white hover:text-blue-400 focus:outline-none"
           (click)="togglePlay(); $event.stopPropagation()">
           <fa-icon *ngIf="isPlaying" [icon]="faPause" class="text-white text-2xl cursor-pointer"></fa-icon>
           <fa-icon *ngIf="!isPlaying" [icon]="faPlay" class="text-white text-2xl cursor-pointer"></fa-icon>
         </button>
-
-        <!-- Rewind 10s -->
-        <button class="text-white hover:text-blue-400 focus:outline-none" (click)="skip(-10); $event.stopPropagation()">
-          <fa-icon [icon]="faBackward" class="text-white text-2xl cursor-pointer"></fa-icon>
-        </button>
-
         <!-- Forward 10s -->
         <button class="text-white hover:text-blue-400 focus:outline-none" (click)="skip(10); $event.stopPropagation()">
           <fa-icon [icon]="faForward" class="text-white text-2xl cursor-pointer"></fa-icon>
