@@ -27,7 +27,8 @@
         {{ duration | number:'1.0-0' }} min
             </p>
         <p class="text-xs text-neutral-300 mt-1 text-center line-clamp-3" *ngIf="+duration < 1">Menos de 1 min</p>
-      <p class="text-xs text-neutral-300 mt-1 text-center line-clamp-3" *ngIf="seasons > 0">{{seasons}} temporadas</p>
+      <p class="text-xs text-neutral-300 mt-1 text-center line-clamp-3" *ngIf="seasons > 1">{{seasons}} temporadas</p>
+      <p class="text-xs text-neutral-300 mt-1 text-center line-clamp-3" *ngIf="seasons === 1">{{seasons}} temporada</p> 
       <p class="text-xs text-neutral-400">{{ date }}</p>
     </div>
   </div>
