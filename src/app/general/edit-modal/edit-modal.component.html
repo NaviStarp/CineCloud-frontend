@@ -1,0 +1,191 @@
+<!-- Contenedor del Modal -->
+<div
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+    [@fadeInOut]
+>
+    <!-- Contenido del Modal -->
+    <div 
+        class="bg-neutral-800 border border-neutral-700 text-neutral-50 rounded-lg p-4 shadow-xl w-11/12 max-w-2xl transform transition-all duration-300 hover:border-primary-500 focus-within:border-primary-500"
+        [@slideInOut]
+    >
+        <!-- Encabezado con botón de cerrar -->
+        <div class="flex justify-between items-center mb-3">
+            <h2 *ngIf="type === 'Serie'" class="text-lg font-semibold text-neutral-100">Editar Serie</h2>
+            <h2 *ngIf="type === 'Pelicula'" class="text-lg font-semibold text-neutral-100">Editar Película</h2>
+            <button
+                type="button"
+                class="text-neutral-400 hover:text-neutral-200 p-1.5 rounded-full hover:bg-neutral-700/50 transition-colors"
+                (click)="close.emit()"
+                aria-label="Cerrar Modal"
+            >
+                <fa-icon [icon]="faTimes"></fa-icon>
+            </button>
+        </div>
+
+        <!-- Formulario -->
+        <form (ngSubmit)="onSubmit()" class="space-y-4">
+
+            <!-- Campos en 2 columnas en pantallas medianas -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Campo Título -->
+                <div class="form-group">
+                    <label for="title" class="block text-xs font-medium text-neutral-300 mb-1">Título</label>
+                    <input 
+                        type="text" 
+                        id="title" 
+                        [(ngModel)]="title" 
+                        name="title"
+                        class="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-transparent transition-all"
+                        required
+                    >
+                </div>
+            
+                <!-- Campo Fecha de Estreno -->
+                <div class="form-group">
+                    <label for="releaseDate" class="block text-xs font-medium text-neutral-300 mb-1">Fecha de Estreno</label>
+                    <input
+                        type="date"
+                        id="releaseDate"
+                        [(ngModel)]="releaseDate"
+                        name="releaseDate"
+                        class="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-transparent transition-all"
+                    >
+                </div>
+            </div>
+            
+            <!-- Campo Descripción -->
+            <div class="form-group">
+                <label for="description" class="block text-xs font-medium text-neutral-300 mb-1">Descripción</label>
+                <textarea
+                    id="description"
+                    [(ngModel)]="description"
+                    name="description"
+                    class="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-transparent transition-all min-h-24 resize-none"
+                ></textarea>
+            </div>
+            
+            <!-- Campo Categorías -->
+            <div class="form-group">
+                <label class="block text-xs font-medium text-neutral-300 mb-1">Categorías</label>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mb-2">
+                    <button 
+                        *ngFor="let cat of popularCategories"
+                        type="button"
+                        class="p-2 rounded-md text-center text-xs transition-all focus:outline-none focus:ring-1 focus:ring-primary-500"
+                        [ngClass]="{'bg-primary-600 text-white': selectedCategories.includes(cat), 'bg-neutral-700 text-neutral-300': !selectedCategories.includes(cat)}"
+                        (click)="toggleCategory(cat)"
+                    >
+                        {{cat}}
+                    </button>
+                </div>
+                <!-- Búsqueda y autocompletado de categorías -->
+                <div class="relative">
+                    <p class="text-sm text-neutral-400 mb-2">Busca o crea una nueva categoría:</p>
+                    <div class="relative">
+                        <input
+                            type="text"
+                            autocomplete="off"
+                            [(ngModel)]="categorySearch"
+                            name="categorySearch"
+                            class="w-full px-4 py-3 pl-10 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                            placeholder="Buscar o crear categoría..."
+                            (input)="onCategorySearch()"
+                            (focus)="showCategorySuggestions = true"
+                            (blur)="onCategoryBlur()"
+                        >
+                        <fa-icon [icon]="faSearch" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"></fa-icon>
+                    </div>
+                    <!-- Sugerencias de categorías -->
+                    <div *ngIf="showCategorySuggestions" 
+                        class="absolute mt-1 w-full bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
+                        <div *ngFor="let cat of filteredCategories" 
+                            class="px-4 py-2 hover:bg-neutral-700 cursor-pointer transition-colors"
+                            (mousedown)="addCategory(cat)">
+                            {{cat}}
+                        </div>
+                        <div *ngIf="categorySearch && !categoryExists(categorySearch)" 
+                            class="px-4 py-2 text-primary-400 hover:bg-neutral-700 cursor-pointer transition-colors border-t border-neutral-600"
+                            (mousedown)="createAndSelectCategory(categorySearch)">
+                            <fa-icon [icon]="faPlus" class="mr-2"></fa-icon> Crear "{{categorySearch}}"
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="selectedCategories && selectedCategories.length > 0" class="mt-2">
+                    <div class="flex flex-wrap gap-1">
+                        <div *ngFor="let category of selectedCategories" class="flex items-center bg-neutral-700/50 rounded-md border border-neutral-600 px-2 py-1 text-xs">
+                            <span>{{category}}</span>
+                            <button type="button" class="text-neutral-400 hover:text-neutral-200 ml-1" (click)="removeCategory(category)">
+                                <fa-icon [icon]="faTimes" class="text-xs"></fa-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Campo Portada -->
+            <div class="form-group grid grid-cols-1 md:grid-cols-3 gap-2">
+                <div class="relative h-40 md:h-48 md:col-span-1 bg-neutral-800 rounded-md overflow-hidden border border-neutral-600 flex items-center justify-center">
+                    <div *ngIf="!imageUrl" class="text-center p-2">
+                        <fa-icon [icon]="faImage" class="text-neutral-500 text-2xl mb-1"></fa-icon>
+                        <p class="text-neutral-400 text-xs">Sin portada</p>
+                    </div>
+                    <img *ngIf="imageUrl" [src]="imageUrl" alt="Portada" class="w-full h-full object-contain">
+                    <button *ngIf="imageUrl"
+                        type="button"
+                        class="absolute top-1 right-1 bg-red-500/80 hover:bg-red-600 text-white w-6 h-6 rounded-full flex items-center justify-center transition-all"
+                        (click)="$event.stopPropagation(); removeThumbnail()">
+                        <fa-icon [icon]="faTimes" class="text-xs"></fa-icon>
+                    </button>
+                </div>
+                
+                <div class="md:col-span-2 flex flex-col gap-1">
+                    <!-- Imagen URL simplificado -->
+                    <div class="form-group">
+                        <label class="block text-xs font-medium text-neutral-300 mb-1">URL de imagen</label>
+                        <div class="flex items-center gap-2">
+                            <input
+                                type="text"
+                                [(ngModel)]="thumbnailUrl"
+                                name="thumbnailUrl"
+                                placeholder="https://ejemplo.com/imagen.jpg"
+                                class="px-3 py-2 bg-neutral-700 border border-neutral-600 text-neutral-100 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-transparent transition-all w-full"
+                            />
+                            <button
+                                type="button"
+                                class="px-2 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition"
+                                (click)="loadFromUrl()">
+                                <fa-icon [icon]="faCheck"></fa-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-xs text-neutral-400 mb-1"><fa-icon [icon]="faInfoCircle" class="mr-1"></fa-icon> Formato: 2:3 (400×600px)</p>
+                        <div>
+                            <input id="thumbnail" type="file" (change)="onThumbnailSelected($event)" accept="image/*" class="hidden" />
+                            <label for="thumbnail" class="flex items-center justify-center cursor-pointer px-3 py-2 bg-primary-600 text-white text-sm rounded-md hover:bg-primary-700 transition w-full">
+                                <fa-icon [icon]="faUpload" class="mr-1"></fa-icon> Seleccionar imagen
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Botones de acción -->
+            <div class="flex justify-end space-x-2 pt-1">
+                <button
+                    type="button"
+                    class="px-4 py-2 border border-neutral-600 text-neutral-200 text-sm rounded-md hover:bg-neutral-700 transition-colors focus:outline-none focus:ring-1 focus:ring-neutral-500"
+                    (click)="close.emit()"
+                >
+                    Cancelar
+                </button>
+                <button
+                    type="submit"
+                    class="px-4 py-2 bg-primary-600 text-white text-sm rounded-md hover:bg-primary-700 transition-colors focus:outline-none focus:ring-1 focus:ring-primary-500"
+                >
+                    Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

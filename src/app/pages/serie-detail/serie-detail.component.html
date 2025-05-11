@@ -23,32 +23,34 @@
        [ngClass]="{ 'line-clamp-3': isMobile && !showFullDescription }">
       {{ description }}
     </p>
-    <button *ngIf="  isMobile && description.length > 40"
+    <button *ngIf="isMobile && description.length > 40"
         (click)="showFullDescription = !showFullDescription" 
-        class="text-primary-500 text-sm underline hover:text-primary-400  cursor-pointer">
+        class="text-primary-500 text-sm underline hover:text-primary-400 cursor-pointer">
       {{ showFullDescription ? 'Mostrar menos' : 'Mostrar más' }}
     </button>
 
     <div class="flex items-center space-x-4 text-base text-neutral-400 mb-6">
       <span>{{ releaseDate }}</span>
-      <span *ngIf="episodes.length > 1">{{episodes.length}} episodios</span>
-      <span *ngIf="episodes.length <= 1">{{ episodes.length }} episodio</span>
+      <span *ngIf="episodes.length > 1">{{ episodes.length }} episodios</span>
+      <span *ngIf="episodes.length === 1">{{ episodes.length }} episodio</span>
+      <span *ngIf="episodes.length === 0">Sin episodios</span>
     </div>
 
     <!-- Categorias -->
-    <div class="flex items-center space-x-3 text-base mb-8">
+    <div class="flex flex-wrap items-center gap-3 mb-8">
       <ng-container *ngFor="let category of categories; let i = index">
         <ng-container *ngIf="i < 3">
           <span class="bg-neutral-700 text-neutral-200 px-3 py-1 rounded-full text-sm">
             {{ category }}
           </span>
-          <span *ngIf="i < categories.length - 1" class="text-neutral-400">|</span>
         </ng-container>
       </ng-container>
     </div>
+    
     <!-- Botones -->
     <div class="flex flex-wrap items-center gap-3 mb-8">
-      <button (click)="selectEpisode(episodes[0])" 
+      <button *ngIf="episodes.length > 0" 
+          (click)="selectEpisode(episodes[0])" 
           class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-base md:text-lg">
         <fa-icon [icon]="faPlay" class="mr-3"></fa-icon>
         Reproducir
@@ -57,7 +59,7 @@
         <button (click)="copyUrlToClipboard(); showToolTip = true; $event.stopPropagation();" 
             (mouseleave)="showToolTip = false" 
             class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-base md:text-lg">
-          <fa-icon [icon]="faShare" class="text-xl text-white mr-3 group-hover:text-primary-400"></fa-icon>
+          <fa-icon [icon]="faShare" class="mr-3 text-xl text-white group-hover:text-primary-400"></fa-icon>
           Compartir
         </button>
         <span *ngIf="showToolTip" 
@@ -67,6 +69,7 @@
         </span>
       </div>
       <button *ngIf="isAdmin" 
+          (click)="editModal = true; $event.stopPropagation()"
           class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-base md:text-lg">
         <fa-icon [icon]="faEdit" class="mr-3"></fa-icon>
         Editar
@@ -78,54 +81,58 @@
         Eliminar
       </button>
     </div>
+  </div>
 </div>
-</div>
-  <div class="mt-8 px-4 md:px-8">
-    <div class="border-b border-neutral-700 mb-6">
-      <div class="flex">
-        <button [class]="selectedView === 'episodes' ? 'border-b-2 border-primary-500 text-white' : 'text-neutral-400'" 
-                class="py-3 px-6 font-medium"
-                (click)="selectedView = 'episodes'">
-          Episodios
-        </button>
-        <button [class]="selectedView === 'related' ? 'border-b-2 border-primary-500 text-white' : 'text-neutral-400'"
-                class="py-3 px-6 font-medium"
-                (click)="selectedView = 'related'">
-          Relacionados
-        </button>
-      </div>
-    </div>
 
-    <div *ngIf="selectedView === 'episodes'">
-      <div *ngIf="episodes.length === 0" class="text-center py-8 text-neutral-400">
-        No hay episodios disponibles para esta serie.
-      </div>
-
-      <app-episode-list *ngIf="episodes.length > 0" [episodes]="episodes" [seasons]="season"
-        (episodeSelected)="selectEpisode($event)" class="mb-6">
-      </app-episode-list>
-    </div>
-
-    <div class="mb-10" *ngIf="selectedView === 'related'">
-      <div *ngIf="filterMediaByRelation().length === 0" class="text-center py-8 text-neutral-400">
-        No hay contenido relacionado disponible.
-      </div>
-      <app-media-carousel 
-        *ngIf="filterMediaByRelation().length > 0"
-        [items]="filterMediaByRelation()" 
-        [title]="'Contenido relacionado'">
-      </app-media-carousel>
+<div class="mt-8 px-4 md:px-8">
+  <div class="border-b border-neutral-700 mb-6">
+    <div class="flex">
+      <button [class]="selectedView === 'episodes' ? 'border-b-2 border-primary-500 text-white' : 'text-neutral-400'" 
+              class="py-3 px-6 font-medium"
+              (click)="selectedView = 'episodes'">
+        Episodios
+      </button>
+      <button [class]="selectedView === 'related' ? 'border-b-2 border-primary-500 text-white' : 'text-neutral-400'"
+              class="py-3 px-6 font-medium"
+              (click)="selectedView = 'related'">
+        Relacionados
+      </button>
     </div>
   </div>
+
+  <div *ngIf="selectedView === 'episodes'">
+    <div *ngIf="episodes.length === 0" class="text-center py-8 text-neutral-400">
+      No hay episodios disponibles para esta serie.
+    </div>
+
+    <app-episode-list *ngIf="episodes.length > 0" 
+      [episodes]="episodes" 
+      [seasons]="temporadas"
+      (episodeSelected)="selectEpisode($event)" 
+      class="mb-6">
+    </app-episode-list>
+  </div>
+
+  <div class="mb-10" *ngIf="selectedView === 'related'">
+    <div *ngIf="filterMediaByRelation().length === 0" class="text-center py-8 text-neutral-400">
+      No hay contenido relacionado disponible.
+    </div>
+    <app-media-carousel 
+      *ngIf="filterMediaByRelation().length > 0"
+      [items]="filterMediaByRelation()" 
+      [title]="'Contenido relacionado'">
+    </app-media-carousel>
+  </div>
+</div>
 
 <app-video-player
   #videoPlayer
   [@VideoAnimation]="showVideo ? 'visible' : 'hidden'"
   [videoUrl]="hlsUrl"
   [videoType]="'serie'"
-  [videoId]="episodes[0].id"
+  [videoId]="episodes.length > 0 ? episodes[0].id : ''"
   [videoTitle]="title"
-  [episodeInfo]="episodes[0].season + 'x' + episodes[0].episode + ' - ' + episodes[0].title"
+  [episodeInfo]="episodes.length > 0 ? episodes[0].season + 'x' + episodes[0].episode + ' - ' + episodes[0].title : ''"
   [episodes]="episodes"
   (videoClosed)="onVideoClosed()"
   [ngClass]="{ 'hidden': !showVideo && animationDone }"
@@ -140,3 +147,16 @@
   [type]="'serie'"
   (closeModal)="showDeleteModal = false"
 ></app-delete-modal>
+
+<app-edit-modal
+  *ngIf="editModal"
+  [id]="id"
+  [description]="description"
+  [imageUrl]="imageUrl"
+  [releaseDate]="releaseDate"
+  [selectedCategories]="categories"
+  [title]="title"
+  [type]="'Serie'"
+  (close)="editModal = false"
+  (save)="loadSerieData()"
+></app-edit-modal>

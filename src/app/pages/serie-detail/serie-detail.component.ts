@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { HeaderComponent } from '../../general/header/header.component';
+import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
 import { VideoPlayerComponent } from '../../general/video-player/video-player.component';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { faCheck, faEdit, faPlay, faShareAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -11,14 +10,25 @@ import { EpisodeListComponent } from "./episode-list/episode-list.component";
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MediaCarouselComponent } from '../media-gallery/media-carousel/media-carousel.component';
 import { DeleteModalComponent } from "../../general/delete-modal/delete-modal.component";
+import { EditModalComponent } from "../../general/edit-modal/edit-modal.component";
+import { HeaderComponent } from '../../general/header/header.component';
 
 @Component({
   selector: 'app-serie-detail',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, VideoPlayerComponent, MediaCarouselComponent,
-    FaIconComponent, EpisodeListComponent, FormsModule, DeleteModalComponent],
+  imports: [
+    CommonModule, 
+    HeaderComponent, 
+    VideoPlayerComponent, 
+    MediaCarouselComponent,
+    FontAwesomeModule, 
+    EpisodeListComponent, 
+    FormsModule, 
+    DeleteModalComponent, 
+    EditModalComponent
+  ],
   templateUrl: './serie-detail.component.html',
-  styleUrl: './serie-detail.component.css',
+  styleUrls: ['./serie-detail.component.css'],
   animations: [
     trigger('VideoAnimation', [
       state('hidden', style({
@@ -58,11 +68,14 @@ export class SerieDetailComponent implements OnInit {
   showFullDescription: boolean = false;
   showToolTip: boolean = false;
   showDeleteModal: boolean = false;
+  editModal: boolean = false;
   isAdmin: boolean = false;
   hlsUrl: string = '';
   videoTitle: string = '';
   videoDescription: string = '';
+  
   @ViewChild('videoPlayer') videoPlayer!: VideoPlayerComponent;
+  
   // Iconos
   faPlay = faPlay;
   faTrash = faTrash;
@@ -70,7 +83,11 @@ export class SerieDetailComponent implements OnInit {
   faCheck = faCheck;
   faShare = faShareAlt;
   
-  constructor(private route: ActivatedRoute, private auth: AuthService, private router: Router) {
+  constructor(private route: ActivatedRoute, private auth: AuthService, private router: Router) {}
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.isMobile = window.innerWidth < 700;
   }
 
   async ngOnInit(): Promise<void> {
@@ -82,6 +99,7 @@ export class SerieDetailComponent implements OnInit {
     this.auth.isAdmin().then((isAdmin) => {
       this.isAdmin = isAdmin;
     });
+    
     try {
       const data = await this.auth.getVideos();
       if (data) {
@@ -111,7 +129,7 @@ export class SerieDetailComponent implements OnInit {
         if (data.episodios && Array.isArray(data.episodios)) {
           this.episodes = data.episodios.map((ep: any) => {
             return {
-              ...ep,
+              id: ep.id || '',
               season: ep.temporada || 1,
               temporada: ep.temporada || 1, 
               episode: ep.numero || 0,
@@ -128,10 +146,13 @@ export class SerieDetailComponent implements OnInit {
               video: ep.video || '' 
             };
           });
+          
+          if (this.episodes.length > 0) {
+            this.hlsUrl = this.episodes[0].video || this.episodes[0].videoUrl || '';
+          }
         } else {
           this.episodes = [];
         }
-        
       }
     } catch (error) {
       console.error('Error loading serie:', error);
@@ -175,24 +196,29 @@ export class SerieDetailComponent implements OnInit {
       return;
     }
     console.log('Selected episode:', episode);
-    this.videoPlayer.videoUrl = episode.video || episode.videoUrl;
-    this.videoPlayer.videoId = episode.id || episode.id;
-    this.videoPlayer.videoTitle = episode.titulo || episode.title || 'No Title';
-    this.videoPlayer.episodeInfo = `${episode.season || ''}x${episode.episode || ''}`;
-  
-    this.videoPlayer.reloadVideo();
+    
+    this.hlsUrl = episode.video || episode.videoUrl;
+    
+    // Si el reproductor ya está inicializado, actualizamos sus propiedades
+    if (this.videoPlayer) {
+      this.videoPlayer.videoUrl = episode.video || episode.videoUrl;
+      this.videoPlayer.videoId = episode.id;
+      this.videoPlayer.videoTitle = this.title;
+      this.videoPlayer.episodeInfo = `${episode.season || episode.temporada}x${episode.episode || episode.numero} - ${episode.title || episode.titulo}`;
+      this.videoPlayer.reloadVideo();
+    }
+    
     this.showVideo = true;
   }
   
-  onVideoClosed() {
+  onVideoClosed(): void {
     this.showVideo = false;
     this.animationDone = false;
   }
   
-  onAnimationDone() {
+  onAnimationDone(): void {
     if (!this.showVideo) {
       this.animationDone = true;
     }
   }
-  
 }
