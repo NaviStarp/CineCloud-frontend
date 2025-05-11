@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/cine-cloud",
+            "outputPath": "dist/CineCloud-frontend",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -48,6 +48,8 @@
                   "maximumError": "8kB"
                 }
               ],
+              "baseHref": "/CineCloud-frontend/",
+              "deployUrl": "/CineCloud-frontend/",
               "outputHashing": "all"
             },
             "development": {
@@ -98,6 +100,9 @@
             ],
             "scripts": []
           }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy"
         }
       }
     }
