@@ -21,6 +21,14 @@
       ></app-video-card>
       
       </div>
+      <div *ngIf="videos.length > 0" class="flex items-center justify-between mt-4">
+        <label class="flex items-center cursor-pointer">
+          <input type="checkbox" [(ngModel)]="isQualityRescaleEnabled" (change)="toggleQualityRescale()" class="hidden" />
+          <span class="bg-neutral-700 text-neutral-200 px-3 py-1 rounded-full text-sm">Rescalado de calidad</span>
+          <span class="ml-2 text-neutral-500">{{ isQualityRescaleEnabled ? 'Activado' : 'Desactivado' }}</span>
+        </label>
+        </div>
+      <!-- Botón de subir videos -->
       <div *ngIf="videos.length > 0" class="flex justify-center mt-4">
         <button (click)="uploadVideos($event)" class="px-8 py-4 bg-gradient-to-r from-primary-500 to-primary-700 text-white rounded-full hover:from-primary-600 hover:to-primary-800 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-400 transform hover:scale-105">
           <div class="flex items-center space-x-2">

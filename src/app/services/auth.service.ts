@@ -153,10 +153,11 @@ export class AuthService {
   public getHLSUrl(url: string) {
     return `${this.getServerUrl()}${url}/playlist.m3u8`;
   }
-  public async uploadVideos(videos: VideoEntry[]) {
+  public async uploadVideos(videos: VideoEntry[],rescale:boolean = false): Promise<any> {
     const formData = new FormData();
 
     videos.forEach((video, index) => {
+      formData.append('rescale', rescale.toString());
       formData.append(`videos[${index}][name]`, video.name);
       formData.append(`videos[${index}][description]`, video.description || '');
       formData.append(`videos[${index}][categorias]`, JSON.stringify(video.categories || []));

@@ -43,7 +43,7 @@ export class MediaFormComponent implements OnInit, AfterViewInit {
   isError: boolean = false;
   isWarning: boolean = false;
   isSuccess: boolean = false;
-  
+  isQualityRescaleEnabled: boolean = true;
 
 
   constructor(private indexedDbService: IndexedDbService, private router: Router,private auth:AuthService) { }
@@ -65,6 +65,9 @@ export class MediaFormComponent implements OnInit, AfterViewInit {
         }
       });
     } 
+  }
+  toggleQualityRescale() {
+    this.isQualityRescaleEnabled = !this.isQualityRescaleEnabled;
   }
 
   async loadVideos() {
@@ -204,7 +207,7 @@ export class MediaFormComponent implements OnInit, AfterViewInit {
         console.log('Duración del video:', video.duration);
       }
       
-      await this.auth.uploadVideos(this.videos);
+      await this.auth.uploadVideos(this.videos,this.isQualityRescaleEnabled);
       
       socket.close();
       
