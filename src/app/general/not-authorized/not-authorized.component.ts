@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-not-authorized',
@@ -7,10 +8,10 @@ import { Component } from '@angular/core';
   styleUrl: './not-authorized.component.css'
 })
 export class NotAuthorizedComponent {
-
+  constructor(private router: Router) {}
   volver() {
     console.log('Volver a la página principal');
-    window.location.href = '/';
+    this.router.navigate(['/']);
   }
 
 }

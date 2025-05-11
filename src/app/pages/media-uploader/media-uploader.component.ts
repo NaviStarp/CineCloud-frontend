@@ -6,10 +6,11 @@ import { ModalErrorComponent } from "../../general/modal-error/modal-error.compo
 import { IndexedDbService } from '../../services/indexed-db.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { HeaderComponent } from '../../general/header/header.component';
+import { Router, RouterLink } from '@angular/router';
 @Component({
   selector: 'app-media-uploader',
   standalone: true,
-  imports: [CommonModule, FontAwesomeModule, ModalErrorComponent,HeaderComponent],
+  imports: [CommonModule, FontAwesomeModule, ModalErrorComponent,HeaderComponent,RouterLink],
   templateUrl: './media-uploader.component.html',
   styleUrls: ['./media-uploader.component.css'],
   animations: [
@@ -30,7 +31,7 @@ export class MediaUploaderComponent {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   @ViewChild('fileInfo') fileInfo!: ElementRef<HTMLDivElement>;
 
-  constructor(private indexedDbService: IndexedDbService) {}
+  constructor(private indexedDbService: IndexedDbService,private router:Router) {}
   
   selectedFiles: File[] = [];
   modalAbierta = false;
@@ -132,7 +133,7 @@ export class MediaUploaderComponent {
   
       Promise.all(savePromises).then(() => {
         console.log('Todos los videos fueron guardados');
-        window.location.href = '/subir/2';
+        this.router.navigate(['/subir/2']);
       });
   
     } else {

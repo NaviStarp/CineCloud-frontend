@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormControl } 
 import { HeaderComponent } from '../login-signup/header/header.component';
 import { SignupFormComponent } from '../login-signup/signup-form/signup-form.component';
 import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
@@ -17,7 +18,7 @@ export class SignupComponent {
   isLoading = false;
   errorMessage = '';
 
-  constructor(private auth: AuthService, private fb: FormBuilder) {
+  constructor(private auth: AuthService, private fb: FormBuilder,private router: Router) {
     this.registerForm = this.fb.group({
       username: new FormControl('', [Validators.required, Validators.minLength(4)]),
       password: new FormControl('', [Validators.required, Validators.minLength(2)]),
@@ -69,7 +70,7 @@ export class SignupComponent {
       }
       // Finalmente, después de recibir la respuesta, se establece isLoading en false
       this.isLoading = false;
-      window.location.href = '/';
+      this.router.navigate(['/']);
     }).catch((error: SignupError) => {
       // Si hay un error, también se establece isLoading en false
       console.error('Error durante el inicio de sesión:', error);

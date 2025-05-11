@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCheck, faFilm, faHome, faPlus, faSpinner, faTv } from '@fortawesome/free-solid-svg-icons';
 import { IndexedDbService } from '../../services/indexed-db.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { VideoEntry } from '../../services/indexed-db.service';
 import { AuthService, Series } from '../../services/auth.service';
 import { ProgressBarComponent } from '../../general/progress-bar/progress-bar.component';
@@ -18,7 +18,8 @@ import { VideoCardComponent } from '../../video-card/video-card.component';
     CommonModule,
     FormsModule,
     VideoCardComponent,
-    ProgressBarComponent
+    ProgressBarComponent,
+    RouterLink
   ],
   templateUrl: './media-form.component.html',
   styleUrls: ['./media-form.component.css']

@@ -81,7 +81,7 @@ export class ServerConfigComponent {
                 clearInterval(countdownInterval);
                 localStorage.setItem('serverIp', serverUrl);
                 localStorage.setItem('serverPort', serverPort);
-                window.location.href = '/login';
+                this.router.navigate(['/login']);
               } else {
                 this.redirectMessage = `Redirigiendo al panel principal en ${count} segundos...`;
               }

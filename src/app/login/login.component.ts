@@ -7,6 +7,7 @@ import { LoginFormComponent } from '../login-signup/login-form/login-form.compon
 import { Inject, PLATFORM_ID } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { env } from 'process';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -20,7 +21,7 @@ export class LoginComponent implements OnInit {
   isLoading = false;
   errorMessage = '';
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object,private auth: AuthService, private fb: FormBuilder) {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object,private auth: AuthService, private fb: FormBuilder,private router:Router) {
     this.loginForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(4)]],
       password: ['', [Validators.required, Validators.minLength(2)]],
@@ -33,19 +34,19 @@ export class LoginComponent implements OnInit {
       
       if(!serverPort || !serverUrl){
         console.log('No se encontro el servidor asdsas',serverPort,serverUrl);
-        window.location.href = '/server/config';
+        this.router.navigate(['/server/config']);
         return;
       }
       this.auth.testServer(serverUrl, serverPort).then((res: any) => {
       if(!res){
         alert('No se pudo conectar al servidor');
-        window.location.href = '/server/config';
+        this.router.navigate(['/server/config']);
       }
       });
     }
     this.auth.loggedIn().then((res: any) => {
       if (res) {
-        window.location.href = '/';
+        this.router.navigate(['/']);
       }
     }
     );
@@ -87,7 +88,7 @@ export class LoginComponent implements OnInit {
         }
         // Finalmente, después de recibir la respuesta, se establece isLoading en false
         this.isLoading = false;
-        window.location.href = '/';
+        this.router.navigate(['/']);
       }else{
         this.errorMessage = "Usuario o contraseña incorrectos";
         this.isLoading = false;
