@@ -21,11 +21,11 @@
       <!-- Navegación principal (desktop) -->
       <div class="hidden md:block">
         <div class="flex items-center space-x-6">
-          <a href="/" class="text-neutral-200 hover:text-primary-500 transition-colors">Inicio</a>
-          <a href="/peliculas" class="text-neutral-200 hover:text-primary-500 transition-colors">Películas</a>
-          <a href="/series" class="text-neutral-200 hover:text-primary-500 transition-colors">Series</a>
+          <a routerLink="/" class="text-neutral-200 hover:text-primary-500 transition-colors">Inicio</a>
+          <a routerLink="/peliculas" class="text-neutral-200 hover:text-primary-500 transition-colors">Películas</a>
+          <a routerLink="/series" class="text-neutral-200 hover:text-primary-500 transition-colors">Series</a>
           <ng-container *ngIf="mostrarBotonSubir">
-            <a href="/subir" class="text-neutral-200 hover:text-primary-500 transition-colors">Subir</a>
+            <a routerLink="/subir" class="text-neutral-200 hover:text-primary-500 transition-colors">Subir</a>
           </ng-container>
         </div>
       </div>
@@ -56,11 +56,11 @@
 <!-- Menú móvil -->
 <div *ngIf="mobileMenuVisible" class="fixed w-full bg-neutral-900 z-40 shadow-lg transition-all duration-300" [ngStyle]="{'top': (!scroll && categorias.length > 0) ? '64px' : '48px'}">
   <div class="py-3 px-4 border-b border-neutral-700">
-    <a href="/" class="block py-2 text-neutral-200 hover:text-primary-500 transition-colors">Inicio</a>
-    <a href="/peliculas" class="block py-2 text-neutral-200 hover:text-primary-500 transition-colors">Películas</a>
-    <a href="/series" class="block py-2 text-neutral-200 hover:text-primary-500 transition-colors">Series</a>
+    <a routerLink="/" class="block py-2 text-neutral-200 hover:text-primary-500 transition-colors">Inicio</a>
+    <a routerLink="/peliculas" class="block py-2 text-neutral-200 hover:text-primary-500 transition-colors">Películas</a>
+    <a routerLink="/series" class="block py-2 text-neutral-200 hover:text-primary-500 transition-colors">Series</a>
     <ng-container *ngIf="mostrarBotonSubir">
-      <a href="/subir" class="block py-2 text-neutral-200 hover:text-primary-500 transition-colors">Subir</a>
+      <a routerLink="/subir" class="block py-2 text-neutral-200 hover:text-primary-500 transition-colors">Subir</a>
     </ng-container>
   </div>
 </div>

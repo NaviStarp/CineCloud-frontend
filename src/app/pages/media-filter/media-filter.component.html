@@ -23,7 +23,7 @@
         <!-- Contenedor de cartas -->
         <div class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
           <ng-container *ngFor="let mediaItem of mediaFiltrada">
-            <a href="/{{mediaItem.type}}/{{mediaItem.id}}" class="block transition-transform duration-200 hover:scale-105">
+            <a routerLink="/{{mediaItem.type}}/{{mediaItem.id}}" class="block transition-transform duration-200 hover:scale-105">
               <app-media-card
                 [id]="mediaItem.id"
                 [title]="mediaItem.titulo"

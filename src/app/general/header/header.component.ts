@@ -3,11 +3,12 @@ import { Component, EventEmitter, HostListener, Injectable, Input, OnInit, Outpu
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faBars, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { AuthService } from '../../services/auth.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'media-header',
   standalone: true,
-  imports: [FaIconComponent, CommonModule],
+  imports: [FaIconComponent, CommonModule,RouterLink],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })

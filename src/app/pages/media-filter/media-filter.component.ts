@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { HeaderComponent } from "../../general/header/header.component";
 import { MediaCardComponent } from "../media-gallery/media-card/media-card.component";
@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-media-filter',
-  imports: [HeaderComponent, MediaCardComponent, CommonModule],
+  imports: [HeaderComponent, MediaCardComponent, CommonModule,RouterLink],
   templateUrl: './media-filter.component.html',
   styleUrl: './media-filter.component.css'
 })

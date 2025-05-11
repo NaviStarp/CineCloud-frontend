@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-delete-modal',
@@ -22,7 +23,7 @@ export class DeleteModalComponent {
   name: string = '';
   faExclamationTriangle = faExclamationTriangle;
 
-  constructor(private auth:AuthService) { }
+  constructor(private auth:AuthService,private router:Router) { }
 
   close() {
     this.closeModal.emit();
@@ -43,7 +44,7 @@ export class DeleteModalComponent {
     this.auth.deleteMovie(this.id).then((res) => {
       if (res) {
         this.close();
-        window.location.href = '/';
+        this.router.navigate(['/']);
       }
     }).catch((err) => {
       console.error(err);
@@ -55,7 +56,7 @@ export class DeleteModalComponent {
     this.auth.deleteSeries(this.id).then((res) => {
       if (res) {
         this.close();
-        window.location.href = '/';
+        this.router.navigate(['/']);
       }
     }).catch((err) => {
       console.error(err);

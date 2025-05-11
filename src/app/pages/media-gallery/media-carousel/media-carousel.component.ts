@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { MediaCardComponent } from '../media-card/media-card.component';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-media-carousel',
-  imports: [CommonModule, MediaCardComponent,RouterModule],
+  imports: [CommonModule, MediaCardComponent,RouterModule,RouterLink],
   templateUrl: './media-carousel.component.html',
   styleUrl: './media-carousel.component.css'
 })
