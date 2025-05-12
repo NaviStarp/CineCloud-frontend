@@ -27,6 +27,14 @@ export interface Episode {
   descripcion: string;
   imagen: string;
 }
+export interface EditMedia {
+  id: string;
+  titulo: string;
+  descripcion: string;
+  fecha_estreno: string;
+  categorias: string[];
+  imagen: string;
+}
 
 export interface Series {
   id: number;
@@ -393,6 +401,12 @@ export class AuthService {
     return movies;
   }
   public async getThumnailUrl(url: string) {
+    if(!this.getToken() || this.getServerUrl() === '') {
+      return '';
+    }
+    if(!url || url === '') {
+      return '';
+    }
     const response = await fetch(`${this.getServerUrl()}/get-signed-url/${url}`, {
       method: 'GET',
     }).then(res => res.json());
@@ -588,6 +602,109 @@ export class AuthService {
       }
     });
     return response.ok;
+  }
+  public async editMovie(movie: EditMedia): Promise<any> {
+    if (!this.getToken() || this.getServerUrl() === '') {
+      return false;
+    }
+    
+    const formData = new FormData();
+    formData.append('titulo', movie.titulo);
+    formData.append('descripcion', movie.descripcion);
+    formData.append('fecha_estreno', movie.fecha_estreno);
+    formData.append('categorias', JSON.stringify(movie.categorias));
+
+    if (typeof movie.imagen === 'string' && movie.imagen.startsWith('data:image')) {
+      const parts = movie.imagen.split(';base64,');
+      const imageType = parts[0].split(':')[1];
+      const byteString = atob(parts[1]);
+      const arrayBuffer = new ArrayBuffer(byteString.length);
+      const uint8Array = new Uint8Array(arrayBuffer);
+
+      for (let i = 0; i < byteString.length; i++) {
+        uint8Array[i] = byteString.charCodeAt(i);
+      }
+
+      const blob = new Blob([uint8Array], { type: imageType });
+      formData.append('imagen', blob, `${movie.titulo.replace(/\s+/g, '-')}-thumbnail.jpg`);
+    }
+
+    try {
+      const token = this.getToken();
+      if (!token) {
+        throw new Error('No se encontró el token de autenticación');
+      }
+
+      const response = await fetch(`${this.getServerUrl()}/movies/edit/${movie.id}/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Token ${token}`
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => response.text());
+        throw new Error(typeof errorData === 'string' ? errorData : JSON.stringify(errorData));
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.log(error)
+      throw error;
+    }
+  }
+
+  public async editSeries(series: EditMedia): Promise<any> {
+    if (!this.getToken() || this.getServerUrl() === '') {
+      return false;
+    }
+    const formData = new FormData();
+    formData.append('titulo', series.titulo);
+    formData.append('descripcion', series.descripcion);
+    formData.append('fecha_estreno', series.fecha_estreno);
+    formData.append('categorias', JSON.stringify(series.categorias));
+
+    if (series.imagen && typeof series.imagen === 'string' && series.imagen.startsWith('data:image')) {
+      const parts = series.imagen.split(';base64,');
+      const imageType = parts[0].split(':')[1];
+      const byteString = atob(parts[1]);
+      const arrayBuffer = new ArrayBuffer(byteString.length);
+      const uint8Array = new Uint8Array(arrayBuffer);
+
+      for (let i = 0; i < byteString.length; i++) {
+      uint8Array[i] = byteString.charCodeAt(i);
+      }
+
+      const blob = new Blob([uint8Array], { type: imageType });
+      formData.append('imagen', blob, `${series.titulo.replace(/\s+/g, '-')}-thumbnail.jpg`);
+    } else {
+      console.warn('No se proporcionó una imagen válida para la serie.');
+    }
+
+    try {
+      const token = this.getToken();
+      if (!token) {
+        throw new Error('No se encontró el token de autenticación');
+      }
+
+      const response = await fetch(`${this.getServerUrl()}/series/edit/${series.id}/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Token ${token}`
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => response.text());
+        throw new Error(typeof errorData === 'string' ? errorData : JSON.stringify(errorData));
+      }
+
+      return await response.json();
+    } catch (error) {
+      throw error;
+    }
   }
 
 

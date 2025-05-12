@@ -9,10 +9,11 @@ import { faCheck, faEdit, faPlay, faShareAlt, faTrash } from '@fortawesome/free-
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { DeleteModalComponent } from "../../general/delete-modal/delete-modal.component";
+import { EditModalComponent } from "../../general/edit-modal/edit-modal.component";
 
 @Component({
   selector: 'app-movie-detail',
-  imports: [CommonModule, HeaderComponent, VideoPlayerComponent, MediaCarouselComponent, FaIconComponent, DeleteModalComponent],
+  imports: [CommonModule, HeaderComponent, VideoPlayerComponent, MediaCarouselComponent, FaIconComponent, DeleteModalComponent, EditModalComponent],
   templateUrl: './movie-detail.component.html',
   styleUrls: ['./movie-detail.component.css'],
   animations: [
@@ -51,6 +52,7 @@ export class MovieDetailComponent implements OnInit {
   loading: boolean = true;
   showToolTip: boolean = false;
   showDeleteModal: boolean = false;
+  showEditModal: boolean = false;
   selectedView: string = 'description';
   animationDone: boolean = false;
   isAdmin: boolean = false;

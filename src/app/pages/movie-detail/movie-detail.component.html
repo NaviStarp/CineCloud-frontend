@@ -60,6 +60,7 @@
     </span>
   </div>
   <button *ngIf="isAdmin" 
+      (click)="showEditModal = true"
       class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-base md:text-lg">
     <fa-icon [icon]="faEdit" class="mr-3"></fa-icon>
     Editar
@@ -134,3 +135,15 @@
   [type]="'pelicula'"
   (closeModal)="showDeleteModal = false"
   ></app-delete-modal>
+
+<app-edit-modal
+  *ngIf="showEditModal"
+  [id]="id"
+  [title]="title"
+  [description]="description"
+  [releaseDate]="releaseDate"
+  [imageUrl]="imageUrl"
+  [selectedCategories]="categories"
+  [type]="'pelicula'"
+  (close)="showEditModal = false"
+  ></app-edit-modal>
