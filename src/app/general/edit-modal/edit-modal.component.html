@@ -10,8 +10,8 @@
     >
         <!-- Encabezado con botón de cerrar -->
         <div class="flex justify-between items-center mb-3">
-            <h2 *ngIf="type === 'Serie'" class="text-lg font-semibold text-neutral-100">Editar Serie</h2>
-            <h2 *ngIf="type === 'Pelicula'" class="text-lg font-semibold text-neutral-100">Editar Película</h2>
+            <h2 *ngIf="type === 'serie'" class="text-lg font-semibold text-neutral-100">Editar Serie</h2>
+            <h2 *ngIf="type === 'pelicula'" class="text-lg font-semibold text-neutral-100">Editar Película</h2>
             <button
                 type="button"
                 class="text-neutral-400 hover:text-neutral-200 p-1.5 rounded-full hover:bg-neutral-700/50 transition-colors"
@@ -138,7 +138,7 @@
                     </button>
                 </div>
                 
-                <div class="md:col-span-2 flex flex-col gap-1">
+                <div class="md:col-span-2 flex flex-col justify-center gap-3">
                     <!-- Imagen URL simplificado -->
                     <div class="form-group">
                         <label class="block text-xs font-medium text-neutral-300 mb-1">URL de imagen</label>
