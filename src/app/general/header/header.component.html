@@ -25,6 +25,9 @@
           <a routerLink="/peliculas" class="text-neutral-200 hover:text-primary-500 transition-colors">Películas</a>
           <a routerLink="/series" class="text-neutral-200 hover:text-primary-500 transition-colors">Series</a>
           <ng-container *ngIf="mostrarBotonSubir">
+            <a routerLink="/gestion" class="text-neutral-200 hover:text-primary-500 transition-colors">Gestionar</a>
+          </ng-container>
+          <ng-container *ngIf="mostrarBotonSubir">
             <a routerLink="/subir" class="text-neutral-200 hover:text-primary-500 transition-colors">Subir</a>
           </ng-container>
         </div>
@@ -59,6 +62,9 @@
     <a routerLink="/" class="block py-2 text-neutral-200 hover:text-primary-500 transition-colors">Inicio</a>
     <a routerLink="/peliculas" class="block py-2 text-neutral-200 hover:text-primary-500 transition-colors">Películas</a>
     <a routerLink="/series" class="block py-2 text-neutral-200 hover:text-primary-500 transition-colors">Series</a>
+    <ng-container *ngIf="mostrarBotonSubir">
+      <a routerLink="/gestion" class="text-neutral-200 hover:text-primary-500 transition-colors">Gestionar</a>
+    </ng-container>
     <ng-container *ngIf="mostrarBotonSubir">
       <a routerLink="/subir" class="block py-2 text-neutral-200 hover:text-primary-500 transition-colors">Subir</a>
     </ng-container>

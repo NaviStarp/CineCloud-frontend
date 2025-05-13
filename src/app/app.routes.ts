@@ -13,6 +13,7 @@ import { ServerConfigComponent } from './pages/server-config/server-config.compo
 import { MediaGalleryComponent } from './pages/media-gallery/media-gallery.component';
 import { MovieDetailComponent } from './pages/movie-detail/movie-detail.component';
 import { SerieDetailComponent } from './pages/serie-detail/serie-detail.component';
+import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 export const routes: Routes = [
     { 
         path: 'subir', 
@@ -31,6 +32,7 @@ export const routes: Routes = [
     { path: 'server/config', component: ServerConfigComponent ,data: { animation: 'default' }},
     { path: 'prueba', component: MediaListComponent, canActivate: [authGuard],data: { animation: 'default' } },
     { path: '', component: MediaGalleryComponent, canActivate: [authGuard],data: { animation: 'default' } },
+    { path:'gestion', component: AdminPageComponent, canActivate: [adminGuard],data: { animation: 'default' } },
     { 
         path: 'peliculas', 
         component: MediaFilterComponent, 

@@ -14,7 +14,13 @@ export interface MediaResponse {
   series: any[];
   episodios: any[];
 }
-
+export interface Category {
+  id: number;
+  icono: string | null;
+  nombre: string;
+  descripcion: string | null;
+  cantidad: number;
+}
 export interface VideoProgress {
   videoId: string;
   progress: number;
@@ -230,6 +236,20 @@ export class AuthService {
     });
     const categorias = await response.json();
     return categorias.map((categoria: any) => categoria.nombre);
+  }
+
+  public async getCategoriesFull(): Promise<Category[]> {
+    if (!this.getToken() || this.getServerUrl() === '') {
+      return [];
+    }
+    const response = await fetch(`${this.getServerUrl()}/categories/`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${this.getToken()}`
+      }
+    });
+    const categorias = await response.json();
+    return categorias;
   }
   public async createSeries(series: Series) {
     const formData = new FormData();
@@ -705,6 +725,19 @@ export class AuthService {
     } catch (error) {
       throw error;
     }
+  }
+
+  public async getAdministrators(): Promise<any[]> {
+    if (!this.getToken() || this.getServerUrl() === '') {
+      return [];
+    }
+    const response = await fetch(`${this.getServerUrl()}/administrators/get`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${this.getToken()}`
+      }
+    });
+    return response.json();
   }
 
 

@@ -33,8 +33,8 @@
 <!-- Skeleton Loader -->
 <app-skeleton-loader *ngIf="loading" [itemWidth]="200"></app-skeleton-loader>
 
-<!-- Contenedor principal (sólo visible cuando no está cargando) -->
-<div *ngIf="!loading" class="container mx-auto px-4 py-8">
+<!-- Contenedor principal (sólo visible cuando no está cargando y cuando hay alguna pelicula o serie) -->
+<div *ngIf=" (filteredPeliculas.length !== 0 || filteredSeries.length !== 0)&& !loading"   class="container mx-auto px-4 py-8">
   <div class="space-y-10">
     <!-- Sección de Todos/Resultados -->
     <div class="bg-gradient-to-b from-neutral-800 to-neutral-900 rounded-xl shadow-lg">
