@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { HeaderComponent } from '../../general/header/header.component';
-import { AuthService, Category } from '../../services/auth.service';
+import { AuthService, Category, User } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { 
@@ -55,7 +55,8 @@ export class AdminPageComponent {
   faTimes = faTimes;
   faExclamationTriangle = faExclamationTriangle;
   faCheckCircle = faCheckCircle;
-
+  itemToDelete: { type: 'admin' | 'category', id: string } | null = null;
+  showModalConfirmar: boolean = false;
   constructor(private auth: AuthService) {
     this.loadData();
   }
@@ -66,12 +67,14 @@ export class AdminPageComponent {
     }).catch((err) => {
       console.log(err);
     }); 
+    this.categories=this.categories.sort((a, b) => a.nombre.localeCompare(b.nombre));
 
     this.auth.getAdministrators().then((res) => {
       this.administrators = res;
     }).catch((err) => {
       console.log(err);
     });
+   this.administrators=this.administrators.sort((a, b) => a.username.localeCompare(b.username));
   }
 
   // Modal methods
@@ -85,41 +88,126 @@ export class AdminPageComponent {
     this.showModal = false;
   }
 
+  openConfirmModal(type: 'admin' | 'category', id: string) {
+    this.itemToDelete = { type, id };
+    this.showModalConfirmar = true;
+  }
+
+  confirmDelete() {
+    if (!this.itemToDelete) return;
+
+    if (this.itemToDelete.type === 'admin') {
+      this.deleteAdmin(this.itemToDelete.id);
+    } else {
+      this.deleteCategory(this.itemToDelete.id);
+    }
+
+    this.showModalConfirmar = false;
+    this.itemToDelete = null;
+  }
+
   // Admin methods
-  handleAdmin(form: any) {
+  handleAdmin(event: Event) {
+    event.preventDefault();
+    const form = event.target as HTMLFormElement;
+    const formData = new FormData(form);
+    const adminData :User= {
+      username: formData.get('nombre') as string,
+      password: formData.get('contraseña') as string,
+    }
+
     if(this.editId === ''){
-      this.addAdmin(form);
+      this.addAdmin(adminData);
     }else{
-      this.editAdmin(this.editId);
+      this.editAdmin(adminData);
     }
   }
-  addAdmin(form: any) {
-    console.log('Adding admin:', form);
+  addAdmin(data : User) {
+    this.auth.createAdmin(data).then((res) => {
+      console.log('Admin added successfully:', res);
+      this.loadData();
+    }
+    ).catch((err) => {
+      console.error('Error adding admin:', err);
+    }
+    );
     this.closeModal();
   }
 
-  editAdmin(adminId: string) {
-    // Implement edit admin logic
-    console.log('Editing admin:', adminId);
+  editAdmin(data:  User) {
+    try {
+      this.auth.editUser(data, this.editId).then((res) => {
+        console.log('Admin edited successfully:', res);
+        this.loadData(); 
+      }
+      ).catch((err) => {
+        console.error('Error editing admin:', err);
+      }
+      );
+    }
+    catch (error) {
+      console.error('Error editing admin:', error);
+    }
+
     this.closeModal();
   }
 
   deleteAdmin(adminId: string) {
-    console.log('Deleting admin:', adminId);
+    this.auth.deleteUser(adminId).then((res) => { 
+      console.log('Admin deleted successfully:', res);
+      this.loadData();
+    }).catch((err) => {
+      console.error('Error deleting admin:', err);
+    });
   }
 
   // Funciones de categoria
-  addCategory(form: any) {
-    console.log('Adding category:', form);
+    handleCategory(event: Event) {
+      event.preventDefault();
+      const form = event.target as HTMLFormElement;
+      const formData = new FormData(form);
+      const categoryData = {
+        nombre: formData.get('nombre') as string,
+      }
+      if (this.editId) {
+        this.editCategory(categoryData.nombre);
+      } else {
+        this.addCategory(categoryData.nombre);
+      }
+  }
+  addCategory(category: string) {
+    this.auth.createCategory(category).then((res) => {
+      console.log('Category added successfully:', res);
+      this.loadData();
+    }).catch((err) => {
+      console.error('Error adding category:', err);
+    });
     this.closeModal();
   }
 
-  editCategory() {
-    console.log('Editing category:', this.editId);
-    this.openModal('editCategory');
+  editCategory(category:string) {
+    try {
+      this.auth.editCategory(this.editId,category).then((res) => {
+        console.log('Category edited successfully:', res);
+        this.loadData(); 
+      }
+      ).catch((err) => {
+        console.error('Error editing category:', err);
+      }
+      );
+    }catch (error) {
+      console.error('Error editing category:', error);
+    }
+    this.closeModal();
   }
 
-  deleteCategory() {
-    console.log('Deleting category:', this.editId);
+  deleteCategory(id: string) {
+    this.auth.deleteCategory(id).then((res) => {  
+      console.log('Category deleted successfully:', res);
+      this.loadData();
+    }
+    ).catch((err) => {
+      console.error('Error deleting category:', err);
+    });
   }
 }

@@ -740,5 +740,94 @@ export class AuthService {
     return response.json();
   }
 
-
+  public async editUser(user: User, id: string): Promise<any> {
+    if (!this.getToken() || this.getServerUrl() === '') {
+      return false;
+    }
+    const formData = new FormData();
+    formData.append('password', user.password);
+    try {
+      const response = await fetch(`${this.getServerUrl()}/users/edit/${id}/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Token ${this.getToken()}`
+        },
+        body: formData
+      });
+      return response.ok;
+    } catch (error) {
+      throw error;
+    }
+  }
+  public async editCategory(id: string, name: string): Promise<any> {
+    if (!this.getToken() || this.getServerUrl() === '') {
+      return false;
+    }
+    const formData = new FormData();
+    formData.append('nombre', name);
+    try {
+      const response = await fetch(`${this.getServerUrl()}/categories/edit/${id}/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Token ${this.getToken()}`
+        },
+        body: formData
+      });
+      return response.ok;
+    } catch (error) {
+      throw error;
+    }
+  }
+  public async deleteCategory(id: string): Promise<any> {
+    if (!this.getToken() || this.getServerUrl() === '') {
+      return false;
+    }
+    try {
+      const response = await fetch(`${this.getServerUrl()}/categories/delete/${id}/`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Token ${this.getToken()}`
+        }
+      });
+      return response.ok;
+    } catch (error) {
+      throw error;
+    }
+  }
+  public async deleteUser(id: string): Promise<any> {
+    if (!this.getToken() || this.getServerUrl() === '') {
+      return false;
+    }
+    try {
+      const response = await fetch(`${this.getServerUrl()}/users/delete/${id}/`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Token ${this.getToken()}`
+        }
+      });
+      return response.ok;
+    } catch (error) {
+      throw error;
+    }
+  }
+  public async createAdmin(user: User): Promise<any> {
+    if (!this.getToken() || this.getServerUrl() === '') {
+      return false;
+    }
+    const formData = new FormData();
+    formData.append('username', user.username);
+    formData.append('password', user.password);
+    try {
+      const response = await fetch(`${this.getServerUrl()}/administrators/new/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Token ${this.getToken()}`
+        },
+        body: formData
+      });
+      return response.ok;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

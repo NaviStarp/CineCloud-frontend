@@ -91,6 +91,7 @@
             <fa-icon [icon]="faKey" class="mr-1"></fa-icon> Cambiar contraseña
           </button>
           <button 
+            (click)="openConfirmModal('admin', admin.id)"
             class="flex-1 text-xs py-1 bg-red-500 text-white rounded hover:bg-red-400 transition-colors flex items-center justify-center"
           >
             <fa-icon [icon]="faTrash" class="mr-1"></fa-icon> Eliminar
@@ -154,12 +155,13 @@
         </div>
         <div class="flex space-x-2">
           <button 
-            (click)="openModal('editCategory')"
+            (click)="openModal('editCategory', category.id.toString())"
             class="text-xs px-2 py-1 bg-primary-500 text-white rounded hover:bg-primary-400 transition-colors"
           >
             <fa-icon [icon]="faEdit" class="mr-1"></fa-icon> Editar
           </button>
           <button 
+            (click)="openConfirmModal('category', category.id.toString())"
             class="text-xs px-2 py-1 bg-red-500 text-white rounded hover:bg-red-400 transition-colors"
           >
             <fa-icon [icon]="faTrash" class="mr-1"></fa-icon> Eliminar
@@ -191,7 +193,29 @@
     </div>
   </div>
 </div>
-
+<!--Modal de confirmación de elimiminación-->
+<div (click)="showModalConfirmar=false" 
+     class="fixed inset-0 bg-transparent backdrop-blur-lg flex items-center justify-center z-50" 
+     *ngIf="showModalConfirmar">
+    <div class="bg-neutral-800 rounded-xl shadow-xl p-4 w-full max-w-md" 
+         (click)="$event.stopPropagation()">
+        <div class="flex flex-col items-center">
+            <h3 class="text-lg font-bold text-neutral-300 mb-4">
+                ¿Estás seguro de que deseas eliminar este elemento?
+            </h3>
+            <div class="flex space-x-3">
+                <button class="px-3 py-1 bg-neutral-700 text-neutral-300 rounded-lg hover:bg-neutral-600 text-sm"
+                        (click)="showModalConfirmar = false">
+                    Cancelar
+                </button>
+                <button class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-400 text-sm"
+                        (click)="confirmDelete()">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Modal para agregar/editar (más compacto) -->
 <div (click)="showModal=false" class="fixed inset-0 bg-transparent backdrop-blur-lg flex items-center justify-center z-50" *ngIf="showModal">
     <div class="bg-neutral-800 rounded-xl shadow-xl p-4 w-full max-w-md" (click)="$event.stopPropagation()">
@@ -207,15 +231,15 @@
         </div>
         
         <!-- Formulario para administradores -->
-        <form (ngSubmit)="$event.stopPropagation();handleAdmin($event)" *ngIf="modalType === 'addAdmin' || modalType === 'editAdmin'">
+        <form (ngSubmit)="handleAdmin($event)" *ngIf="modalType === 'addAdmin' || modalType === 'editAdmin'">
             <div class="space-y-3">
                 <div *ngIf="modalType === 'addAdmin'">
                     <label class="block text-xs font-medium text-neutral-300 mb-1">Nombre de usuario</label>
-                    <input type="text" class="w-full px-3 py-2 rounded-lg bg-neutral-700 border border-neutral-600 focus:outline-none focus:ring-2 focus:ring-primary-500 text-neutral-200 text-sm" />
+                    <input name="nombre" type="text" class="w-full px-3 py-2 rounded-lg bg-neutral-700 border border-neutral-600 focus:outline-none focus:ring-2 focus:ring-primary-500 text-neutral-200 text-sm" />
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-neutral-300 mb-1">Contraseña</label>
-                    <input type="password" class="w-full px-3 py-2 rounded-lg bg-neutral-700 border border-neutral-600 focus:outline-none focus:ring-2 focus:ring-primary-500 text-neutral-200 text-sm" />
+                    <input name="contraseña" type="password" class="w-full px-3 py-2 rounded-lg bg-neutral-700 border border-neutral-600 focus:outline-none focus:ring-2 focus:ring-primary-500 text-neutral-200 text-sm" />
                 </div>
             </div>
             
@@ -230,15 +254,11 @@
         </form>
         
         <!-- Formulario para categorías -->
-        <form *ngIf="modalType === 'addCategory' || modalType === 'editCategory'">
+        <form (ngSubmit)="handleCategory($event)" *ngIf="modalType === 'addCategory' || modalType === 'editCategory'">
             <div class="space-y-3">
                 <div>
                     <label class="block text-xs font-medium text-neutral-300 mb-1">Nombre de la categoría</label>
-                    <input type="text" class="w-full px-3 py-2 rounded-lg bg-neutral-700 border border-neutral-600 focus:outline-none focus:ring-2 focus:ring-primary-500 text-neutral-200 text-sm" />
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-neutral-300 mb-1">Descripción</label>
-                    <textarea class="w-full px-3 py-2 rounded-lg bg-neutral-700 border border-neutral-600 focus:outline-none focus:ring-2 focus:ring-primary-500 text-neutral-200 text-sm h-20"></textarea>
+                    <input name="nombre" type="text" class="w-full px-3 py-2 rounded-lg bg-neutral-700 border border-neutral-600 focus:outline-none focus:ring-2 focus:ring-primary-500 text-neutral-200 text-sm" />
                 </div>
             </div>
             
