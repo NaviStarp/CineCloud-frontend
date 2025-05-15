@@ -37,7 +37,7 @@ export class HeaderComponent implements OnInit {
   Themes = Themes;
   currentTheme: Themes;
   availableThemes = Object.entries(Themes).map(([key, value]) => ({ key, value }));
-  
+  logo = 'Logo.png'; 
   // Iconos
   faSearch = faSearch;
   faTimes = faTimes;
@@ -57,8 +57,24 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
     // Verificación inicial del scroll
     this.onWindowScroll();
+    console.log(this.currentTheme);  
+    this.changeLogo();
   }
 
+  changeLogo()
+  {
+    if(this.currentTheme == 'Rojo'){
+      this.logo = 'Logo-red.png'
+    }else if(this.currentTheme == 'Morado'){
+      this.logo = 'Logo.png'
+    }else if(this.currentTheme == 'Naranja'){
+      this.logo = 'Logo-orange.png'
+    }else if(this.currentTheme == 'Verde'){
+      this.logo = 'Logo-green.png'
+    }else if(this.currentTheme == 'Azul'){
+      this.logo = 'Logo-blue.png'
+    }
+  }
 
   /**
    * Verifica si el usuario actual tiene privilegios de administrador
@@ -125,6 +141,7 @@ export class HeaderComponent implements OnInit {
       this.themeService.setTheme(themeValue);
       this.currentTheme = themeValue;
       this.themeMenuVisible = false; // Cerrar el menú de temas después de la selección
+      this.changeLogo();
     } else {
       console.error(`Selección de tema inválida: ${themeKey}`);
     }

@@ -30,8 +30,10 @@ export interface Episode {
   titulo: string;
   temporada: number;
   numero: number;
+  duracion: number;
   descripcion: string;
   imagen: string;
+  progreso: number;
 }
 export interface EditMedia {
   id: string;

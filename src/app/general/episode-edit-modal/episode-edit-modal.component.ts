@@ -52,6 +52,8 @@ export class EpisodeEditModalComponent {
     descripcion: '',
     imagen: '',
     temporada: 1,
+    duracion: 0,
+    progreso: 0,
     numero: 1
   };
   

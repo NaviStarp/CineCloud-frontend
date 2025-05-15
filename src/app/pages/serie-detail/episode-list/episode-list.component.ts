@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { EpisodeCardComponent } from "./episode-card/episode-card.component";
+import { Episode } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-episode-list',
@@ -14,11 +15,11 @@ import { EpisodeCardComponent } from "./episode-card/episode-card.component";
 })
 export class EpisodeListComponent implements OnInit {
   @Input() seasons: number = 0;
-  @Input() episodes: any[] = [];
+  @Input() episodes: Episode[] = [];
   @Output() episodeSelected: EventEmitter<any> = new EventEmitter<any>();
   @Output() episodeEdit: EventEmitter<any> = new EventEmitter<any>();
   @Output() episodeDelete: EventEmitter<any> = new EventEmitter<any>();
-  filteredEpisodes: any[] = [];
+  filteredEpisodes: Episode[] = [];
   selectedSeason: number = 1;
   groupedEpisodes: { key: number, values: any[] }[] = [];
   
@@ -43,7 +44,7 @@ export class EpisodeListComponent implements OnInit {
 
     const seasonMap = new Map<number, any[]>();
     this.episodes.forEach(episode => {
-      const seasonNum = episode.temporada || episode.season || 1;
+      const seasonNum = episode.temporada || 1;
       if (!seasonMap.has(seasonNum)) {
         seasonMap.set(seasonNum, []);
       }

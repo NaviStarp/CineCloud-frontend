@@ -3,7 +3,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Input } from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faEdit, faPlay, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { AuthService } from '../../../../services/auth.service';
+import { AuthService, Episode } from '../../../../services/auth.service';
 
 @Component({
   selector: 'app-episode-card',
@@ -12,7 +12,16 @@ import { AuthService } from '../../../../services/auth.service';
   styleUrl: './episode-card.component.css',
 })
 export class EpisodeCardComponent implements OnInit {
-    @Input() episode: any;
+    @Input() episode: Episode = {
+      id: 0,
+      titulo: '',
+      temporada: 0,
+      numero: 0,
+      duracion: 0,
+      descripcion: '',
+      imagen: '',
+      progreso: 0
+    } ;
     @Output() episodeSelected: EventEmitter<any> = new EventEmitter<any>();
     @Output() episodeEdit: EventEmitter<any> = new EventEmitter<any>();
     @Output() episodeDelete: EventEmitter<any> = new EventEmitter<any>();
@@ -20,19 +29,17 @@ export class EpisodeCardComponent implements OnInit {
     faEdit = faEdit;
     faPlay = faPlay;
     isHovered: boolean = false;
-    progress: number = 0;
     constructor(private auth:AuthService) {
     }
     ngOnInit(): void {
       if (this.episode && this.episode.id) {
-        this.auth.getEpisodeProgress(this.episode.id).then((progress) => {
-          this.progress = progress ?? 0;
-          console.log('PROGRESO:', this.progress);
+        this.auth.getEpisodeProgress(this.episode.id.toString()).then((progress) => {
+          this.episode.progreso = progress;
         }).catch((error) => {
-          this.progress = 0;
+          this.episode.progreso = 0;
         });
       } else {
-        this.progress = 0;
+        this.episode.progreso = 0;
       }
     }
     selectEpisode(episode: any): void {

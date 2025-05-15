@@ -329,10 +329,7 @@ export class VideoFormComponent implements OnInit,OnChanges {
           ...episodio,
         }))
       }));
-      for(let i = 0; i < this.seriesList.length; i++) {
-        const serie = this.seriesList[i];
-        serie.imagen = await this.auth.getThumnailUrl(serie.imagen);
-      }
+
       this.filteredSeries = [...this.seriesList];
     } catch (error) {
       console.error('Error loading series:', error);

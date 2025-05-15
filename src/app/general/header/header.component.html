@@ -7,9 +7,9 @@
   <div class="container mx-auto px-4 h-full">
     <div class="flex items-center justify-between h-full">
       <!-- Logo y Selector de Tema -->
-      <div class="flex items-center flex-shrink-0">
-        <img src="Logo1.png" alt="CineCloud Logo" 
-          [ngClass]="{'h-10 w-auto': !scroll, 'h-8 w-auto': scroll}" 
+      <div class="flex items-center flex-shrink-0 p-4">
+        <img [src]="logo" alt="CineCloud Logo" 
+          [ngClass]="{'size-10': !scroll, 'size-8': scroll}" 
           class="mr-2 transition-all duration-300">
         <span class="font-bold text-primary-500 transition-all duration-300" 
           [ngClass]="{'text-2xl': !scroll, 'text-xl': scroll}">
@@ -18,7 +18,7 @@
         
         <!-- Botón para cambiar tema (Escritorio) -->
         <div class="md:flex items-center ml-3">
-          <div class="relative">
+          <div class="relative hidden md:flex items-center">
             <button (click)="toggleThemeMenu()"
               class="flex items-center space-x-1 text-neutral-300 hover:text-primary-500 transition-colors p-1 rounded-full">
               <div class="w-4 h-4 rounded-full transition-colors duration-300"
@@ -59,7 +59,7 @@
       </div>
 
       <!-- Navegación en Escritorio -->
-      <nav class="hidden md:block">
+      <nav class="hidden md:block p-4">
         <div class="flex items-center space-x-6">
           <a routerLink="/" class="text-neutral-200 hover:text-primary-500 transition-colors">
             Inicio
