@@ -1,6 +1,6 @@
 <!-- confirmation-modal.component.html -->
-<div  class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-lg bg-transparent transform transition-all duration-300">
-    <div class="bg-neutral-800 bg-opacity-80 rounded-lg shadow-xl max-w-md w-full p-6 relative border-l-4 border-red-600">
+<div (click)="closeModal.emit()"  class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-lg bg-transparent transform transition-all duration-300">
+    <div (click)="$event.stopPropagation()" class="bg-neutral-800 bg-opacity-80 rounded-lg shadow-xl max-w-md w-full p-6 relative border-l-4 border-red-600">
       <div class="flex items-center mb-4">
         <fa-icon [icon]="faExclamationTriangle" class="text-red-500 text-3xl mr-3"></fa-icon>
         <h2 class="text-xl font-bold text-red-500">Eliminar {{type}}</h2>

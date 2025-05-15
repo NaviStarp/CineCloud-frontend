@@ -2,11 +2,13 @@
 <div
     class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
     [@fadeInOut]
+    (click)="close.emit()"
 >
     <!-- Contenido del Modal -->
     <div 
         class="bg-neutral-800 border border-neutral-700 text-neutral-50 rounded-lg p-4 shadow-xl w-11/12 max-w-2xl transform transition-all duration-300 hover:border-primary-500 focus-within:border-primary-500"
         [@slideInOut]
+        (click)="$event.stopPropagation()"
     >
         <!-- Encabezado con botón de cerrar -->
         <div class="flex justify-between items-center mb-3">

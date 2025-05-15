@@ -124,6 +124,7 @@ export class EditModalComponent implements OnInit {
     console.log(formData);
     if (this.type === 'serie') {
       this.auth.editSeries(formData).then(() => {
+        this.save.emit();
         this.close.emit();
       }
       ).catch((err) => {
@@ -132,6 +133,7 @@ export class EditModalComponent implements OnInit {
       );
     } else if (this.type === 'pelicula') {
       this.auth.editMovie(formData).then(() => {
+        this.save.emit();
         this.close.emit();
       }
       ).catch((err) => {

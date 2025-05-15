@@ -41,7 +41,7 @@
       </div>
     </div>
     
-    <div class="bg-gradient-to-r from-purple-600 to-purple-500 rounded-lg p-4 shadow-lg">
+    <div class="bg-gradient-to-r from-accent-600 to-accent-500 rounded-lg p-4 shadow-lg">
       <div class="flex justify-between items-center">
         <div>
           <p class="text-neutral-200 text-xs font-medium">Total de Categorías</p>
@@ -92,7 +92,7 @@
           </button>
           <button 
             (click)="openConfirmModal('admin', admin.id)"
-            class="flex-1 text-xs py-1 bg-red-500 text-white rounded hover:bg-red-400 transition-colors flex items-center justify-center"
+            class="flex-1 text-xs py-1 bg-accent-500 text-white rounded hover:bg-accent-400 transition-colors flex items-center justify-center"
           >
             <fa-icon [icon]="faTrash" class="mr-1"></fa-icon> Eliminar
           </button>
@@ -162,7 +162,7 @@
           </button>
           <button 
             (click)="openConfirmModal('category', category.id.toString())"
-            class="text-xs px-2 py-1 bg-red-500 text-white rounded hover:bg-red-400 transition-colors"
+            class="text-xs px-2 py-1 bg-accent-500 text-white rounded hover:bg-accent-400 transition-colors"
           >
             <fa-icon [icon]="faTrash" class="mr-1"></fa-icon> Eliminar
           </button>
@@ -208,7 +208,7 @@
                         (click)="showModalConfirmar = false">
                     Cancelar
                 </button>
-                <button class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-400 text-sm"
+                <button class="px-3 py-1 bg-accent-500 text-white rounded-lg hover:bg-accent-400 text-sm"
                         (click)="confirmDelete()">
                     Eliminar
                 </button>

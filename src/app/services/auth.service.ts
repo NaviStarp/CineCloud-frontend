@@ -517,25 +517,28 @@ export class AuthService {
       throw error; // Devuelve error
     }
   }
-  public async setMovieProgress(videoProgress:VideoProgress) {
+  public async setMovieProgress(videoProgress: VideoProgress): Promise<boolean> {
     if (!this.getToken() || this.getServerUrl() === '') {
       return false;
     }
-    const response = await fetch(`${this.getServerUrl()}/movies/progress/save/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Token ${this.getToken()}`
-      },
-      body: JSON.stringify(videoProgress)
-    });
-    return response.ok;
+    try {
+      const response = await fetch(`${this.getServerUrl()}/movies/progress/save/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${this.getToken()}`
+        },
+        body: JSON.stringify(videoProgress)
+      });
+      return response.ok;
+    } catch (error) {
+      return false;
+    }
   }
   public async setEpisodeProgress(videoProgress: VideoProgress) {
     if (!this.getToken() || this.getServerUrl() === '') {
       return false;
     }
-    console.log('PROGRESO:', videoProgress);
     const response = await fetch(`${this.getServerUrl()}/series/progress/save/`, {
       method: 'POST',
       headers: {
@@ -670,7 +673,6 @@ export class AuthService {
 
       return await response.json();
     } catch (error) {
-      console.log(error)
       throw error;
     }
   }

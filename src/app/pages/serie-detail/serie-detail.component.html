@@ -75,7 +75,7 @@
         Editar
       </button>
       <button *ngIf="isAdmin" 
-          (click)="showDeleteModal = true"
+          (click)="showDeleteModal = true;type='serie'; $event.stopPropagation()"
           class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-base md:text-lg">
         <fa-icon [icon]="faTrash" class="mr-3"></fa-icon>
         Eliminar

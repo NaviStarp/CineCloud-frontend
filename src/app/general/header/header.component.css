@@ -1,0 +1,78 @@
+:host {
+    display: block;
+    --header-transition-time: 0.3s;
+  }
+  
+  /* Custom scrollbar for category navigation */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    -ms-overflow-style: none;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar {
+    height: 4px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: rgba(64, 64, 64, 0.1);
+    border-radius: 4px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: var(--color-primary-700);
+    border-radius: 4px;
+  }
+  
+  /* Animation for the header transitions */
+  header, 
+  .container, 
+  img, 
+  .text-2xl, 
+  .text-xl {
+    transition: all var(--header-transition-time) ease;
+  }
+  
+  /* Animation for the back to top button */
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(var(--color-primary-500-rgb), 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(var(--color-primary-500-rgb), 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(var(--color-primary-500-rgb), 0);
+    }
+  }
+  
+  /* Apply pulse animation to back to top button */
+  button[class*="fixed bottom"] {
+    animation: pulse 2s infinite;
+  }
+  
+  /* Mobile menu animation */
+  @keyframes slideDown {
+    from {
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  [class*="fixed w-full bg-neutral"] {
+    animation: slideDown 0.3s ease-out;
+  }
+  
+  /* Focus styles for better accessibility */
+  a:focus, button:focus, select:focus, input:focus {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: 2px;
+  }
+  
+  /* Avoid text selection in navigation elements */
+  nav, button {
+    user-select: none;
+  }

@@ -10,6 +10,9 @@ body {
   line-height: 1.5rem;
   background-color: var(--color-neutral-900);
 }
+*{
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
 
 @theme {
   /* Tonos primarios - Azul Violeta */

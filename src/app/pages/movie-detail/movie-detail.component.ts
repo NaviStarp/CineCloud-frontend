@@ -86,7 +86,7 @@ export class MovieDetailComponent implements OnInit {
   }
 
 
-  private loadMovieData(): void {
+   loadMovieData(): void {
     this.loading = true;
     this.auth.getMovie(this.id).then((data: any) => {
       this.title = data.titulo;

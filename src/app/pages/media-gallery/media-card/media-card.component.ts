@@ -27,7 +27,6 @@ export class MediaCardComponent implements OnInit {
   constructor(private auth:AuthService) { }
 
   async ngOnInit(): Promise<void> {
-    console.log(this.type)
     if(this.id == undefined || this.id == null || this.id == '')
       return;
     if(this.type == 'pelicula'){
