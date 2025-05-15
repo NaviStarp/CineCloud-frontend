@@ -16,7 +16,8 @@ export class EpisodeListComponent implements OnInit {
   @Input() seasons: number = 0;
   @Input() episodes: any[] = [];
   @Output() episodeSelected: EventEmitter<any> = new EventEmitter<any>();
-
+  @Output() episodeEdit: EventEmitter<any> = new EventEmitter<any>();
+  @Output() episodeDelete: EventEmitter<any> = new EventEmitter<any>();
   filteredEpisodes: any[] = [];
   selectedSeason: number = 1;
   groupedEpisodes: { key: number, values: any[] }[] = [];

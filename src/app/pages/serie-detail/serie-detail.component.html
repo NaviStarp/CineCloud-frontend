@@ -69,7 +69,7 @@
         </span>
       </div>
       <button *ngIf="isAdmin" 
-          (click)="editModal = true; $event.stopPropagation()"
+          (click)="editModal = true;type='serie' ;$event.stopPropagation()"
           class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-base md:text-lg">
         <fa-icon [icon]="faEdit" class="mr-3"></fa-icon>
         Editar
@@ -109,6 +109,8 @@
       [episodes]="episodes" 
       [seasons]="temporadas"
       (episodeSelected)="selectEpisode($event)" 
+      (episodeEdit)="episodeModal = true; type='episodio';selectedEpisode = $event"
+      (episodeDelete)="showDeleteModal = true;type='episodio'; selectedEpisode = $event"
       class="mb-6">
     </app-episode-list>
   </div>
@@ -142,9 +144,9 @@
 
 <app-delete-modal
   *ngIf="showDeleteModal"
-  [id]="id"
-  [title]="title"
-  [type]="'serie'"
+  [id]="type === 'serie' ? id : selectedEpisode.id"
+  [title]="type === 'serie' ? title : selectedEpisode.titulo"
+  [type]="type"
   (closeModal)="showDeleteModal = false"
 ></app-delete-modal>
 
@@ -160,3 +162,10 @@
   (close)="editModal = false"
   (save)="loadSerieData()"
 ></app-edit-modal>
+
+<app-episode-edit-modal
+  *ngIf="episodeModal"
+  [episode]="selectedEpisode"
+  (close)="episodeModal = false"
+
+></app-episode-edit-modal>

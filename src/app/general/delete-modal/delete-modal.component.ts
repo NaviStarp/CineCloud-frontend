@@ -37,6 +37,8 @@ export class DeleteModalComponent {
       this.deleteMovie();
     } else if (this.type === 'serie') {
       this.deleteSeries();
+    } else if (this.type === 'episodio') {
+      this.deleteEpisode();
     }
   }
 
@@ -57,6 +59,18 @@ export class DeleteModalComponent {
       if (res) {
         this.close();
         this.router.navigate(['/']);
+      }
+    }).catch((err) => {
+      console.error(err);
+      this.close();
+    });
+  }
+
+  private deleteEpisode() {
+    this.auth.deleteEpisode(this.id).then((res) => {
+      if (res) {
+        this.close();
+        window.location.reload();
       }
     }).catch((err) => {
       console.error(err);

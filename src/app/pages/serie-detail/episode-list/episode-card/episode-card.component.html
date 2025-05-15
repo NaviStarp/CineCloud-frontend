@@ -40,14 +40,17 @@
             </p>
         </div>
         <!--Botones de acción-->
-        <div class="flex items-center justify-end p-4">
-            <button
-                class="bg-primary-500 hover:bg-primary-600 text-white font-bold py-2 px-4 rounded transition duration-300">
-                Editar 
+        <div class="flex items-center justify-end gap-2 p-4">
+            <button (click)="$event.stopPropagation();episodeEdit.emit(episode)"
+            class="flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-lg transition duration-300">
+            <fa-icon [icon]="faEdit"></fa-icon>
+            Editar
             </button>
             <button
-                class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300">
-                Eliminar
+            (click)="$event.stopPropagation();episodeDelete.emit(episode)"
+            class="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg transition duration-300">
+            <fa-icon [icon]="faTrash"></fa-icon>
+            Eliminar
             </button>
-    </div>
+        </div>
 </div>

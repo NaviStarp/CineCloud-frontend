@@ -32,7 +32,11 @@
       <ng-container *ngFor="let episode of filteredEpisodes">
         <app-episode-card
           [episode]="episode"
-          (episodeSelected)="selectEpisode(episode)">
+          (episodeSelected)="selectEpisode(episode)"
+          (episodeEdit)="episodeEdit.emit(episode)" 
+          (episodeDelete)="episodeDelete.emit(episode)"
+          >
+   
         </app-episode-card>
         <div class="h-0.1 my-6"></div>
       </ng-container>

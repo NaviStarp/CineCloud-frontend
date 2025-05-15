@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Input } from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { faPlay } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faPlay, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { AuthService } from '../../../../services/auth.service';
 
 @Component({
@@ -14,6 +14,10 @@ import { AuthService } from '../../../../services/auth.service';
 export class EpisodeCardComponent implements OnInit {
     @Input() episode: any;
     @Output() episodeSelected: EventEmitter<any> = new EventEmitter<any>();
+    @Output() episodeEdit: EventEmitter<any> = new EventEmitter<any>();
+    @Output() episodeDelete: EventEmitter<any> = new EventEmitter<any>();
+    faTrash = faTrash;
+    faEdit = faEdit;
     faPlay = faPlay;
     isHovered: boolean = false;
     progress: number = 0;

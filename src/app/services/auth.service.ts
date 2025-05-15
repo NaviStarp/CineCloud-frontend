@@ -726,6 +726,63 @@ export class AuthService {
       throw error;
     }
   }
+  public async editEpisode(episode: Episode): Promise<any> {
+    if (!this.getToken() || this.getServerUrl() === '') {
+      return false;
+    }
+    const formData = new FormData();
+    formData.append('titulo', episode.titulo);
+    formData.append('descripcion', episode.descripcion);
+    formData.append('temporada', episode.temporada.toString());
+    formData.append('numero', episode.numero.toString()); 
+    if (typeof episode.imagen === 'string' && episode.imagen.startsWith('data:image')) {
+      const parts = episode.imagen.split(';base64,');
+      const imageType = parts[0].split(':')[1];
+      const byteString = atob(parts[1]);
+      const arrayBuffer = new ArrayBuffer(byteString.length);
+      const uint8Array = new Uint8Array(arrayBuffer);
+
+      for (let i = 0; i < byteString.length; i++) {
+        uint8Array[i] = byteString.charCodeAt(i);
+      }
+
+      const blob = new Blob([uint8Array], { type: imageType });
+      formData.append('imagen', blob, `${episode.titulo.replace(/\s+/g, '-')}-thumbnail.jpg`);
+    }
+    try {
+      const response = await fetch(`${this.getServerUrl()}/episodes/edit/${episode.id}/`, {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Token ${this.getToken()}`
+        },
+        body: formData
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Upload failed: ${response.status} ${errorText}`);
+      }
+      return await response.json();
+    } catch (error) {
+      throw error;
+    }
+  }
+public async deleteEpisode(id: string): Promise<any> {
+    if (!this.getToken() || this.getServerUrl() === '') {
+      return false;
+    }
+    try {
+      const response = await fetch(`${this.getServerUrl()}/episodes/delete/${id}/`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Token ${this.getToken()}`
+        }
+      });
+      return response.ok;
+    } catch (error) {
+      throw error;
+    }
+  }
+
 
   public async getAdministrators(): Promise<any[]> {
     if (!this.getToken() || this.getServerUrl() === '') {

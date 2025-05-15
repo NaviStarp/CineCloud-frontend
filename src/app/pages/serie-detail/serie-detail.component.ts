@@ -12,21 +12,23 @@ import { MediaCarouselComponent } from '../media-gallery/media-carousel/media-ca
 import { DeleteModalComponent } from "../../general/delete-modal/delete-modal.component";
 import { EditModalComponent } from "../../general/edit-modal/edit-modal.component";
 import { HeaderComponent } from '../../general/header/header.component';
+import { EpisodeEditModalComponent } from "../../general/episode-edit-modal/episode-edit-modal.component";
 
 @Component({
   selector: 'app-serie-detail',
   standalone: true,
   imports: [
-    CommonModule, 
-    HeaderComponent, 
-    VideoPlayerComponent, 
+    CommonModule,
+    HeaderComponent,
+    VideoPlayerComponent,
     MediaCarouselComponent,
-    FontAwesomeModule, 
-    EpisodeListComponent, 
-    FormsModule, 
-    DeleteModalComponent, 
-    EditModalComponent
-  ],
+    FontAwesomeModule,
+    EpisodeListComponent,
+    FormsModule,
+    DeleteModalComponent,
+    EditModalComponent,
+    EpisodeEditModalComponent
+],
   templateUrl: './serie-detail.component.html',
   styleUrls: ['./serie-detail.component.css'],
   animations: [
@@ -73,6 +75,9 @@ export class SerieDetailComponent implements OnInit {
   hlsUrl: string = '';
   videoTitle: string = '';
   videoDescription: string = '';
+  episodeModal: boolean = false;
+  type: string = 'serie';
+  selectedEpisode: any = null;
   
   @ViewChild('videoPlayer') videoPlayer!: VideoPlayerComponent;
   
