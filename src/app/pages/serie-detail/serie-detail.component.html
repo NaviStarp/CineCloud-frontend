@@ -50,11 +50,11 @@
     <!-- Botones -->
     <div class="flex flex-wrap items-center gap-3 mb-8">
       <button *ngIf="episodes.length > 0" 
-          (click)="selectEpisode(episodes[0])" 
+          (click)="selectEpisode(lastEpisode)" 
           class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-base md:text-lg">
         <fa-icon [icon]="faPlay" class="mr-3"></fa-icon>
-        Reproducir
-      </button>
+        Reproducir {{ lastEpisode ? 'Episodio ' + lastEpisode.numero: '' }}
+        </button>
       <div class="relative">
         <button (click)="copyUrlToClipboard(); showToolTip = true; $event.stopPropagation();" 
             (mouseleave)="showToolTip = false" 
@@ -105,9 +105,10 @@
       No hay episodios disponibles para esta serie.
     </div>
 
-    <app-episode-list *ngIf="episodes.length > 0" 
+    <app-episode-list #episodeList *ngIf="episodes.length > 0" 
       [episodes]="episodes" 
       [seasons]="temporadas"
+      [selectedSeason]="selectedSeason"
       (episodeSelected)="selectEpisode($event)" 
       (episodeEdit)="episodeModal = true; type='episodio';selectedEpisode = $event"
       (episodeDelete)="showDeleteModal = true;type='episodio'; selectedEpisode = $event"

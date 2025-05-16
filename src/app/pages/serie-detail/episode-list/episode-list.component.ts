@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faPlay } from '@fortawesome/free-solid-svg-icons';
@@ -13,14 +13,16 @@ import { Episode } from '../../../services/auth.service';
   templateUrl: './episode-list.component.html',
   styleUrl: './episode-list.component.css'
 })
-export class EpisodeListComponent implements OnInit {
+export class EpisodeListComponent implements OnInit, OnChanges {
   @Input() seasons: number = 0;
   @Input() episodes: Episode[] = [];
+  @Input() selectedSeason: number = 1;
   @Output() episodeSelected: EventEmitter<any> = new EventEmitter<any>();
   @Output() episodeEdit: EventEmitter<any> = new EventEmitter<any>();
   @Output() episodeDelete: EventEmitter<any> = new EventEmitter<any>();
+  @Output() seasonChanged: EventEmitter<number> = new EventEmitter<number>();
+  @ViewChildren(EpisodeCardComponent) episodeCards!: QueryList<EpisodeCardComponent>;
   filteredEpisodes: Episode[] = [];
-  selectedSeason: number = 1;
   groupedEpisodes: { key: number, values: any[] }[] = [];
   
   // Iconos
@@ -29,10 +31,36 @@ export class EpisodeListComponent implements OnInit {
 
   ngOnInit(): void {
     this.groupEpisodesBySeason();
-    if (this.groupedEpisodes.length > 0) {
+    if (this.groupedEpisodes.length > 0 && !this.selectedSeason) {
       this.selectedSeason = this.groupedEpisodes[0].key;
+      this.seasonChanged.emit(this.selectedSeason);
     }
     this.filteredEpisodes = this.getEpisodesBySeason(this.selectedSeason);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['episodes'] && !changes['episodes'].firstChange) {
+      this.groupEpisodesBySeason();
+      this.filteredEpisodes = this.getEpisodesBySeason(this.selectedSeason);
+    }
+    
+    if (changes['selectedSeason'] && !changes['selectedSeason'].firstChange) {
+      this.filteredEpisodes = this.getEpisodesBySeason(this.selectedSeason);
+    }
+  }
+
+  refreshProgress(): void {
+    console.log('Refreshing progress');
+    console.log(this.episodeCards)
+    if (this.episodeCards && typeof this.episodeCards.forEach === 'function') {
+      this.episodeCards.forEach((card) => {
+        if (card.episode && card.episode.id) {
+          card.ngOnInit();
+        }
+      });
+    } else {
+      console.warn('episodeCards is not available or not iterable');
+    }
   }
 
   groupEpisodesBySeason(): void {
@@ -63,24 +91,21 @@ export class EpisodeListComponent implements OnInit {
 
   sortEpisodesByNumber(episodes: any[]): any[] {
     return episodes.sort((a, b) => {
-      const aNum = a.numero || a.number || 0;
-      const bNum = b.numero || b.number || 0;
+      const aNum = a.numero || a.number || a.episode || 0;
+      const bNum = b.numero || b.number || b.episode || 0;
       return aNum - bNum;
     });
   }
 
   getEpisodesBySeason(season: number): any[] {
-    console.log(this.groupedEpisodes);
     const seasonGroup = this.groupedEpisodes.find(group => group.key === Number(season));
-    console.log('Season group:', seasonGroup);
     return seasonGroup ? seasonGroup.values : [];
   }
 
   onSeasonChange(season: number): void {
-    this.selectedSeason = season;
-    console.log('Selected season:', this.selectedSeason);
+    this.selectedSeason = Number(season);
     this.filteredEpisodes = this.getEpisodesBySeason(this.selectedSeason);
-    console.log('Filtered episodes:', this.filteredEpisodes);
+    this.seasonChanged.emit(this.selectedSeason);
   }
 
   selectEpisode(episode: any): void {

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener, viewChild } from '@angular/core';
 import { VideoPlayerComponent } from '../../general/video-player/video-player.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -28,7 +28,7 @@ import { EpisodeEditModalComponent } from "../../general/episode-edit-modal/epis
     DeleteModalComponent,
     EditModalComponent,
     EpisodeEditModalComponent
-],
+  ],
   templateUrl: './serie-detail.component.html',
   styleUrls: ['./serie-detail.component.css'],
   animations: [
@@ -78,9 +78,10 @@ export class SerieDetailComponent implements OnInit {
   episodeModal: boolean = false;
   type: string = 'serie';
   selectedEpisode: any = null;
-  
+  lastEpisode: any = null;
+  selectedSeason: number = 1;
   @ViewChild('videoPlayer') videoPlayer!: VideoPlayerComponent;
-  
+  @ViewChild('episodeList') episodeList!: EpisodeListComponent;
   // Iconos
   faPlay = faPlay;
   faTrash = faTrash;
@@ -98,12 +99,13 @@ export class SerieDetailComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.route.params.subscribe(params => {
       this.id = params['id'];
-      this.loadSerieData();
     });
     
     this.auth.isAdmin().then((isAdmin) => {
       this.isAdmin = isAdmin;
     });
+    await this.loadSerieData();    
+    this.getLastEpisodeNotSeen();
     
     try {
       const data = await this.auth.getVideos();
@@ -115,7 +117,7 @@ export class SerieDetailComponent implements OnInit {
       console.error('Error loading videos:', error);
     }
   }
-
+  
   async loadSerieData(): Promise<void> {
     this.loading = true;
     
@@ -129,10 +131,15 @@ export class SerieDetailComponent implements OnInit {
         this.releaseDate = data.fecha_estreno || '';
         this.categories = data.categorias || [];
         this.temporadas = data.temporadas || 1;
-        this.season = this.temporadas;  
         
         if (data.episodios && Array.isArray(data.episodios)) {
-          this.episodes = data.episodios.map((ep: any) => {
+          this.episodes = await Promise.all(data.episodios.map(async (ep: any) => {
+            try {
+              const progress = await this.auth.getEpisodeProgress(ep.id.toString());
+              ep.progreso = progress;
+            } catch (error) {
+              ep.progreso = 0;
+            }
             return {
               id: ep.id || '',
               season: ep.temporada || 1,
@@ -145,13 +152,13 @@ export class SerieDetailComponent implements OnInit {
               descripcion: ep.descripcion || '', 
               imageUrl: ep.imagen || '',
               imagen: ep.imagen || '', 
+              progreso: ep.progreso || 0,
               duration: ep.duracion || 0,
               duracion: ep.duracion || 0, 
               videoUrl: ep.video || '',
               video: ep.video || '' 
             };
-          });
-          
+          }));
           if (this.episodes.length > 0) {
             this.hlsUrl = this.episodes[0].video || this.episodes[0].videoUrl || '';
           }
@@ -164,6 +171,30 @@ export class SerieDetailComponent implements OnInit {
     } finally {
       this.loading = false;
     }
+  }
+  
+  getLastEpisodeNotSeen(): any {
+    if (!this.episodes || this.episodes.length === 0) return null;
+  
+    // Ordenar por temporada y número de episodio
+    const sortedEpisodes = [...this.episodes].sort((a, b) => {
+      if (a.season === b.season) {
+        return a.episode - b.episode;
+      }
+      return a.season - b.season;
+    });
+  
+    // Filtrar episodios no vistos (progreso < 100)
+    const notSeenEpisodes = sortedEpisodes.filter(ep => ep.progreso != 100);
+  
+    // Devolver el primer episodio no visto, o el último episodio si todos fueron vistos
+    this.lastEpisode = notSeenEpisodes.length > 0 ? notSeenEpisodes[0] : sortedEpisodes[sortedEpisodes.length - 1];
+    
+    if (this.lastEpisode) {
+      this.selectedSeason = this.lastEpisode.temporada || this.lastEpisode.season || 1;
+    }
+    
+    return this.lastEpisode;
   }
   
   copyUrlToClipboard(): void {
@@ -200,25 +231,38 @@ export class SerieDetailComponent implements OnInit {
       console.error('No episode selected');
       return;
     }
-    console.log('Selected episode:', episode);
     
     this.hlsUrl = episode.video || episode.videoUrl;
     
     // Si el reproductor ya está inicializado, actualizamos sus propiedades
     if (this.videoPlayer) {
-      this.videoPlayer.videoUrl = episode.video || episode.videoUrl;
+      // Importante: actualizar el videoId antes de reloadVideo
       this.videoPlayer.videoId = episode.id;
+      this.videoPlayer.videoUrl = episode.video || episode.videoUrl;
       this.videoPlayer.videoTitle = this.title;
       this.videoPlayer.episodeInfo = `${episode.season || episode.temporada}x${episode.episode || episode.numero} - ${episode.title || episode.titulo}`;
+      
+      // Recargar video con nuevo ID
       this.videoPlayer.reloadVideo();
     }
     
     this.showVideo = true;
   }
   
+  onSeasonChange(season: number): void {
+    this.selectedSeason = season;
+    console.log('Temporada cambiada en el componente padre:', this.selectedSeason);
+  }
+  
   onVideoClosed(): void {
     this.showVideo = false;
     this.animationDone = false;
+    this.refreshProgress();
+  }
+  refreshProgress(): void {
+    if (this.episodeList) {
+      this.episodeList.refreshProgress();
+    }
   }
   
   onAnimationDone(): void {

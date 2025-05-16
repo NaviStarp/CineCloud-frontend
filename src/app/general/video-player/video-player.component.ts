@@ -185,23 +185,30 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, OnChanges {
       this.savedProgress = progress / 100;
       this.lastSavedProgress = this.savedProgress;
       
-      // Si el video ya está inicializado, buscar la posición guardada
-      if (this.videoInitialized && !this.progressRestored && this.savedProgress !== this.duration) {
-        this.seekToSavedPosition();
+      // Usar un listener para ejecutar seekToSavedPosition después de que el video se cargue
+      if (!this.progressRestored && this.videoRef?.nativeElement) {
+        const video = this.videoRef.nativeElement;
+        const seekOnce = () => {
+          this.seekToSavedPosition();
+          video.removeEventListener('canplay', seekOnce);
+        };
+        video.addEventListener('canplay', seekOnce);
       }
     }
   }
-
   private seekToSavedPosition(): void {
     if (!this.videoRef || !this.savedProgress || this.progressRestored) return;
-
+  
     const video = this.videoRef.nativeElement;
     
     // Restaurar solo si el progreso guardado está entre el 1% y el 95%
     if (this.savedProgress > 0.01 && this.savedProgress < 0.95) {
-      video.currentTime = this.savedProgress * video.duration;
-      this.progressRestored = true;
-      console.log(`Progreso del video restaurado al ${Math.round(this.savedProgress * 100)}%`);
+      // Usa timeout para asegurar que se ejecute después de que el video esté listo
+      setTimeout(() => {
+        video.currentTime = this.savedProgress * video.duration;
+        this.progressRestored = true;
+        console.log(`Progreso del video restaurado al ${Math.round(this.savedProgress * 100)}%`);
+      }, 100);
     }
   }
 
@@ -399,11 +406,6 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, OnChanges {
     const video = this.videoRef.nativeElement;
     console.log("Reloading video:", this.videoUrl);
     
-    // Reset progress tracking
-    this.progressRestored = false;
-    this.videoInitialized = false;
-    this.lastSavedProgress = 0;
-    
     // Pause and clear current source
     video.pause();
     video.removeAttribute('src');
@@ -414,16 +416,21 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, OnChanges {
       this.hls.destroy();
     }
   
+    // Reset progress tracking state
+    this.progressRestored = false;
+    this.videoInitialized = false;
+    this.lastSavedProgress = 0;
+    
+    // Fetch saved progress for the new video BEFORE initializing HLS
+    // Muy importante - obtener el progreso antes de inicializar el video
+    this.fetchSavedProgress();
+    
     // Reinitialize the video
     if (Hls.isSupported()) {
       this.initializeHls(video);
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       this.initializeNativeHls(video);
     }
-    
-    // Fetch saved progress for the new video
-    this.fetchSavedProgress();
-    
     video.play();
   }
   
