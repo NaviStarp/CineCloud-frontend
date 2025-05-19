@@ -22,7 +22,7 @@ const THEME_STORAGE_KEY = 'cinecloud-theme';
 })
 export class ThemeService {
   // Tema por defecto
-  private readonly DEFAULT_THEME = Themes.RED;
+  private readonly DEFAULT_THEME = Themes.PURPLE;
   
   // Subject para manejar la reactividad del tema actual
   private currentThemeSubject = new BehaviorSubject<Themes>(this.getInitialTheme());
