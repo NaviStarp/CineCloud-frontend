@@ -23,7 +23,7 @@
 
 <div class="flex items-center space-x-4 text-base text-neutral-400 mb-6">
     <span>{{ releaseDate }}</span>
-    <span *ngIf="duration == ''">?</span>
+    <span *ngIf="duration == ''">Menos de 1 minuto</span>
     <span *ngIf="duration != ''">{{ duration | number:'1.0-0' }} minutos</span>
 </div>
 

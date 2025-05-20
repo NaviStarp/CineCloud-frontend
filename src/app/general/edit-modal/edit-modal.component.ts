@@ -192,7 +192,6 @@ export class EditModalComponent implements OnInit {
     if (!this.selectedCategories.includes(category)) {
       this.auth.createCategory(category).then(() => {
         this.categories.push(category);
-        this.popularCategories.push(category);
         this.selectedCategories.push(category);
         this.categorySearch = '';
         this.showCategorySuggestions = false;
