@@ -245,26 +245,26 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, OnChanges {
     
     const video = this.videoRef.nativeElement;
 
-    // Ensure volume is set and not muted
+    // Asegurarse de que el volumen esté configurado y no esté silenciado
     video.volume = this.volume;
     video.muted = false;
     
-    // Set up event listeners
-    video.addEventListener('timeupdate', this.updateProgress.bind(this));
-    video.addEventListener('loadedmetadata', this.initializeVideo.bind(this));
-    video.addEventListener('play', () => this.isPlaying = true);
-    video.addEventListener('pause', () => this.isPlaying = false);
-    video.addEventListener('progress', this.updateBuffer.bind(this));
-    video.addEventListener('ended', this.handleVideoEnded.bind(this));
+    // Configurar los event listeners
+    video.addEventListener('timeupdate', this.updateProgress.bind(this)); // Actualizar el progreso del video
+    video.addEventListener('loadedmetadata', this.initializeVideo.bind(this)); // Inicializar el video cuando se carguen los metadatos
+    video.addEventListener('play', () => this.isPlaying = true); // Cambiar el estado a "reproduciendo" cuando el video se inicie
+    video.addEventListener('pause', () => this.isPlaying = false); // Cambiar el estado a "pausado" cuando el video se detenga
+    video.addEventListener('progress', this.updateBuffer.bind(this)); // Actualizar el estado del buffer
+    video.addEventListener('ended', this.handleVideoEnded.bind(this)); // Manejar el evento cuando el video termine
     
-    // Initialize HLS
+    // Inicializar HLS
     if (Hls.isSupported()) {
-      this.initializeHls(video);
+      this.initializeHls(video); // Usar HLS.js si es compatible
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      this.initializeNativeHls(video);
+      this.initializeNativeHls(video); // Usar HLS nativo si es compatible
     }
     
-    // Hide controls when mouse is inactive
+    // Ocultar los controles cuando el mouse esté inactivo
     document.addEventListener('mousemove', this.showControlsTemporarily.bind(this));
   }
 
@@ -288,7 +288,7 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, OnChanges {
       xhrSetup: (xhr: XMLHttpRequest) => {
         xhr.setRequestHeader('Authorization', `Token ${this.authToken}`);
       },
-      startLevel: -1, // Auto quality selection
+      startLevel: -1, // Selección automática de calidad
     });
     
     this.hls.on(Hls.Events.ERROR, (event, data) => {

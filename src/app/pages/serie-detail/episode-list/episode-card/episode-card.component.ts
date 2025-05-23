@@ -32,10 +32,9 @@ export class EpisodeCardComponent implements OnInit {
     constructor(private auth:AuthService) {
     }
     ngOnInit(): void {
-      console.log('Recargando');
       if (this.episode && this.episode.id) {
         this.auth.getEpisodeProgress(this.episode.id.toString()).then((progress) => {
-          this.episode.progreso = progress;
+          this.episode.progreso = progress ? progress : 0;
         }).catch((error) => {
           this.episode.progreso = 0;
         });
