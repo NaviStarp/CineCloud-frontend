@@ -190,9 +190,7 @@
       <button 
         *ngFor="let categoria of categorias"
         (click)="scrollToCategory(categoria)"
-        [ngClass]="{'text-primary-500 font-bold': categoria === opcionSeleccionada,
-                   'text-neutral-300 hover:text-primary-500': categoria !== opcionSeleccionada}"
-        class="transition-colors mr-6 flex-shrink-0 px-2 py-1 rounded-md">
+        class="transition-colors  text-neutral-300 hover:text-primary-500 mr-6 flex-shrink-0 px-2 py-1 rounded-md">
         {{ categoria }}
       </button>
     </div>

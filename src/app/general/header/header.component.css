@@ -66,12 +66,6 @@
     animation: slideDown 0.3s ease-out;
   }
   
-  /* Focus styles for better accessibility */
-  a:focus, button:focus, select:focus, input:focus {
-    outline: 2px solid var(--color-primary-500);
-    outline-offset: 2px;
-  }
-  
   /* Avoid text selection in navigation elements */
   nav, button {
     user-select: none;
