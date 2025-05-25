@@ -114,7 +114,7 @@ export class MovieDetailComponent implements OnInit {
     if (this.videoPlayer) {
       this.videoPlayer.videoUrl = this.hlsUrl;
       this.videoPlayer.videoTitle = this.title;
-      this.videoPlayer.episodeInfo = this.description;
+      this.videoPlayer.episodeInfo = this.releaseDate;
       this.showVideo = true;
       this.videoPlayer?.reloadVideo()
     }

@@ -23,7 +23,7 @@
       <!--Icono separacion-->
       <div class="w-1 h-5 bg-white rounded-full mx-2"></div>
       <fa-icon [icon]="faTimes" class="text-white text-2xl cursor-pointer hover:text-red-500"
-        (click)="videoClosed.emit(); $event.stopPropagation()">
+        (click)="stopVideo(); $event.stopPropagation()">
       </fa-icon>
     </div>
 

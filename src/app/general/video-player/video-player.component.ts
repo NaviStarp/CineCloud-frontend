@@ -72,7 +72,7 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, OnChanges {
   private destroy$ = new Subject<void>();
   private videoInitialized = false;
   private progressRestored = false;
-  volume: number = 1;
+  volume: number = 0.5; // Volumen inicial
   bufferPercent: number = 0;
   
   subtitlesEnabled: boolean = false;
@@ -270,15 +270,8 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, OnChanges {
 
   ngAfterViewInit() {
     this.setup();
-    this.eventEmitter();
   }
   
-  eventEmitter() {
-    this.videoClosed.subscribe(() => {
-      this.setup();
-    });
-  }
-    
   initializeHls(video: HTMLVideoElement) {
     if (this.hls) {
       this.hls.destroy();
@@ -443,6 +436,12 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, OnChanges {
       video.pause();
       this.isPlaying = false;
     }
+  }
+  stopVideo() {
+    const video = this.videoRef.nativeElement;
+    video.pause();
+    this.isPlaying = false;
+    this.videoClosed.emit(); 
   }
   toggleSpeedMenu() {
     this.showSpeedMenu = !this.showSpeedMenu;

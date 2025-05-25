@@ -14,13 +14,13 @@
   <div class="absolute inset-0 bg-gradient-to-r from-neutral-900 via-neutral-900/80 to-transparent z-10"></div>
 
   <!-- Contenido -->
-  <div class="absolute bottom-10 z-20 px-6 md:px-16 py-8">
+  <div class="absolute bottom-10 z-20 px-4 sm:px-6 md:px-16 py-6 sm:py-8">
     <!-- Titulo -->
-    <h1 class="text-5xl md:text-6xl font-bold mb-4">{{ title }}</h1>
+    <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4">{{ title }}</h1>
 
     <!-- Descripcion -->
-    <p class="max-w-full md:max-w-4xl text-sm sm:text-base md:text-lg  leading-relaxed sm:leading-normal md:leading-loose"
-       [ngClass]="{ 'line-clamp-3': isMobile && !showFullDescription }">
+    <p class="text-sm sm:text-base md:text-lg leading-relaxed sm:leading-normal md:leading-loose"
+       [ngClass]="{ 'line-clamp-2': isMobile && !showFullDescription }">
       {{ description }}
     </p>
     <button *ngIf="isMobile && description.length > 40"
@@ -29,7 +29,7 @@
       {{ showFullDescription ? 'Mostrar menos' : 'Mostrar más' }}
     </button>
 
-    <div class="flex items-center space-x-4 text-base text-neutral-400 mb-6">
+    <div class="flex flex-wrap items-center space-x-2 sm:space-x-4 text-sm sm:text-base text-neutral-400 mb-4 sm:mb-6">
       <span>{{ releaseDate }}</span>
       <span *ngIf="episodes.length > 1">{{ episodes.length }} episodios</span>
       <span *ngIf="episodes.length === 1">{{ episodes.length }} episodio</span>
@@ -37,10 +37,10 @@
     </div>
 
     <!-- Categorias -->
-    <div class="flex flex-wrap items-center gap-3 mb-8">
+    <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
       <ng-container *ngFor="let category of categories; let i = index">
         <ng-container *ngIf="i < 3">
-          <span class="bg-neutral-700 text-neutral-200 px-3 py-1 rounded-full text-sm">
+          <span class="bg-neutral-700 text-neutral-200 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm">
             {{ category }}
           </span>
         </ng-container>
@@ -48,36 +48,36 @@
     </div>
     
     <!-- Botones -->
-    <div class="flex flex-wrap items-center gap-3 mb-8">
+    <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
       <button *ngIf="episodes.length > 0" 
           (click)="selectEpisode(lastEpisode)" 
-          class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-base md:text-lg">
-        <fa-icon [icon]="faPlay" class="mr-3"></fa-icon>
+          class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-2 sm:py-3 px-4 sm:px-5 rounded text-sm sm:text-base md:text-lg">
+        <fa-icon [icon]="faPlay" class="mr-2 sm:mr-3"></fa-icon>
         Reproducir {{ lastEpisode ? 'Episodio ' + lastEpisode.numero: '' }}
-        </button>
+      </button>
       <div class="relative">
         <button (click)="copyUrlToClipboard(); showToolTip = true; $event.stopPropagation();" 
             (mouseleave)="showToolTip = false" 
-            class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-base md:text-lg">
-          <fa-icon [icon]="faShare" class="mr-3 text-xl text-white group-hover:text-primary-400"></fa-icon>
+            class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-2 sm:py-3 px-4 rounded text-sm  md:text-lg">
+          <fa-icon [icon]="faShare" class="mr-2 sm:mr-3 text-lg sm:text-xl text-white group-hover:text-primary-400"></fa-icon>
           Compartir
         </button>
         <span *ngIf="showToolTip" 
-            class="absolute min-w-40 bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-neutral-800 text-green-500 text-sm px-3 py-1 rounded shadow-lg">
+            class="absolute min-w-40 bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-neutral-800 text-green-500 text-xs sm:text-sm px-2 sm:px-3 py-1 rounded shadow-lg">
           <fa-icon [icon]="faCheck" class="mr-1"></fa-icon>
           ¡Enlace copiado!
         </span>
       </div>
       <button *ngIf="isAdmin" 
           (click)="editModal = true;type='serie' ;$event.stopPropagation()"
-          class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-base md:text-lg">
-        <fa-icon [icon]="faEdit" class="mr-3"></fa-icon>
+          class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-2 sm:py-3 px-4 rounded text-sm  md:text-lg">
+        <fa-icon [icon]="faEdit" class="mr-2 sm:mr-3"></fa-icon>
         Editar
       </button>
       <button *ngIf="isAdmin" 
           (click)="showDeleteModal = true;type='serie'; $event.stopPropagation()"
-          class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-3 px-5 rounded text-base md:text-lg">
-        <fa-icon [icon]="faTrash" class="mr-3"></fa-icon>
+          class="flex items-center bg-neutral-800 hover:bg-neutral-700 text-white py-2 sm:py-3 px-4  rounded text-sm  md:text-lg">
+        <fa-icon [icon]="faTrash" class="mr-2 sm:mr-3"></fa-icon>
         Eliminar
       </button>
     </div>
